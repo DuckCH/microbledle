@@ -21,7 +21,6 @@ export default function ProfileModal({
 }) {
   const [displayName, setDisplayName] = useState(profile?.displayName || user?.displayName || 'Physician');
   const [status, setStatus] = useState(profile?.status || 'Medical Student Y1');
-  const [customStatus, setCustomStatus] = useState(profile?.customStatus || '');
   const [avatar, setAvatar] = useState(profile?.avatar || 'microscope');
   const [saveSuccess, setSaveSuccess] = useState(false);
 
@@ -30,7 +29,6 @@ export default function ProfileModal({
     if (profile) {
       setDisplayName(profile.displayName || user?.displayName || 'Physician');
       setStatus(profile.status || 'Medical Student Y1');
-      setCustomStatus(profile.customStatus || '');
       setAvatar(profile.avatar || 'microscope');
     }
   }, [profile, user]);
@@ -44,7 +42,7 @@ export default function ProfileModal({
     e.preventDefault();
     const updated = {
       displayName: displayName.trim() || 'Physician',
-      status: status === 'Other' ? customStatus.trim() : status,
+      status: status.trim() || 'Medical Student',
       avatar: avatar,
       level: progression.level,
       title: progression.title,
@@ -188,33 +186,31 @@ export default function ProfileModal({
             </div>
           </div>
 
-          {/* Status / Role */}
+          {/* Status */}
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">
-              Medical Status / Role
+              Status
             </label>
             <div className="relative">
               <Stethoscope className="absolute left-3.5 top-3 w-4 h-4 text-slate-500" />
-              <select
-                value={status}
-                onChange={(e) => setStatus(e.target.value)}
-                className="w-full pl-10 pr-3 py-2.5 bg-slate-950 border border-slate-700/80 rounded-xl text-xs text-white focus:outline-none focus:ring-1 focus:ring-emerald-500"
-              >
-                {STATUS_OPTIONS.map((opt) => (
-                  <option key={opt} value={opt}>{opt}</option>
-                ))}
-                <option value="Other">Custom Status...</option>
-              </select>
-            </div>
-            {status === 'Other' && (
               <input
                 type="text"
-                value={customStatus}
-                onChange={(e) => setCustomStatus(e.target.value)}
-                placeholder="Enter custom medical status..."
-                className="w-full mt-2 px-3 py-2 bg-slate-950 border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+                placeholder="Type your status (e.g. Intern 1, Path Enthusiast, Coffee Addict...)"
+                list="status-presets"
+                maxLength={60}
+                className="w-full pl-10 pr-3 py-2.5 bg-slate-950 border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
               />
-            )}
+              <datalist id="status-presets">
+                {STATUS_OPTIONS.map((opt) => (
+                  <option key={opt} value={opt} />
+                ))}
+              </datalist>
+            </div>
+            <p className="text-[10px] text-slate-500 mt-1">
+              Customize with any status, title, or motto you'd like
+            </p>
           </div>
 
           {/* Action Buttons */}
