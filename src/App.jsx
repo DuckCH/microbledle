@@ -637,8 +637,12 @@ export default function App() {
       {/* Top Navbar */}
       <header className="w-full max-w-4xl border-b border-slate-800 pb-4 mb-6 flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 bg-gradient-to-br from-emerald-500/20 to-cyan-500/20 text-emerald-400 rounded-xl border border-emerald-500/30 shadow-lg shadow-emerald-950/30">
-            <Microscope className="w-7 h-7 animate-pulse text-emerald-400" />
+          <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl overflow-hidden border border-emerald-500/40 shadow-lg shadow-emerald-950/50 shrink-0 bg-slate-900 group hover:border-emerald-400 transition-all duration-300 hover:scale-105 ring-2 ring-emerald-500/20 flex items-center justify-center">
+            <img 
+              src="./apple-touch-icon.png" 
+              alt="Microbledle Logo" 
+              className="w-full h-full object-cover rounded-2xl" 
+            />
           </div>
           <div>
             <div className="flex items-center gap-2">
