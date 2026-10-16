@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   X, User, ShieldCheck, Award, Flame, Trophy, Cloud, Check, 
-  Sparkles, Building2, Stethoscope, ArrowRight, Save, LogOut
+  Sparkles, Stethoscope, ArrowRight, Save, LogOut
 } from 'lucide-react';
 import { 
   calculateUserProgression, 
@@ -22,7 +22,6 @@ export default function ProfileModal({
   const [displayName, setDisplayName] = useState(profile?.displayName || user?.displayName || 'Physician');
   const [status, setStatus] = useState(profile?.status || 'Medical Student (MS1/MS2)');
   const [customStatus, setCustomStatus] = useState(profile?.customStatus || '');
-  const [institution, setInstitution] = useState(profile?.institution || '');
   const [avatar, setAvatar] = useState(profile?.avatar || 'microscope');
   const [saveSuccess, setSaveSuccess] = useState(false);
 
@@ -32,7 +31,6 @@ export default function ProfileModal({
       setDisplayName(profile.displayName || user?.displayName || 'Physician');
       setStatus(profile.status || 'Medical Student (MS1/MS2)');
       setCustomStatus(profile.customStatus || '');
-      setInstitution(profile.institution || '');
       setAvatar(profile.avatar || 'microscope');
     }
   }, [profile, user]);
@@ -47,7 +45,6 @@ export default function ProfileModal({
     const updated = {
       displayName: displayName.trim() || 'Physician',
       status: status === 'Other' ? customStatus.trim() : status,
-      institution: institution.trim(),
       avatar: avatar,
       level: progression.level,
       title: progression.title,
@@ -93,7 +90,7 @@ export default function ProfileModal({
               <span className="truncate">{progression.title}</span>
             </p>
             <p className="text-[11px] text-slate-400 truncate mt-0.5">
-              {institution ? `${institution} • ` : ''}{user?.email || 'Local Player'}
+              {user?.email || 'Local Player'}
             </p>
           </div>
         </div>
@@ -218,23 +215,6 @@ export default function ProfileModal({
                 className="w-full mt-2 px-3 py-2 bg-slate-950 border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
               />
             )}
-          </div>
-
-          {/* Institution / Hospital */}
-          <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">
-              Hospital / University Affiliation
-            </label>
-            <div className="relative">
-              <Building2 className="absolute left-3.5 top-3 w-4 h-4 text-slate-500" />
-              <input
-                type="text"
-                value={institution}
-                onChange={(e) => setInstitution(e.target.value)}
-                placeholder="e.g. Johns Hopkins Medicine"
-                className="w-full pl-10 pr-3 py-2.5 bg-slate-950 border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
-              />
-            </div>
           </div>
 
           {/* Storage Architecture Explanation Badge */}

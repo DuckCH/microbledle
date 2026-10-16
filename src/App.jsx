@@ -212,14 +212,12 @@ export default function App() {
       return saved ? JSON.parse(saved) : {
         displayName: 'Physician',
         status: 'Medical Student (MS1/MS2)',
-        institution: '',
         avatar: 'microscope'
       };
     } catch {
       return {
         displayName: 'Physician',
         status: 'Medical Student (MS1/MS2)',
-        institution: '',
         avatar: 'microscope'
       };
     }
