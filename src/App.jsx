@@ -5,7 +5,7 @@ import {
   Share2, CheckCircle2, X, Sparkles, ChevronRight, Info,
   Microscope, Stethoscope, Dna, FlaskConical, Award, Flame,
   Check, Calendar, Shuffle, Volume2, VolumeX, Clock, TestTube2,
-  BookOpen, User, LogOut, Cloud, ShieldCheck
+  BookOpen, User, LogOut, Cloud, ShieldCheck, Smartphone
 } from 'lucide-react';
 import microbes from './data/microbes.json';
 import { playTileSound, playSelectSound, playWinSound, playDefeatSound } from './utils/audio';
@@ -14,6 +14,7 @@ import BugdexModal from './components/BugdexModal';
 import AuthModal from './components/AuthModal';
 import ProfileModal from './components/ProfileModal';
 import LeaderboardModal from './components/LeaderboardModal';
+import InstallModal from './components/InstallModal';
 import { 
   auth, 
   logoutUser, 
@@ -199,6 +200,39 @@ export default function App() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showLeaderboardModal, setShowLeaderboardModal] = useState(false);
+  const [showInstallModal, setShowInstallModal] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [isStandalone, setIsStandalone] = useState(false);
+  const isIos = useMemo(() => {
+    return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  }, []);
+
+  useEffect(() => {
+    const standaloneMode = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    setIsStandalone(standaloneMode);
+
+    const handleBeforeInstall = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstall);
+    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        setDeferredPrompt(null);
+        setShowInstallModal(false);
+      }
+    } else {
+      setShowInstallModal(true);
+    }
+  };
+
   const [copied, setCopied] = useState(false);
   const [isMuted, setIsMuted] = useState(() => {
     return localStorage.getItem('microbledle_muted') === 'true';
@@ -809,6 +843,18 @@ export default function App() {
           >
             <Award className="w-5 h-5 text-cyan-400" />
           </button>
+
+          {/* PWA Install App Button */}
+          {!isStandalone && (
+            <button
+              onClick={() => setShowInstallModal(true)}
+              className="p-2 md:px-2.5 md:py-2 rounded-xl bg-emerald-950/60 border border-emerald-500/50 hover:border-emerald-400 hover:bg-emerald-900/60 text-emerald-300 transition flex items-center gap-1.5 text-xs font-semibold shadow-sm"
+              title="Install Microbledle as Web App (Offline & Full-Screen)"
+            >
+              <Smartphone className="w-4 h-4 text-emerald-400" />
+              <span className="hidden sm:inline">Install</span>
+            </button>
+          )}
         </div>
       </header>
 
@@ -1383,6 +1429,15 @@ export default function App() {
         userStats={stats}
         userProfile={profile}
         onOpenAuth={() => setShowAuthModal(true)}
+      />
+
+      {/* PWA Install Modal */}
+      <InstallModal
+        isOpen={showInstallModal}
+        onClose={() => setShowInstallModal(false)}
+        onInstallClick={handleInstallClick}
+        canInstallPrompt={Boolean(deferredPrompt)}
+        isIos={isIos}
       />
     </div>
   );
