@@ -40,7 +40,9 @@ export default function AuthModal({ isOpen, onClose, onDemoLogin }) {
       await signInWithGoogle();
       onClose();
     } catch (err) {
-      if (err.message === 'FIREBASE_NOT_CONFIGURED') {
+      if (err.code === 'auth/unauthorized-domain') {
+        setErrorMsg(`Unauthorized Domain: Go to Firebase Console > Authentication > Settings > Authorized domains, and add "${window.location.hostname}".`);
+      } else if (err.message === 'FIREBASE_NOT_CONFIGURED') {
         setErrorMsg('Firebase credentials not set in .env. Use Demo Login or configure Firebase.');
       } else {
         setErrorMsg(err.message || 'Failed to sign in with Google');
