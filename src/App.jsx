@@ -4,9 +4,10 @@ import {
   Search, AlertCircle, HelpCircle, Trophy, RotateCcw, 
   Share2, CheckCircle2, X, Sparkles, ChevronRight, Info,
   Microscope, Stethoscope, Dna, FlaskConical, Award, Flame,
-  Check, Calendar, Shuffle
+  Check, Calendar, Shuffle, Volume2, VolumeX, Clock, TestTube2
 } from 'lucide-react';
 import microbes from './data/microbes.json';
+import { playTileSound, playSelectSound, playWinSound, playDefeatSound } from './utils/audio';
 
 // Deterministic daily target pathogen using UTC date
 function getDailyTarget() {
@@ -19,6 +20,54 @@ function getDailyTarget() {
   }
   const index = Math.abs(hash) % microbes.length;
   return { target: microbes[index], dateStr };
+}
+
+// Live Countdown hook to 00:00:00 UTC
+function useUtcCountdown() {
+  const [timeLeft, setTimeLeft] = useState('');
+
+  useEffect(() => {
+    function update() {
+      const now = new Date();
+      const nextUtc = new Date(Date.UTC(
+        now.getUTCFullYear(),
+        now.getUTCMonth(),
+        now.getUTCDate() + 1,
+        0, 0, 0
+      ));
+      const diff = Math.max(0, nextUtc.getTime() - now.getTime());
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+      setTimeLeft(
+        `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+      );
+    }
+    update();
+    const interval = setInterval(update, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return timeLeft;
+}
+
+// Gram stain badge helper
+function getGramBadge(gram) {
+  const g = gram.toLowerCase();
+  if (g.includes('positive')) {
+    return { bg: 'bg-purple-950/70 border-purple-700/60 text-purple-300', dot: 'bg-purple-400', label: 'Gram +' };
+  }
+  if (g.includes('negative')) {
+    return { bg: 'bg-rose-950/70 border-rose-700/60 text-rose-300', dot: 'bg-rose-400', label: 'Gram −' };
+  }
+  if (g.includes('acid-fast')) {
+    return { bg: 'bg-red-950/70 border-red-700/60 text-red-300', dot: 'bg-red-400', label: 'Acid-Fast' };
+  }
+  if (g.includes('spirochete')) {
+    return { bg: 'bg-cyan-950/70 border-cyan-700/60 text-cyan-300', dot: 'bg-cyan-400', label: 'Spirochete' };
+  }
+  return { bg: 'bg-amber-950/70 border-amber-700/60 text-amber-300', dot: 'bg-amber-400', label: 'Fungi' };
 }
 
 // Comparison evaluator logic for the 5 diagnostic columns
@@ -104,6 +153,8 @@ function evaluateGuess(guess, target) {
       morphology: { 
         status: morphStatus, 
         value: `${guess.morphology.gram} • ${guess.morphology.shape}`,
+        gram: guess.morphology.gram,
+        shape: guess.morphology.shape,
         gramMatch,
         shapeMatch
       },
@@ -116,6 +167,8 @@ function evaluateGuess(guess, target) {
 
 export default function App() {
   const dailyInfo = useMemo(() => getDailyTarget(), []);
+  const countdown = useUtcCountdown();
+
   const [isPractice, setIsPractice] = useState(false);
   const [target, setTarget] = useState(dailyInfo.target);
   const [dateStr, setDateStr] = useState(dailyInfo.dateStr);
@@ -128,6 +181,9 @@ export default function App() {
   const [showStatsModal, setShowStatsModal] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [isMuted, setIsMuted] = useState(() => {
+    return localStorage.getItem('microbledle_muted') === 'true';
+  });
 
   const searchInputRef = useRef(null);
   const maxGuesses = 6;
@@ -140,6 +196,15 @@ export default function App() {
     maxStreak: 0,
     distribution: [0, 0, 0, 0, 0, 0]
   });
+
+  // Sound mute toggle
+  const toggleMute = () => {
+    setIsMuted(prev => {
+      const next = !prev;
+      localStorage.setItem('microbledle_muted', String(next));
+      return next;
+    });
+  };
 
   // Load stats from localStorage
   useEffect(() => {
@@ -156,7 +221,6 @@ export default function App() {
   // Load or sync game state
   useEffect(() => {
     if (isPractice) {
-      // In practice mode, start clean
       setGuesses([]);
       setGameOver(false);
       setWon(false);
@@ -203,30 +267,43 @@ export default function App() {
   const handleSelectMicrobe = (organism) => {
     if (gameOver || guesses.length >= maxGuesses) return;
 
+    playSelectSound(isMuted);
+
     const evalResult = evaluateGuess(organism, target);
     const newGuesses = [...guesses, evalResult];
     setGuesses(newGuesses);
     setSearchTerm('');
     setIsSearchOpen(false);
 
+    // Staggered audio chime for the revealed row
+    [0, 1, 2, 3, 4].forEach((idx) => {
+      setTimeout(() => {
+        playTileSound(idx, isMuted);
+      }, (idx + 1) * 90);
+    });
+
     const isVictory = evalResult.isWin;
     const isLoss = !isVictory && newGuesses.length >= maxGuesses;
 
     if (isVictory || isLoss) {
-      setGameOver(true);
-      setWon(isVictory);
-      setShowStatsModal(true);
+      setTimeout(() => {
+        setGameOver(true);
+        setWon(isVictory);
+        setShowStatsModal(true);
 
-      if (isVictory) {
-        confetti({
-          particleCount: 100,
-          spread: 70,
-          origin: { y: 0.6 }
-        });
-      }
+        if (isVictory) {
+          playWinSound(isMuted);
+          confetti({
+            particleCount: 120,
+            spread: 80,
+            origin: { y: 0.6 }
+          });
+        } else {
+          playDefeatSound(isMuted);
+        }
+      }, 700);
 
       if (!isPractice) {
-        // Update user stats
         setStats(prev => {
           const newPlayed = prev.played + 1;
           const newWins = isVictory ? prev.wins + 1 : prev.wins;
@@ -319,15 +396,36 @@ export default function App() {
                 </span>
               )}
             </div>
-            <p className="text-xs text-slate-400 flex items-center gap-1.5 mt-0.5">
-              <Calendar className="w-3.5 h-3.5 text-slate-500" />
-              {isPractice ? 'Practice Session' : `Daily Case • ${dateStr}`}
-            </p>
+            <div className="flex items-center gap-3 text-xs text-slate-400 mt-0.5">
+              <span className="flex items-center gap-1">
+                <Calendar className="w-3.5 h-3.5 text-slate-500" />
+                {isPractice ? 'Free Practice' : dateStr}
+              </span>
+              {!isPractice && (
+                <span className="flex items-center gap-1 text-slate-400 bg-slate-900 px-2 py-0.5 rounded-full border border-slate-800">
+                  <Clock className="w-3 h-3 text-emerald-400" />
+                  Next in <span className="font-mono text-emerald-300 font-semibold">{countdown}</span>
+                </span>
+              )}
+            </div>
           </div>
         </div>
 
         {/* Right Action Bar */}
         <div className="flex items-center gap-2">
+          {/* Audio Mute/Unmute */}
+          <button
+            onClick={toggleMute}
+            className={`p-2 rounded-xl border transition ${
+              isMuted 
+                ? 'bg-slate-900 border-slate-800 text-slate-500 hover:text-slate-300' 
+                : 'bg-emerald-950/60 border-emerald-500/40 text-emerald-300 hover:bg-emerald-900/60'
+            }`}
+            title={isMuted ? 'Unmute Sound' : 'Mute Sound'}
+          >
+            {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+          </button>
+
           {/* Practice Mode Toggle */}
           <button
             onClick={() => {
@@ -402,34 +500,42 @@ export default function App() {
             {/* Autocomplete Dropdown */}
             {isSearchOpen && availableMicrobes.length > 0 && (
               <div className="absolute z-30 left-0 right-0 mt-2 bg-slate-900 border border-slate-700/90 rounded-2xl shadow-2xl overflow-hidden divide-y divide-slate-800 backdrop-blur-md">
-                {availableMicrobes.map((bug) => (
-                  <button
-                    key={bug.id}
-                    onClick={() => handleSelectMicrobe(bug)}
-                    className="w-full text-left px-4 py-3 hover:bg-slate-800/80 transition flex items-center justify-between group"
-                  >
-                    <div>
-                      <div className="font-semibold text-emerald-400 italic group-hover:text-emerald-300 flex items-center gap-2">
-                        {bug.name}
-                        <span className="not-italic text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 group-hover:bg-slate-700">
-                          {bug.morphology.gram}
-                        </span>
+                {availableMicrobes.map((bug) => {
+                  const gramInfo = getGramBadge(bug.morphology.gram);
+                  return (
+                    <button
+                      key={bug.id}
+                      onClick={() => handleSelectMicrobe(bug)}
+                      className="w-full text-left px-4 py-3 hover:bg-slate-800/80 transition flex items-center justify-between group"
+                    >
+                      <div>
+                        <div className="font-semibold text-emerald-400 italic group-hover:text-emerald-300 flex items-center gap-2">
+                          {bug.name}
+                          <span className={`not-italic text-[10px] font-bold px-2 py-0.5 rounded-full border flex items-center gap-1 ${gramInfo.bg}`}>
+                            <span className={`w-1.5 h-1.5 rounded-full ${gramInfo.dot}`}></span>
+                            {gramInfo.label}
+                          </span>
+                        </div>
+                        <div className="text-xs text-slate-400 mt-0.5">
+                          <span className="text-slate-300 font-medium">{bug.commonName}</span> • {bug.taxonomy}
+                        </div>
                       </div>
-                      <div className="text-xs text-slate-400 mt-0.5">
-                        <span className="text-slate-300 font-medium">{bug.commonName}</span> • {bug.taxonomy}
-                      </div>
-                    </div>
-                    <ChevronRight className="w-5 h-5 text-slate-500 group-hover:text-emerald-400 transform group-hover:translate-x-0.5 transition" />
-                  </button>
-                ))}
+                      <ChevronRight className="w-5 h-5 text-slate-500 group-hover:text-emerald-400 transform group-hover:translate-x-0.5 transition" />
+                    </button>
+                  );
+                })}
               </div>
             )}
           </div>
         ) : (
           <div className="max-w-xl mx-auto w-full p-4 rounded-2xl bg-slate-900/90 border border-slate-800 text-center shadow-lg">
-            <div className="text-sm text-slate-400 mb-1">Diagnosis finalized for this round</div>
+            <div className="text-xs text-slate-400 mb-1">Diagnosis finalized for this case</div>
             <div className="font-bold text-lg text-emerald-400 italic">
               {target.name} ({target.commonName})
+            </div>
+            <div className="mt-2 flex items-center justify-center gap-2 text-xs text-slate-400">
+              <Clock className="w-3.5 h-3.5 text-emerald-400" />
+              Next daily case in: <span className="font-mono text-emerald-300 font-bold">{countdown}</span>
             </div>
             <button
               onClick={() => setShowStatsModal(true)}
@@ -440,66 +546,97 @@ export default function App() {
           </div>
         )}
 
-        {/* Progressive Clues Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Progressive Clues Section (Smear at 2, Culture at 3, Vignette at 4) */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           
-          {/* Microscopic Smear Clue (Unlocks at guess >= 2) */}
-          <div className={`p-4 rounded-2xl border transition-all duration-300 ${
+          {/* 1. Microscopic Smear Clue (Unlocks at guess >= 2) */}
+          <div className={`p-3.5 rounded-2xl border transition-all duration-300 ${
             guesses.length >= 2
-              ? 'bg-slate-900/80 border-cyan-500/40 text-slate-200 shadow-lg shadow-cyan-950/20' 
+              ? 'bg-slate-900/80 border-cyan-500/40 text-slate-200 shadow-md shadow-cyan-950/20' 
               : 'bg-slate-900/30 border-slate-800/60 text-slate-500'
           }`}>
-            <div className="flex items-center justify-between mb-2">
-              <span className={`text-xs uppercase tracking-wider font-bold flex items-center gap-1.5 ${
+            <div className="flex items-center justify-between mb-1.5">
+              <span className={`text-[11px] uppercase tracking-wider font-bold flex items-center gap-1 ${
                 guesses.length >= 2 ? 'text-cyan-400' : 'text-slate-500'
               }`}>
-                <Microscope className="w-4 h-4" /> Microscopic Smear Clue
+                <Microscope className="w-3.5 h-3.5" /> Smear Clue
               </span>
-              <span className={`text-[11px] px-2 py-0.5 rounded-full font-medium ${
+              <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${
                 guesses.length >= 2 
                   ? 'bg-cyan-950 text-cyan-300 border border-cyan-800' 
                   : 'bg-slate-800 text-slate-500'
               }`}>
-                {guesses.length >= 2 ? 'UNLOCKED' : `Unlocks at Guess 2 (${guesses.length}/2)`}
+                {guesses.length >= 2 ? 'UNLOCKED' : `Guess 2 (${guesses.length}/2)`}
               </span>
             </div>
-            <p className="text-sm leading-relaxed">
+            <p className="text-xs leading-relaxed">
               {guesses.length >= 2 ? (
                 <span className="italic text-cyan-100 font-serif">"{target.smear}"</span>
               ) : (
                 <span className="italic text-slate-500">
-                  Analyze Gram status and cell shape across two guesses to reveal the direct microscopic smear...
+                  Reveals microscopic morphology and cellular arrangement...
                 </span>
               )}
             </p>
           </div>
 
-          {/* Clinical Vignette Clue (Unlocks at guess >= 4) */}
-          <div className={`p-4 rounded-2xl border transition-all duration-300 ${
-            guesses.length >= 4 
-              ? 'bg-slate-900/80 border-amber-500/40 text-slate-200 shadow-lg shadow-amber-950/20' 
+          {/* 2. Diagnostic Culture Clue (Unlocks at guess >= 3) */}
+          <div className={`p-3.5 rounded-2xl border transition-all duration-300 ${
+            guesses.length >= 3
+              ? 'bg-slate-900/80 border-teal-500/40 text-slate-200 shadow-md shadow-teal-950/20' 
               : 'bg-slate-900/30 border-slate-800/60 text-slate-500'
           }`}>
-            <div className="flex items-center justify-between mb-2">
-              <span className={`text-xs uppercase tracking-wider font-bold flex items-center gap-1.5 ${
+            <div className="flex items-center justify-between mb-1.5">
+              <span className={`text-[11px] uppercase tracking-wider font-bold flex items-center gap-1 ${
+                guesses.length >= 3 ? 'text-teal-400' : 'text-slate-500'
+              }`}>
+                <TestTube2 className="w-3.5 h-3.5" /> Culture Clue
+              </span>
+              <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${
+                guesses.length >= 3 
+                  ? 'bg-teal-950 text-teal-300 border border-teal-800' 
+                  : 'bg-slate-800 text-slate-500'
+              }`}>
+                {guesses.length >= 3 ? 'UNLOCKED' : `Guess 3 (${guesses.length}/3)`}
+              </span>
+            </div>
+            <p className="text-xs leading-relaxed">
+              {guesses.length >= 3 ? (
+                <span className="italic text-teal-100 font-serif">"{target.culture}"</span>
+              ) : (
+                <span className="italic text-slate-500">
+                  Reveals growth media, colony appearance, and pigment...
+                </span>
+              )}
+            </p>
+          </div>
+
+          {/* 3. Clinical Vignette Clue (Unlocks at guess >= 4) */}
+          <div className={`p-3.5 rounded-2xl border transition-all duration-300 ${
+            guesses.length >= 4 
+              ? 'bg-slate-900/80 border-amber-500/40 text-slate-200 shadow-md shadow-amber-950/20' 
+              : 'bg-slate-900/30 border-slate-800/60 text-slate-500'
+          }`}>
+            <div className="flex items-center justify-between mb-1.5">
+              <span className={`text-[11px] uppercase tracking-wider font-bold flex items-center gap-1 ${
                 guesses.length >= 4 ? 'text-amber-400' : 'text-slate-500'
               }`}>
-                <Stethoscope className="w-4 h-4" /> Clinical Case Vignette
+                <Stethoscope className="w-3.5 h-3.5" /> Vignette Clue
               </span>
-              <span className={`text-[11px] px-2 py-0.5 rounded-full font-medium ${
+              <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${
                 guesses.length >= 4 
                   ? 'bg-amber-950 text-amber-300 border border-amber-800' 
                   : 'bg-slate-800 text-slate-500'
               }`}>
-                {guesses.length >= 4 ? 'UNLOCKED' : `Unlocks at Guess 4 (${guesses.length}/4)`}
+                {guesses.length >= 4 ? 'UNLOCKED' : `Guess 4 (${guesses.length}/4)`}
               </span>
             </div>
-            <p className="text-sm leading-relaxed">
+            <p className="text-xs leading-relaxed">
               {guesses.length >= 4 ? (
                 <span className="italic text-amber-100 font-serif">"{target.vignette}"</span>
               ) : (
                 <span className="italic text-slate-500">
-                  Narrow down metabolic profile and organ tropism to reveal the patient's classic presentation...
+                  Reveals the complete USMLE patient scenario...
                 </span>
               )}
             </p>
@@ -545,15 +682,22 @@ export default function App() {
               <tbody className="divide-y divide-slate-800/50">
                 {guesses.map((item, rowIndex) => {
                   const { taxonomy, morphology, respiration, keyTest, tropism } = item.results;
+                  const gramBadge = getGramBadge(morphology.gram);
+
                   return (
                     <tr key={rowIndex} className="tile-reveal">
-                      {/* Bug Name */}
+                      {/* Bug Name & Badge */}
                       <td className="py-3 px-3">
                         <div className="font-semibold text-emerald-300 italic text-sm">
                           {item.guess.name}
                         </div>
-                        <div className="text-[11px] text-slate-400 not-italic">
-                          {item.guess.commonName}
+                        <div className="flex items-center gap-1.5 mt-0.5">
+                          <span className={`text-[9px] font-bold px-1.5 py-0.2 rounded-full border ${gramBadge.bg}`}>
+                            {gramBadge.label}
+                          </span>
+                          <span className="text-[11px] text-slate-400 not-italic">
+                            {item.guess.commonName}
+                          </span>
                         </div>
                       </td>
 
@@ -567,7 +711,7 @@ export default function App() {
                       {/* 2. Morphology */}
                       <td className="py-3 px-1.5 align-middle">
                         <div className={`p-2.5 rounded-xl border text-xs font-semibold leading-snug text-center ${getTileStyles(morphology.status)}`}>
-                          {morphology.value}
+                          <div>{morphology.value}</div>
                         </div>
                       </td>
 
@@ -736,6 +880,16 @@ export default function App() {
               </div>
             </div>
 
+            {/* Countdown to next case */}
+            {!isPractice && (
+              <div className="mb-4 p-3 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-between text-xs">
+                <span className="text-slate-400 flex items-center gap-1.5">
+                  <Clock className="w-4 h-4 text-emerald-400" /> Next Daily Case:
+                </span>
+                <span className="font-mono text-emerald-300 font-bold text-sm">{countdown}</span>
+              </div>
+            )}
+
             {/* Action buttons */}
             <div className="space-y-2">
               {gameOver && (
@@ -807,11 +961,15 @@ export default function App() {
             <div className="border-t border-slate-800 pt-3 text-xs text-slate-400 space-y-2">
               <div className="flex items-center gap-2 text-cyan-300">
                 <Microscope className="w-4 h-4 shrink-0" />
-                <span><strong>Microscopic Smear Clue</strong> unlocks after Guess 2.</span>
+                <span><strong>Microscopic Smear Clue:</strong> Unlocks after Guess 2.</span>
+              </div>
+              <div className="flex items-center gap-2 text-teal-300">
+                <TestTube2 className="w-4 h-4 shrink-0" />
+                <span><strong>Diagnostic Culture Clue:</strong> Unlocks after Guess 3.</span>
               </div>
               <div className="flex items-center gap-2 text-amber-300">
                 <Stethoscope className="w-4 h-4 shrink-0" />
-                <span><strong>Clinical Case Vignette</strong> unlocks after Guess 4.</span>
+                <span><strong>Clinical Case Vignette:</strong> Unlocks after Guess 4.</span>
               </div>
               <div className="flex items-center gap-2 text-slate-400">
                 <Calendar className="w-4 h-4 shrink-0 text-slate-500" />
