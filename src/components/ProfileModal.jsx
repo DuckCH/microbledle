@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  X, User, ShieldCheck, Award, Flame, Trophy, Cloud, Check, 
+  X, User, ShieldCheck, Award, Flame, Trophy, Check, 
   Sparkles, Stethoscope, ArrowRight, Save, LogOut
 } from 'lucide-react';
 import { 
@@ -215,24 +215,6 @@ export default function ProfileModal({
                 className="w-full mt-2 px-3 py-2 bg-slate-950 border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
               />
             )}
-          </div>
-
-          {/* Storage Architecture Explanation Badge */}
-          <div className="p-3.5 rounded-2xl bg-emerald-950/30 border border-emerald-600/40 text-emerald-200 text-xs">
-            <div className="flex items-center gap-2 font-bold text-emerald-400 mb-1">
-              <Cloud className="w-4 h-4" /> Dual-Storage Architecture Active
-            </div>
-            <p className="text-[11px] leading-relaxed text-emerald-300">
-              {user ? (
-                <span>
-                  All profile changes, streaks, and Bugdex discoveries are automatically synced to <strong>Firebase Cloud Firestore</strong> and cached in <strong>Local Storage</strong>. Your account stays in sync across all devices!
-                </span>
-              ) : (
-                <span>
-                  Currently operating in local storage mode. Sign in with Google to enable permanent multi-device cloud backup.
-                </span>
-              )}
-            </p>
           </div>
 
           {/* Action Buttons */}
