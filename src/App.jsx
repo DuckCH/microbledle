@@ -655,7 +655,7 @@ export default function App() {
                 </span>
               )}
             </div>
-            <div className="flex items-center gap-3 text-xs text-slate-400 mt-0.5">
+            <div className="flex items-center gap-2 md:gap-3 text-xs text-slate-400 mt-1 flex-wrap">
               <span className="flex items-center gap-1">
                 <Calendar className="w-3.5 h-3.5 text-slate-500" />
                 {isPractice ? 'Free Practice' : dateStr}
@@ -666,6 +666,16 @@ export default function App() {
                   Next in <span className="font-mono text-emerald-300 font-semibold">{countdown}</span>
                 </span>
               )}
+              {/* Medical Rank in Main Menu */}
+              <button
+                onClick={() => setShowProfileModal(true)}
+                className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-950/70 text-amber-300 border border-amber-700/60 hover:bg-amber-900/70 hover:border-amber-500 transition text-xs font-semibold shadow-sm"
+                title="Click to view Medical Rank Progression"
+              >
+                <span>{progression.badge}</span>
+                <span className="font-bold">{progression.title}</span>
+                <span className="text-[10px] text-amber-400 font-mono font-bold">(Lvl {progression.level})</span>
+              </button>
             </div>
           </div>
         </div>
@@ -677,36 +687,51 @@ export default function App() {
           {user ? (
             <button
               onClick={() => setShowProfileModal(true)}
-              className="flex items-center gap-2 p-1.5 pl-2.5 bg-slate-900 border border-slate-700/80 hover:border-emerald-500/50 rounded-xl text-xs transition group"
-              title="Click to view & edit your Medical Profile"
+              className="flex items-center gap-2.5 p-1.5 pl-2.5 bg-slate-900 border border-slate-700/80 hover:border-emerald-500/50 rounded-xl text-xs transition group"
+              title="Click to view & edit your Medical Profile & Rank"
             >
-              <span className="text-base">{currentAvatarObj.emoji}</span>
+              <span className="text-lg shrink-0">{currentAvatarObj.emoji}</span>
               <div className="text-left">
-                <div className="text-slate-200 font-bold max-w-[110px] truncate leading-tight group-hover:text-emerald-400 transition">
-                  {profile.displayName || user.displayName || user.email?.split('@')[0]}
+                <div className="flex items-center gap-1.5">
+                  <span className="text-slate-200 font-bold max-w-[110px] truncate leading-tight group-hover:text-emerald-400 transition">
+                    {profile.displayName || user.displayName || user.email?.split('@')[0]}
+                  </span>
+                  <span className="text-[10px] text-amber-300 font-bold px-1.5 py-0.2 rounded bg-amber-950 border border-amber-800 shrink-0">
+                    Lvl {progression.level}
+                  </span>
                 </div>
-                <div className="text-[10px] text-emerald-400 font-semibold leading-none flex items-center gap-1 mt-0.5">
-                  <span>Lvl {progression.level}</span>
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" title="Cloud Synced" />
+                <div className="text-[10px] text-emerald-400 font-semibold leading-none flex items-center gap-1 mt-1">
+                  <span>{progression.badge}</span>
+                  <span className="truncate max-w-[120px]">{progression.title}</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" title="Cloud Synced" />
                 </div>
               </div>
             </button>
           ) : (
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1.5">
               <button
                 onClick={() => setShowProfileModal(true)}
-                className="p-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-emerald-500/50 text-slate-300 hover:text-emerald-400 transition"
-                title="View Local Profile & Level"
+                className="flex items-center gap-2 p-1.5 pl-2.5 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-xs transition group"
+                title="View Local Profile & Rank"
               >
-                <span className="text-sm">{currentAvatarObj.emoji}</span>
+                <span className="text-base">{currentAvatarObj.emoji}</span>
+                <div className="text-left">
+                  <div className="text-slate-200 font-bold text-xs truncate max-w-[90px] group-hover:text-emerald-400 transition">
+                    {profile.displayName || 'Physician'}
+                  </div>
+                  <div className="text-[10px] text-amber-400 font-semibold leading-none flex items-center gap-1 mt-0.5">
+                    <span>{progression.badge}</span>
+                    <span className="truncate max-w-[100px]">{progression.title}</span>
+                  </div>
+                </div>
               </button>
               <button
                 onClick={() => setShowAuthModal(true)}
-                className="px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-emerald-500/50 text-slate-300 hover:text-emerald-400 transition flex items-center gap-1.5 text-xs font-semibold"
+                className="px-2.5 py-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-emerald-500/50 text-slate-300 hover:text-emerald-400 transition flex items-center gap-1 text-xs font-semibold"
                 title="Sign in with Google / Email to save progression"
               >
-                <User className="w-4 h-4 text-emerald-400" />
-                <span>Sign In</span>
+                <User className="w-3.5 h-3.5 text-emerald-400" />
+                <span className="hidden sm:inline">Sign In</span>
               </button>
             </div>
           )}
