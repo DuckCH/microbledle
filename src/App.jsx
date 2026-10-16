@@ -655,7 +655,7 @@ export default function App() {
                 </span>
               )}
             </div>
-            <div className="flex items-center gap-2 md:gap-3 text-xs text-slate-400 mt-1 flex-wrap">
+            <div className="flex items-center gap-3 text-xs text-slate-400 mt-0.5">
               <span className="flex items-center gap-1">
                 <Calendar className="w-3.5 h-3.5 text-slate-500" />
                 {isPractice ? 'Free Practice' : dateStr}
@@ -666,16 +666,6 @@ export default function App() {
                   Next in <span className="font-mono text-emerald-300 font-semibold">{countdown}</span>
                 </span>
               )}
-              {/* Medical Rank in Main Menu */}
-              <button
-                onClick={() => setShowProfileModal(true)}
-                className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-950/70 text-amber-300 border border-amber-700/60 hover:bg-amber-900/70 hover:border-amber-500 transition text-xs font-semibold shadow-sm"
-                title="Click to view Medical Rank Progression"
-              >
-                <span>{progression.badge}</span>
-                <span className="font-bold">{progression.title}</span>
-                <span className="text-[10px] text-amber-400 font-mono font-bold">(Lvl {progression.level})</span>
-              </button>
             </div>
           </div>
         </div>
