@@ -15,25 +15,30 @@ import {
   getDoc, 
   setDoc 
 } from 'firebase/firestore';
+import { getAnalytics, isSupported } from 'firebase/analytics';
 
-// Firebase configuration using Vite environment variables (or placeholder fallback)
+// Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyDemoPlaceholderKey1234567890",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyBj_HysIPdSQ0xkLXV4uFhJyYWeekEi6vQ",
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "microbledle.firebaseapp.com",
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "microbledle",
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "microbledle.appspot.com",
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "1234567890",
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:1234567890:web:abcdef123456"
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "microbledle.firebasestorage.app",
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "718300540478",
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:718300540478:web:26d4e34d4cb9b440256b6f",
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || "G-XHVZXSEBCP"
 };
 
-// Check if actual configuration has been provided by user
-export const isFirebaseConfigured = Boolean(
-  import.meta.env.VITE_FIREBASE_API_KEY && 
-  import.meta.env.VITE_FIREBASE_API_KEY !== "AIzaSyDemoPlaceholderKey1234567890"
-);
+export const isFirebaseConfigured = true;
 
 // Initialize Firebase App
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+
+// Initialize Analytics when running in browser
+if (typeof window !== 'undefined') {
+  isSupported().then(yes => {
+    if (yes) getAnalytics(app);
+  }).catch(() => {});
+}
 
 export const auth = getAuth(app);
 export const db = getFirestore(app);
@@ -41,18 +46,12 @@ export const googleProvider = new GoogleAuthProvider();
 
 // Google Sign-In with popup
 export async function signInWithGoogle() {
-  if (!isFirebaseConfigured) {
-    throw new Error("FIREBASE_NOT_CONFIGURED");
-  }
   const result = await signInWithPopup(auth, googleProvider);
   return result.user;
 }
 
 // Email & Password Registration
 export async function registerWithEmail(email, password, displayName) {
-  if (!isFirebaseConfigured) {
-    throw new Error("FIREBASE_NOT_CONFIGURED");
-  }
   const credential = await createUserWithEmailAndPassword(auth, email, password);
   if (displayName && credential.user) {
     await updateProfile(credential.user, { displayName });
@@ -62,9 +61,6 @@ export async function registerWithEmail(email, password, displayName) {
 
 // Email & Password Sign-In
 export async function loginWithEmail(email, password) {
-  if (!isFirebaseConfigured) {
-    throw new Error("FIREBASE_NOT_CONFIGURED");
-  }
   const credential = await signInWithEmailAndPassword(auth, email, password);
   return credential.user;
 }
@@ -76,7 +72,7 @@ export async function logoutUser() {
 
 // Save or merge user progression in Firestore
 export async function saveUserProgress(uid, data) {
-  if (!isFirebaseConfigured || !uid) return;
+  if (!uid) return;
   try {
     const userDocRef = doc(db, 'users', uid);
     await setDoc(userDocRef, {
@@ -90,7 +86,7 @@ export async function saveUserProgress(uid, data) {
 
 // Load user progression from Firestore
 export async function loadUserProgress(uid) {
-  if (!isFirebaseConfigured || !uid) return null;
+  if (!uid) return null;
   try {
     const userDocRef = doc(db, 'users', uid);
     const snap = await getDoc(userDocRef);
