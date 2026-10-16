@@ -211,13 +211,13 @@ export default function App() {
       const saved = localStorage.getItem('microbledle_profile');
       return saved ? JSON.parse(saved) : {
         displayName: 'Physician',
-        status: 'Medical Student (MS1/MS2)',
+        status: 'Medical Student Y1',
         avatar: 'microscope'
       };
     } catch {
       return {
         displayName: 'Physician',
-        status: 'Medical Student (MS1/MS2)',
+        status: 'Medical Student Y1',
         avatar: 'microscope'
       };
     }

@@ -20,7 +20,7 @@ export default function ProfileModal({
   onLogout 
 }) {
   const [displayName, setDisplayName] = useState(profile?.displayName || user?.displayName || 'Physician');
-  const [status, setStatus] = useState(profile?.status || 'Medical Student (MS1/MS2)');
+  const [status, setStatus] = useState(profile?.status || 'Medical Student Y1');
   const [customStatus, setCustomStatus] = useState(profile?.customStatus || '');
   const [avatar, setAvatar] = useState(profile?.avatar || 'microscope');
   const [saveSuccess, setSaveSuccess] = useState(false);
@@ -29,7 +29,7 @@ export default function ProfileModal({
   useEffect(() => {
     if (profile) {
       setDisplayName(profile.displayName || user?.displayName || 'Physician');
-      setStatus(profile.status || 'Medical Student (MS1/MS2)');
+      setStatus(profile.status || 'Medical Student Y1');
       setCustomStatus(profile.customStatus || '');
       setAvatar(profile.avatar || 'microscope');
     }
