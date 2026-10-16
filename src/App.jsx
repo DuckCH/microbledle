@@ -5,12 +5,14 @@ import {
   Share2, CheckCircle2, X, Sparkles, ChevronRight, Info,
   Microscope, Stethoscope, Dna, FlaskConical, Award, Flame,
   Check, Calendar, Shuffle, Volume2, VolumeX, Clock, TestTube2,
-  BookOpen, User, LogOut, Cloud
+  BookOpen, User, LogOut, Cloud, ShieldCheck
 } from 'lucide-react';
 import microbes from './data/microbes.json';
 import { playTileSound, playSelectSound, playWinSound, playDefeatSound } from './utils/audio';
+import { calculateUserProgression, AVATAR_OPTIONS } from './utils/leveling';
 import BugdexModal from './components/BugdexModal';
 import AuthModal from './components/AuthModal';
+import ProfileModal from './components/ProfileModal';
 import { 
   auth, 
   logoutUser, 
@@ -193,6 +195,7 @@ export default function App() {
   const [showHelpModal, setShowHelpModal] = useState(false);
   const [showBugdexModal, setShowBugdexModal] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showProfileModal, setShowProfileModal] = useState(false);
   const [copied, setCopied] = useState(false);
   const [isMuted, setIsMuted] = useState(() => {
     return localStorage.getItem('microbledle_muted') === 'true';
@@ -201,6 +204,26 @@ export default function App() {
   // Current authenticated user (Firebase user or demo user)
   const [user, setUser] = useState(null);
   const [cloudSynced, setCloudSynced] = useState(false);
+
+  // User Profile
+  const [profile, setProfile] = useState(() => {
+    try {
+      const saved = localStorage.getItem('microbledle_profile');
+      return saved ? JSON.parse(saved) : {
+        displayName: 'Physician',
+        status: 'Medical Student (MS1/MS2)',
+        institution: '',
+        avatar: 'microscope'
+      };
+    } catch {
+      return {
+        displayName: 'Physician',
+        status: 'Medical Student (MS1/MS2)',
+        institution: '',
+        avatar: 'microscope'
+      };
+    }
+  });
 
   // Bugdex unlocked organisms
   const [unlockedBugIds, setUnlockedBugIds] = useState(() => {
@@ -224,6 +247,15 @@ export default function App() {
     distribution: [0, 0, 0, 0, 0, 0]
   });
 
+  // Progression calculation
+  const progression = useMemo(() => {
+    return calculateUserProgression(stats.wins, unlockedBugIds.length);
+  }, [stats.wins, unlockedBugIds.length]);
+
+  const currentAvatarObj = useMemo(() => {
+    return AVATAR_OPTIONS.find(a => a.id === profile?.avatar) || AVATAR_OPTIONS[0];
+  }, [profile?.avatar]);
+
   // Sound mute toggle
   const toggleMute = () => {
     setIsMuted(prev => {
@@ -233,7 +265,7 @@ export default function App() {
     });
   };
 
-  // Load stats from localStorage
+  // Load stats from localStorage on mount
   useEffect(() => {
     const savedStats = localStorage.getItem('microbledle_stats_v1');
     if (savedStats) {
@@ -245,10 +277,9 @@ export default function App() {
     }
   }, []);
 
-  // Listen to Firebase Auth state
+  // Listen to Firebase Auth state and execute Dual-Storage Sync (Cloud + Local)
   useEffect(() => {
     if (!isFirebaseConfigured) {
-      // Check for saved demo user
       const savedDemo = localStorage.getItem('microbledle_demo_user');
       if (savedDemo) {
         try {
@@ -264,41 +295,69 @@ export default function App() {
         setUser(authUser);
         setCloudSynced(true);
 
-        // Load and merge cloud data from Firestore
+        // 1. PULL cloud progression from Firestore
         const cloudData = await loadUserProgress(authUser.uid);
+
         if (cloudData) {
-          // Merge stats
-          setStats(prev => {
-            const merged = {
-              played: Math.max(prev.played, cloudData.stats?.played || 0),
-              wins: Math.max(prev.wins, cloudData.stats?.wins || 0),
-              streak: Math.max(prev.streak, cloudData.stats?.streak || 0),
-              maxStreak: Math.max(prev.maxStreak, cloudData.stats?.maxStreak || 0),
-              distribution: prev.distribution.map((val, idx) => 
-                Math.max(val, cloudData.stats?.distribution?.[idx] || 0)
-              )
-            };
-            localStorage.setItem('microbledle_stats_v1', JSON.stringify(merged));
-            return merged;
+          // 2. MERGE stats (take maximums)
+          const mergedStats = {
+            played: Math.max(stats.played, cloudData.stats?.played || 0),
+            wins: Math.max(stats.wins, cloudData.stats?.wins || 0),
+            streak: Math.max(stats.streak, cloudData.stats?.streak || 0),
+            maxStreak: Math.max(stats.maxStreak, cloudData.stats?.maxStreak || 0),
+            distribution: stats.distribution.map((val, idx) => 
+              Math.max(val, cloudData.stats?.distribution?.[idx] || 0)
+            )
+          };
+          setStats(mergedStats);
+
+          // 3. MERGE Bugdex collection (union of unique IDs)
+          const localBugs = JSON.parse(localStorage.getItem('microbledle_unlocked_bugs') || '[]');
+          const cloudBugs = cloudData.unlockedBugIds || [];
+          const mergedBugs = Array.from(new Set([...localBugs, ...cloudBugs]));
+          setUnlockedBugIds(mergedBugs);
+
+          // 4. MERGE Profile information
+          const localProfile = JSON.parse(localStorage.getItem('microbledle_profile') || '{}');
+          const mergedProfile = {
+            ...localProfile,
+            ...(cloudData.profile || {}),
+            displayName: cloudData.profile?.displayName || authUser.displayName || localProfile.displayName || 'Physician'
+          };
+          setProfile(mergedProfile);
+
+          // 5. SAVE TO BOTH: Write merged snapshot locally and to Firestore
+          localStorage.setItem('microbledle_stats_v1', JSON.stringify(mergedStats));
+          localStorage.setItem('microbledle_unlocked_bugs', JSON.stringify(mergedBugs));
+          localStorage.setItem('microbledle_profile', JSON.stringify(mergedProfile));
+
+          await saveUserProgress(authUser.uid, {
+            stats: mergedStats,
+            unlockedBugIds: mergedBugs,
+            profile: mergedProfile,
+            email: authUser.email,
+            displayName: mergedProfile.displayName
           });
 
-          // Merge Bugdex unlocked organisms
-          if (cloudData.unlockedBugIds) {
-            setUnlockedBugIds(prev => {
-              const combined = Array.from(new Set([...prev, ...cloudData.unlockedBugIds]));
-              localStorage.setItem('microbledle_unlocked_bugs', JSON.stringify(combined));
-              return combined;
-            });
-          }
         } else {
-          // Save existing local data to Firestore
+          // First time user login: Upload existing local progress to their cloud account
           const currentLocalStats = JSON.parse(localStorage.getItem('microbledle_stats_v1') || '{}');
           const currentBugs = JSON.parse(localStorage.getItem('microbledle_unlocked_bugs') || '[]');
+          const currentProfile = JSON.parse(localStorage.getItem('microbledle_profile') || '{}');
+          const initialProfile = {
+            ...currentProfile,
+            displayName: currentProfile.displayName || authUser.displayName || 'Physician'
+          };
+
+          setProfile(initialProfile);
+          localStorage.setItem('microbledle_profile', JSON.stringify(initialProfile));
+
           await saveUserProgress(authUser.uid, {
             stats: currentLocalStats,
             unlockedBugIds: currentBugs,
+            profile: initialProfile,
             email: authUser.email,
-            displayName: authUser.displayName
+            displayName: initialProfile.displayName
           });
         }
       } else {
@@ -310,11 +369,29 @@ export default function App() {
     return () => unsubscribe();
   }, []);
 
+  // Save profile changes to BOTH Local Storage and Cloud Firestore
+  const handleSaveProfile = async (updatedProfile) => {
+    setProfile(updatedProfile);
+    localStorage.setItem('microbledle_profile', JSON.stringify(updatedProfile));
+
+    if (user && isFirebaseConfigured) {
+      await saveUserProgress(user.uid, {
+        profile: updatedProfile,
+        displayName: updatedProfile.displayName
+      });
+    }
+  };
+
   // Handle Demo Login
   const handleDemoLogin = (demoUser) => {
     setUser(demoUser);
     setCloudSynced(true);
     localStorage.setItem('microbledle_demo_user', JSON.stringify(demoUser));
+    if (demoUser.displayName) {
+      const updated = { ...profile, displayName: demoUser.displayName };
+      setProfile(updated);
+      localStorage.setItem('microbledle_profile', JSON.stringify(updated));
+    }
   };
 
   const handleLogout = async () => {
@@ -407,7 +484,7 @@ export default function App() {
             origin: { y: 0.6 }
           });
 
-          // Unlock bug in Bugdex
+          // Unlock bug in Bugdex & Save to BOTH Local and Cloud
           setUnlockedBugIds(prev => {
             if (!prev.includes(target.id)) {
               const updated = [...prev, target.id];
@@ -441,9 +518,10 @@ export default function App() {
             maxStreak: newMaxStreak,
             distribution: newDist
           };
+          
+          // Save to BOTH Local Storage and Cloud Firestore
           localStorage.setItem('microbledle_stats_v1', JSON.stringify(updated));
 
-          // Save to Firestore if user logged in
           if (user && isFirebaseConfigured) {
             saveUserProgress(user.uid, { stats: updated });
           }
@@ -541,30 +619,42 @@ export default function App() {
         {/* Right Action Bar */}
         <div className="flex items-center gap-2 flex-wrap">
           
-          {/* User Auth / Cloud Sync Status Pill */}
+          {/* User Profile Pill */}
           {user ? (
-            <div className="flex items-center gap-1.5 p-1.5 pl-2.5 bg-slate-900 border border-slate-700/80 rounded-xl text-xs">
-              <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" title="Cloud Synced" />
-              <span className="text-slate-300 font-semibold max-w-[110px] truncate">
-                {user.displayName || user.email?.split('@')[0] || 'User'}
-              </span>
+            <button
+              onClick={() => setShowProfileModal(true)}
+              className="flex items-center gap-2 p-1.5 pl-2.5 bg-slate-900 border border-slate-700/80 hover:border-emerald-500/50 rounded-xl text-xs transition group"
+              title="Click to view & edit your Medical Profile"
+            >
+              <span className="text-base">{currentAvatarObj.emoji}</span>
+              <div className="text-left">
+                <div className="text-slate-200 font-bold max-w-[110px] truncate leading-tight group-hover:text-emerald-400 transition">
+                  {profile.displayName || user.displayName || user.email?.split('@')[0]}
+                </div>
+                <div className="text-[10px] text-emerald-400 font-semibold leading-none flex items-center gap-1 mt-0.5">
+                  <span>Lvl {progression.level}</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" title="Cloud Synced" />
+                </div>
+              </div>
+            </button>
+          ) : (
+            <div className="flex items-center gap-1">
               <button
-                onClick={handleLogout}
-                className="p-1 text-slate-400 hover:text-rose-400 transition ml-1 rounded-lg hover:bg-slate-800"
-                title="Log Out"
+                onClick={() => setShowProfileModal(true)}
+                className="p-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-emerald-500/50 text-slate-300 hover:text-emerald-400 transition"
+                title="View Local Profile & Level"
               >
-                <LogOut className="w-3.5 h-3.5" />
+                <span className="text-sm">{currentAvatarObj.emoji}</span>
+              </button>
+              <button
+                onClick={() => setShowAuthModal(true)}
+                className="px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-emerald-500/50 text-slate-300 hover:text-emerald-400 transition flex items-center gap-1.5 text-xs font-semibold"
+                title="Sign in with Google / Email to save progression"
+              >
+                <User className="w-4 h-4 text-emerald-400" />
+                <span>Sign In</span>
               </button>
             </div>
-          ) : (
-            <button
-              onClick={() => setShowAuthModal(true)}
-              className="px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-emerald-500/50 text-slate-300 hover:text-emerald-400 transition flex items-center gap-1.5 text-xs font-semibold"
-              title="Sign in with Google / Email to save progression"
-            >
-              <User className="w-4 h-4 text-emerald-400" />
-              <span>Sign In</span>
-            </button>
           )}
 
           {/* Bugdex Compendium Button */}
@@ -1178,6 +1268,18 @@ export default function App() {
         isOpen={showAuthModal}
         onClose={() => setShowAuthModal(false)}
         onDemoLogin={handleDemoLogin}
+      />
+
+      {/* Profile & Level Customization Modal */}
+      <ProfileModal
+        isOpen={showProfileModal}
+        onClose={() => setShowProfileModal(false)}
+        user={user}
+        stats={stats}
+        unlockedCount={unlockedBugIds.length}
+        profile={profile}
+        onSaveProfile={handleSaveProfile}
+        onLogout={handleLogout}
       />
     </div>
   );
