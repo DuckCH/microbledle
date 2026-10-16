@@ -281,7 +281,8 @@ export default function App() {
 
     const header = isPractice ? 'Microbledle (Practice)' : `Microbledle ${dateStr}`;
     const score = won ? `${guesses.length}/${maxGuesses}` : `X/${maxGuesses}`;
-    const text = `${header} ${score}\n\n${gridRows}\n\nPlay at: http://localhost:5173`;
+    const playUrl = window.location.origin.includes('localhost') ? window.location.href : 'https://duckch.github.io/microbledle/';
+    const text = `${header} ${score}\n\n${gridRows}\n\nPlay at: ${playUrl}`;
 
     navigator.clipboard.writeText(text);
     setCopied(true);
