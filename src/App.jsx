@@ -13,12 +13,14 @@ import { calculateUserProgression, AVATAR_OPTIONS } from './utils/leveling';
 import BugdexModal from './components/BugdexModal';
 import AuthModal from './components/AuthModal';
 import ProfileModal from './components/ProfileModal';
+import LeaderboardModal from './components/LeaderboardModal';
 import { 
   auth, 
   logoutUser, 
   saveUserProgress, 
   loadUserProgress, 
-  isFirebaseConfigured 
+  isFirebaseConfigured,
+  submitDailyScore
 } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 
@@ -196,6 +198,7 @@ export default function App() {
   const [showBugdexModal, setShowBugdexModal] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
+  const [showLeaderboardModal, setShowLeaderboardModal] = useState(false);
   const [copied, setCopied] = useState(false);
   const [isMuted, setIsMuted] = useState(() => {
     return localStorage.getItem('microbledle_muted') === 'true';
@@ -357,6 +360,21 @@ export default function App() {
             email: authUser.email,
             displayName: initialProfile.displayName
           });
+
+          // Also sync today's daily solved score to global leaderboard if present
+          const savedDailyScore = localStorage.getItem(`microbledle_daily_score_${dailyInfo.dateStr}`);
+          if (savedDailyScore) {
+            try {
+              const parsed = JSON.parse(savedDailyScore);
+              await submitDailyScore(dailyInfo.dateStr, authUser.uid, {
+                ...parsed,
+                uid: authUser.uid,
+                displayName: initialProfile.displayName || authUser.displayName || 'Physician'
+              });
+            } catch (e) {
+              console.warn("Could not sync daily score to leaderboard", e);
+            }
+          }
         }
       } else {
         setUser(null);
@@ -532,6 +550,40 @@ export default function App() {
           gameOver: true,
           won: isVictory
         }));
+
+        // Submit daily case score to Global Leaderboard
+        if (isVictory) {
+          const newWins = stats.wins + 1;
+          const currentProg = calculateUserProgression(
+            newWins,
+            unlockedBugIds.length + (!unlockedBugIds.includes(target.id) ? 1 : 0)
+          );
+
+          let guestId = localStorage.getItem('microbledle_guest_id');
+          if (!guestId) {
+            guestId = 'guest_' + Math.random().toString(36).substring(2, 9);
+            localStorage.setItem('microbledle_guest_id', guestId);
+          }
+          const activeUid = user ? user.uid : guestId;
+
+          const dailyScorePayload = {
+            uid: activeUid,
+            displayName: profile.displayName || (user?.email ? user.email.split('@')[0] : 'Physician'),
+            avatar: profile.avatar || 'microscope',
+            status: profile.status || 'Medical Student Y1',
+            level: currentProg.level,
+            rankTitle: currentProg.title,
+            badge: currentProg.badge,
+            guessesCount: newGuesses.length,
+            submittedAt: new Date().toISOString()
+          };
+
+          localStorage.setItem(`microbledle_daily_score_${dateStr}`, JSON.stringify(dailyScorePayload));
+
+          if (isFirebaseConfigured) {
+            submitDailyScore(dateStr, activeUid, dailyScorePayload);
+          }
+        }
       }
     } else if (!isPractice) {
       localStorage.setItem(`microbledle_game_${dateStr}`, JSON.stringify({
@@ -720,12 +772,23 @@ export default function App() {
             <HelpCircle className="w-5 h-5" />
           </button>
 
+          {/* Global Leaderboard Button */}
+          <button
+            onClick={() => setShowLeaderboardModal(true)}
+            className="px-2.5 py-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-amber-500/50 hover:bg-slate-800 text-slate-300 hover:text-amber-400 transition flex items-center gap-1.5 text-xs font-semibold"
+            title="Global Leaderboard & Rankings"
+          >
+            <Trophy className="w-4 h-4 text-amber-400" />
+            <span className="hidden sm:inline">Rankings</span>
+          </button>
+
+          {/* Your Career Statistics */}
           <button
             onClick={() => setShowStatsModal(true)}
             className="p-2 rounded-xl bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-300 hover:text-cyan-400 transition"
-            title="Your Statistics"
+            title="Your Career Statistics"
           >
-            <Trophy className="w-5 h-5" />
+            <Award className="w-5 h-5 text-cyan-400" />
           </button>
         </div>
       </header>
@@ -1185,6 +1248,18 @@ export default function App() {
                 </button>
               )}
 
+              {/* View Global Leaderboard Button */}
+              <button
+                onClick={() => {
+                  setShowStatsModal(false);
+                  setShowLeaderboardModal(true);
+                }}
+                className="w-full py-3 bg-slate-800/90 hover:bg-slate-750 border border-amber-500/40 hover:border-amber-400 text-amber-300 font-bold rounded-2xl flex items-center justify-center gap-2 transition"
+              >
+                <Trophy className="w-4 h-4 text-amber-400" />
+                View Global Leaderboard
+              </button>
+
               {isPractice && gameOver && (
                 <button
                   onClick={startNewPractice}
@@ -1278,6 +1353,17 @@ export default function App() {
         profile={profile}
         onSaveProfile={handleSaveProfile}
         onLogout={handleLogout}
+      />
+
+      {/* Global Leaderboard Modal */}
+      <LeaderboardModal
+        isOpen={showLeaderboardModal}
+        onClose={() => setShowLeaderboardModal(false)}
+        currentDateStr={dateStr}
+        user={user}
+        userStats={stats}
+        userProfile={profile}
+        onOpenAuth={() => setShowAuthModal(true)}
       />
     </div>
   );

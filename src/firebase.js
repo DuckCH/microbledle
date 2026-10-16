@@ -13,7 +13,12 @@ import {
   getFirestore, 
   doc, 
   getDoc, 
-  setDoc 
+  setDoc,
+  collection,
+  query,
+  orderBy,
+  limit,
+  getDocs
 } from 'firebase/firestore';
 import { getAnalytics, isSupported } from 'firebase/analytics';
 
@@ -98,3 +103,85 @@ export async function loadUserProgress(uid) {
   }
   return null;
 }
+
+// Submit score for today's daily case to the global daily leaderboard
+export async function submitDailyScore(dateStr, uid, scoreData) {
+  if (!uid || !dateStr) return;
+  try {
+    const scoreDocRef = doc(db, 'daily_leaderboard', dateStr, 'scores', uid);
+    await setDoc(scoreDocRef, {
+      ...scoreData,
+      uid,
+      submittedAt: scoreData.submittedAt || new Date().toISOString()
+    }, { merge: true });
+  } catch (err) {
+    console.warn("Error submitting daily score:", err);
+  }
+}
+
+// Fetch global daily leaderboard for a given UTC date
+export async function getDailyLeaderboard(dateStr, maxResults = 50) {
+  if (!dateStr) return [];
+  try {
+    const scoresColRef = collection(db, 'daily_leaderboard', dateStr, 'scores');
+    // Fetch recent daily scores and sort in memory to avoid Firestore composite index requirement
+    const q = query(scoresColRef, limit(maxResults * 2));
+    const snap = await getDocs(q);
+    const results = [];
+    snap.forEach((docSnap) => {
+      results.push({ id: docSnap.id, ...docSnap.data() });
+    });
+
+    // Rank by: 1. Fewest guesses, 2. Earliest submission timestamp
+    results.sort((a, b) => {
+      const gA = Number(a.guessesCount) || 6;
+      const gB = Number(b.guessesCount) || 6;
+      if (gA !== gB) return gA - gB;
+      const tA = a.submittedAt ? new Date(a.submittedAt).getTime() : Infinity;
+      const tB = b.submittedAt ? new Date(b.submittedAt).getTime() : Infinity;
+      return tA - tB;
+    });
+
+    return results.slice(0, maxResults);
+  } catch (err) {
+    console.warn("Error fetching daily leaderboard:", err);
+    return [];
+  }
+}
+
+// Fetch all-time hall of fame
+export async function getAllTimeLeaderboard(maxResults = 50) {
+  try {
+    const usersColRef = collection(db, 'users');
+    const q = query(usersColRef, limit(maxResults * 2));
+    const snap = await getDocs(q);
+    const results = [];
+    snap.forEach((docSnap) => {
+      const data = docSnap.data();
+      if (data && (data.stats || data.profile)) {
+        results.push({ id: docSnap.id, ...data });
+      }
+    });
+
+    // Rank by: 1. Most wins, 2. Current streak, 3. Total games played
+    results.sort((a, b) => {
+      const winsA = Number(a.stats?.wins) || 0;
+      const winsB = Number(b.stats?.wins) || 0;
+      if (winsB !== winsA) return winsB - winsA;
+
+      const streakA = Number(a.stats?.streak) || 0;
+      const streakB = Number(b.stats?.streak) || 0;
+      if (streakB !== streakA) return streakB - streakA;
+
+      const playedA = Number(a.stats?.played) || 0;
+      const playedB = Number(b.stats?.played) || 0;
+      return playedB - playedA;
+    });
+
+    return results.slice(0, maxResults);
+  } catch (err) {
+    console.warn("Error fetching all-time leaderboard:", err);
+    return [];
+  }
+}
+
