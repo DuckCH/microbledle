@@ -5,11 +5,20 @@ import {
   Share2, CheckCircle2, X, Sparkles, ChevronRight, Info,
   Microscope, Stethoscope, Dna, FlaskConical, Award, Flame,
   Check, Calendar, Shuffle, Volume2, VolumeX, Clock, TestTube2,
-  BookOpen
+  BookOpen, User, LogOut, Cloud
 } from 'lucide-react';
 import microbes from './data/microbes.json';
 import { playTileSound, playSelectSound, playWinSound, playDefeatSound } from './utils/audio';
 import BugdexModal from './components/BugdexModal';
+import AuthModal from './components/AuthModal';
+import { 
+  auth, 
+  logoutUser, 
+  saveUserProgress, 
+  loadUserProgress, 
+  isFirebaseConfigured 
+} from './firebase';
+import { onAuthStateChanged } from 'firebase/auth';
 
 // Deterministic daily target pathogen using UTC date
 function getDailyTarget() {
@@ -183,10 +192,15 @@ export default function App() {
   const [showStatsModal, setShowStatsModal] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
   const [showBugdexModal, setShowBugdexModal] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const [copied, setCopied] = useState(false);
   const [isMuted, setIsMuted] = useState(() => {
     return localStorage.getItem('microbledle_muted') === 'true';
   });
+
+  // Current authenticated user (Firebase user or demo user)
+  const [user, setUser] = useState(null);
+  const [cloudSynced, setCloudSynced] = useState(false);
 
   // Bugdex unlocked organisms
   const [unlockedBugIds, setUnlockedBugIds] = useState(() => {
@@ -230,6 +244,87 @@ export default function App() {
       }
     }
   }, []);
+
+  // Listen to Firebase Auth state
+  useEffect(() => {
+    if (!isFirebaseConfigured) {
+      // Check for saved demo user
+      const savedDemo = localStorage.getItem('microbledle_demo_user');
+      if (savedDemo) {
+        try {
+          setUser(JSON.parse(savedDemo));
+          setCloudSynced(true);
+        } catch (e) {}
+      }
+      return;
+    }
+
+    const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
+      if (authUser) {
+        setUser(authUser);
+        setCloudSynced(true);
+
+        // Load and merge cloud data from Firestore
+        const cloudData = await loadUserProgress(authUser.uid);
+        if (cloudData) {
+          // Merge stats
+          setStats(prev => {
+            const merged = {
+              played: Math.max(prev.played, cloudData.stats?.played || 0),
+              wins: Math.max(prev.wins, cloudData.stats?.wins || 0),
+              streak: Math.max(prev.streak, cloudData.stats?.streak || 0),
+              maxStreak: Math.max(prev.maxStreak, cloudData.stats?.maxStreak || 0),
+              distribution: prev.distribution.map((val, idx) => 
+                Math.max(val, cloudData.stats?.distribution?.[idx] || 0)
+              )
+            };
+            localStorage.setItem('microbledle_stats_v1', JSON.stringify(merged));
+            return merged;
+          });
+
+          // Merge Bugdex unlocked organisms
+          if (cloudData.unlockedBugIds) {
+            setUnlockedBugIds(prev => {
+              const combined = Array.from(new Set([...prev, ...cloudData.unlockedBugIds]));
+              localStorage.setItem('microbledle_unlocked_bugs', JSON.stringify(combined));
+              return combined;
+            });
+          }
+        } else {
+          // Save existing local data to Firestore
+          const currentLocalStats = JSON.parse(localStorage.getItem('microbledle_stats_v1') || '{}');
+          const currentBugs = JSON.parse(localStorage.getItem('microbledle_unlocked_bugs') || '[]');
+          await saveUserProgress(authUser.uid, {
+            stats: currentLocalStats,
+            unlockedBugIds: currentBugs,
+            email: authUser.email,
+            displayName: authUser.displayName
+          });
+        }
+      } else {
+        setUser(null);
+        setCloudSynced(false);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  // Handle Demo Login
+  const handleDemoLogin = (demoUser) => {
+    setUser(demoUser);
+    setCloudSynced(true);
+    localStorage.setItem('microbledle_demo_user', JSON.stringify(demoUser));
+  };
+
+  const handleLogout = async () => {
+    if (isFirebaseConfigured) {
+      await logoutUser();
+    }
+    setUser(null);
+    setCloudSynced(false);
+    localStorage.removeItem('microbledle_demo_user');
+  };
 
   // Load or sync game state
   useEffect(() => {
@@ -317,6 +412,9 @@ export default function App() {
             if (!prev.includes(target.id)) {
               const updated = [...prev, target.id];
               localStorage.setItem('microbledle_unlocked_bugs', JSON.stringify(updated));
+              if (user && isFirebaseConfigured) {
+                saveUserProgress(user.uid, { unlockedBugIds: updated });
+              }
               return updated;
             }
             return prev;
@@ -344,6 +442,12 @@ export default function App() {
             distribution: newDist
           };
           localStorage.setItem('microbledle_stats_v1', JSON.stringify(updated));
+
+          // Save to Firestore if user logged in
+          if (user && isFirebaseConfigured) {
+            saveUserProgress(user.uid, { stats: updated });
+          }
+
           return updated;
         });
 
@@ -436,6 +540,33 @@ export default function App() {
 
         {/* Right Action Bar */}
         <div className="flex items-center gap-2 flex-wrap">
+          
+          {/* User Auth / Cloud Sync Status Pill */}
+          {user ? (
+            <div className="flex items-center gap-1.5 p-1.5 pl-2.5 bg-slate-900 border border-slate-700/80 rounded-xl text-xs">
+              <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" title="Cloud Synced" />
+              <span className="text-slate-300 font-semibold max-w-[110px] truncate">
+                {user.displayName || user.email?.split('@')[0] || 'User'}
+              </span>
+              <button
+                onClick={handleLogout}
+                className="p-1 text-slate-400 hover:text-rose-400 transition ml-1 rounded-lg hover:bg-slate-800"
+                title="Log Out"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setShowAuthModal(true)}
+              className="px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-emerald-500/50 text-slate-300 hover:text-emerald-400 transition flex items-center gap-1.5 text-xs font-semibold"
+              title="Sign in with Google / Email to save progression"
+            >
+              <User className="w-4 h-4 text-emerald-400" />
+              <span>Sign In</span>
+            </button>
+          )}
+
           {/* Bugdex Compendium Button */}
           <button
             onClick={() => setShowBugdexModal(true)}
@@ -1040,6 +1171,13 @@ export default function App() {
         isOpen={showBugdexModal}
         onClose={() => setShowBugdexModal(false)}
         unlockedBugIds={unlockedBugIds}
+      />
+
+      {/* Auth & Registration Modal */}
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        onDemoLogin={handleDemoLogin}
       />
     </div>
   );
