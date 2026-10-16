@@ -4,10 +4,12 @@ import {
   Search, AlertCircle, HelpCircle, Trophy, RotateCcw, 
   Share2, CheckCircle2, X, Sparkles, ChevronRight, Info,
   Microscope, Stethoscope, Dna, FlaskConical, Award, Flame,
-  Check, Calendar, Shuffle, Volume2, VolumeX, Clock, TestTube2
+  Check, Calendar, Shuffle, Volume2, VolumeX, Clock, TestTube2,
+  BookOpen
 } from 'lucide-react';
 import microbes from './data/microbes.json';
 import { playTileSound, playSelectSound, playWinSound, playDefeatSound } from './utils/audio';
+import BugdexModal from './components/BugdexModal';
 
 // Deterministic daily target pathogen using UTC date
 function getDailyTarget() {
@@ -180,9 +182,20 @@ export default function App() {
   const [won, setWon] = useState(false);
   const [showStatsModal, setShowStatsModal] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
+  const [showBugdexModal, setShowBugdexModal] = useState(false);
   const [copied, setCopied] = useState(false);
   const [isMuted, setIsMuted] = useState(() => {
     return localStorage.getItem('microbledle_muted') === 'true';
+  });
+
+  // Bugdex unlocked organisms
+  const [unlockedBugIds, setUnlockedBugIds] = useState(() => {
+    try {
+      const saved = localStorage.getItem('microbledle_unlocked_bugs');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
   });
 
   const searchInputRef = useRef(null);
@@ -298,6 +311,16 @@ export default function App() {
             spread: 80,
             origin: { y: 0.6 }
           });
+
+          // Unlock bug in Bugdex
+          setUnlockedBugIds(prev => {
+            if (!prev.includes(target.id)) {
+              const updated = [...prev, target.id];
+              localStorage.setItem('microbledle_unlocked_bugs', JSON.stringify(updated));
+              return updated;
+            }
+            return prev;
+          });
         } else {
           playDefeatSound(isMuted);
         }
@@ -412,7 +435,20 @@ export default function App() {
         </div>
 
         {/* Right Action Bar */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
+          {/* Bugdex Compendium Button */}
+          <button
+            onClick={() => setShowBugdexModal(true)}
+            className="px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-300 hover:text-emerald-400 transition flex items-center gap-1.5 text-xs font-semibold"
+            title="Bugdex USMLE Compendium"
+          >
+            <BookOpen className="w-4 h-4 text-emerald-400" />
+            <span>Bugdex</span>
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800 font-mono">
+              {unlockedBugIds.length}/{microbes.length}
+            </span>
+          </button>
+
           {/* Audio Mute/Unmute */}
           <button
             onClick={toggleMute}
@@ -512,7 +548,7 @@ export default function App() {
                         <div className="font-semibold text-emerald-400 italic group-hover:text-emerald-300 flex items-center gap-2">
                           {bug.name}
                           <span className={`not-italic text-[10px] font-bold px-2 py-0.5 rounded-full border flex items-center gap-1 ${gramInfo.bg}`}>
-                            <span className={`w-1.5 h-1.5 rounded-full ${gramInfo.dot}`}></span>
+                            <span className={`w-1.5 h-1.5 rounded-full ${gramInfo.dot}`} />
                             {gramInfo.label}
                           </span>
                         </div>
@@ -537,12 +573,20 @@ export default function App() {
               <Clock className="w-3.5 h-3.5 text-emerald-400" />
               Next daily case in: <span className="font-mono text-emerald-300 font-bold">{countdown}</span>
             </div>
-            <button
-              onClick={() => setShowStatsModal(true)}
-              className="mt-3 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 rounded-xl text-xs font-semibold text-white shadow transition inline-flex items-center gap-1.5"
-            >
-              <Trophy className="w-4 h-4" /> View Summary & Share
-            </button>
+            <div className="mt-3 flex items-center justify-center gap-2">
+              <button
+                onClick={() => setShowStatsModal(true)}
+                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 rounded-xl text-xs font-semibold text-white shadow transition inline-flex items-center gap-1.5"
+              >
+                <Trophy className="w-4 h-4" /> View Summary & Share
+              </button>
+              <button
+                onClick={() => setShowBugdexModal(true)}
+                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl text-xs font-semibold text-emerald-400 shadow transition inline-flex items-center gap-1.5"
+              >
+                <BookOpen className="w-4 h-4" /> Open in Bugdex
+              </button>
+            </div>
           </div>
         )}
 
@@ -800,8 +844,19 @@ export default function App() {
             {/* Clinical Reveal Card (if Game Over) */}
             {gameOver && (
               <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 mb-6 text-left">
-                <div className="text-[10px] uppercase font-bold tracking-wider text-emerald-400 mb-1">
-                  Target Organism Identified
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-[10px] uppercase font-bold tracking-wider text-emerald-400">
+                    Target Organism Identified
+                  </span>
+                  <button
+                    onClick={() => {
+                      setShowStatsModal(false);
+                      setShowBugdexModal(true);
+                    }}
+                    className="text-[10px] text-emerald-400 hover:underline font-semibold flex items-center gap-1"
+                  >
+                    <BookOpen className="w-3 h-3" /> View in Bugdex
+                  </button>
                 </div>
                 <div className="text-xl font-black text-white italic">
                   {target.name}
@@ -979,6 +1034,13 @@ export default function App() {
           </div>
         </div>
       )}
+
+      {/* Bugdex USMLE Compendium Modal */}
+      <BugdexModal 
+        isOpen={showBugdexModal}
+        onClose={() => setShowBugdexModal(false)}
+        unlockedBugIds={unlockedBugIds}
+      />
     </div>
   );
 }
