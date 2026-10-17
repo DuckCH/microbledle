@@ -7,7 +7,8 @@ import {
   createUserWithEmailAndPassword, 
   signOut, 
   updateProfile,
-  onAuthStateChanged
+  onAuthStateChanged,
+  browserPopupRedirectResolver
 } from 'firebase/auth';
 import { 
   getFirestore, 
@@ -70,7 +71,7 @@ export async function signInWithGoogle() {
   if (!isFirebaseConfigured || !auth || !googleProvider) {
     throw new Error("FIREBASE_NOT_CONFIGURED");
   }
-  const result = await signInWithPopup(auth, googleProvider);
+  const result = await signInWithPopup(auth, googleProvider, browserPopupRedirectResolver);
   return result.user;
 }
 
