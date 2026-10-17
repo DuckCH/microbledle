@@ -22,41 +22,63 @@ import {
 } from 'firebase/firestore';
 import { getAnalytics, isSupported } from 'firebase/analytics';
 
-// Your web app's Firebase configuration
+// Your web app's Firebase configuration (read strictly from Vite environment variables)
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyBj_HysIPdSQ0xkLXV4uFhJyYWeekEi6vQ",
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "microbledle.firebaseapp.com",
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "microbledle",
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "microbledle.firebasestorage.app",
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "718300540478",
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:718300540478:web:26d4e34d4cb9b440256b6f",
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || "G-XHVZXSEBCP"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "",
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "",
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "",
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "",
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "",
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || "",
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || ""
 };
 
-export const isFirebaseConfigured = true;
+// Check if actual configuration has been provided via environment variables
+export const isFirebaseConfigured = Boolean(
+  import.meta.env.VITE_FIREBASE_API_KEY && 
+  import.meta.env.VITE_FIREBASE_PROJECT_ID
+);
 
-// Initialize Firebase App
-const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+// Initialize Firebase App safely if configured
+let app = null;
+let auth = null;
+let db = null;
+let googleProvider = null;
 
-// Initialize Analytics when running in browser
-if (typeof window !== 'undefined') {
-  isSupported().then(yes => {
-    if (yes) getAnalytics(app);
-  }).catch(() => {});
+if (isFirebaseConfigured) {
+  try {
+    app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+    auth = getAuth(app);
+    db = getFirestore(app);
+    googleProvider = new GoogleAuthProvider();
+
+    // Initialize Analytics when running in browser
+    if (typeof window !== 'undefined') {
+      isSupported().then(yes => {
+        if (yes && app) getAnalytics(app);
+      }).catch(() => {});
+    }
+  } catch (err) {
+    console.warn("Failed to initialize Firebase services:", err);
+  }
 }
 
-export const auth = getAuth(app);
-export const db = getFirestore(app);
-export const googleProvider = new GoogleAuthProvider();
+export { auth, db, googleProvider };
 
 // Google Sign-In with popup
 export async function signInWithGoogle() {
+  if (!isFirebaseConfigured || !auth || !googleProvider) {
+    throw new Error("FIREBASE_NOT_CONFIGURED");
+  }
   const result = await signInWithPopup(auth, googleProvider);
   return result.user;
 }
 
 // Email & Password Registration
 export async function registerWithEmail(email, password, displayName) {
+  if (!isFirebaseConfigured || !auth) {
+    throw new Error("FIREBASE_NOT_CONFIGURED");
+  }
   const credential = await createUserWithEmailAndPassword(auth, email, password);
   if (displayName && credential.user) {
     await updateProfile(credential.user, { displayName });
@@ -66,18 +88,22 @@ export async function registerWithEmail(email, password, displayName) {
 
 // Email & Password Sign-In
 export async function loginWithEmail(email, password) {
+  if (!isFirebaseConfigured || !auth) {
+    throw new Error("FIREBASE_NOT_CONFIGURED");
+  }
   const credential = await signInWithEmailAndPassword(auth, email, password);
   return credential.user;
 }
 
 // Logout
 export async function logoutUser() {
+  if (!auth) return;
   await signOut(auth);
 }
 
 // Save or merge user progression in Firestore
 export async function saveUserProgress(uid, data) {
-  if (!uid) return;
+  if (!isFirebaseConfigured || !db || !uid) return;
   try {
     const userDocRef = doc(db, 'users', uid);
     await setDoc(userDocRef, {
@@ -91,7 +117,7 @@ export async function saveUserProgress(uid, data) {
 
 // Load user progression from Firestore
 export async function loadUserProgress(uid) {
-  if (!uid) return null;
+  if (!isFirebaseConfigured || !db || !uid) return null;
   try {
     const userDocRef = doc(db, 'users', uid);
     const snap = await getDoc(userDocRef);
@@ -106,7 +132,7 @@ export async function loadUserProgress(uid) {
 
 // Submit score for today's daily case to the global daily leaderboard
 export async function submitDailyScore(dateStr, uid, scoreData) {
-  if (!uid || !dateStr) return;
+  if (!isFirebaseConfigured || !db || !uid || !dateStr) return;
   try {
     const scoreDocRef = doc(db, 'daily_leaderboard', dateStr, 'scores', uid);
     await setDoc(scoreDocRef, {
@@ -121,7 +147,7 @@ export async function submitDailyScore(dateStr, uid, scoreData) {
 
 // Fetch global daily leaderboard for a given UTC date
 export async function getDailyLeaderboard(dateStr, maxResults = 50) {
-  if (!dateStr) return [];
+  if (!isFirebaseConfigured || !db || !dateStr) return [];
   try {
     const scoresColRef = collection(db, 'daily_leaderboard', dateStr, 'scores');
     // Fetch recent daily scores and sort in memory to avoid Firestore composite index requirement
@@ -151,6 +177,7 @@ export async function getDailyLeaderboard(dateStr, maxResults = 50) {
 
 // Fetch all-time hall of fame
 export async function getAllTimeLeaderboard(maxResults = 50) {
+  if (!isFirebaseConfigured || !db) return [];
   try {
     const usersColRef = collection(db, 'users');
     const q = query(usersColRef, limit(maxResults * 2));
