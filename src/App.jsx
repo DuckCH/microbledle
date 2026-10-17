@@ -5,7 +5,7 @@ import {
   Share2, CheckCircle2, X, Sparkles, ChevronRight, Info,
   Microscope, Stethoscope, Dna, FlaskConical, Award, Flame,
   Check, Calendar, Shuffle, Volume2, VolumeX, Clock, TestTube2,
-  BookOpen, User, LogOut, Cloud, ShieldCheck, Smartphone
+  BookOpen, User, LogOut, Cloud, ShieldCheck, Smartphone, Pill
 } from 'lucide-react';
 import microbes from './data/microbes.json';
 import { playTileSound, playSelectSound, playWinSound, playDefeatSound } from './utils/audio';
@@ -15,6 +15,7 @@ import AuthModal from './components/AuthModal';
 import ProfileModal from './components/ProfileModal';
 import LeaderboardModal from './components/LeaderboardModal';
 import InstallModal from './components/InstallModal';
+import RxChallenge from './components/RxChallenge';
 import { 
   auth, 
   logoutUser, 
@@ -219,6 +220,7 @@ export default function App() {
   const [guesses, setGuesses] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchSelectedIndex, setSearchSelectedIndex] = useState(-1);
   const [gameOver, setGameOver] = useState(false);
   const [won, setWon] = useState(false);
   const [showStatsModal, setShowStatsModal] = useState(false);
@@ -306,13 +308,15 @@ export default function App() {
     wins: 0,
     streak: 0,
     maxStreak: 0,
-    distribution: [0, 0, 0, 0, 0, 0]
+    distribution: [0, 0, 0, 0, 0, 0],
+    rxAttempted: 0,
+    rxCorrect: 0
   });
 
-  // Progression calculation
+  // Progression calculation (including Rx Challenge bonus XP)
   const progression = useMemo(() => {
-    return calculateUserProgression(stats.wins, unlockedBugIds.length);
-  }, [stats.wins, unlockedBugIds.length]);
+    return calculateUserProgression(stats.wins, unlockedBugIds.length, (stats.rxCorrect || 0) * 50);
+  }, [stats.wins, unlockedBugIds.length, stats.rxCorrect]);
 
   const currentAvatarObj = useMemo(() => {
     return AVATAR_OPTIONS.find(a => a.id === profile?.avatar) || AVATAR_OPTIONS[0];
@@ -327,12 +331,34 @@ export default function App() {
     });
   };
 
+  // Handle post-game Empiric Rx Challenge answer
+  const handleRxAnswer = (isCorrect) => {
+    setStats(prev => {
+      const updated = {
+        ...prev,
+        rxAttempted: (prev.rxAttempted || 0) + 1,
+        rxCorrect: (prev.rxCorrect || 0) + (isCorrect ? 1 : 0)
+      };
+      localStorage.setItem('microbledle_stats_v1', JSON.stringify(updated));
+      if (user && isFirebaseConfigured) {
+        saveUserProgress(user.uid, { stats: updated });
+      }
+      return updated;
+    });
+  };
+
   // Load stats from localStorage on mount
   useEffect(() => {
     const savedStats = localStorage.getItem('microbledle_stats_v1');
     if (savedStats) {
       try {
-        setStats(JSON.parse(savedStats));
+        const parsed = JSON.parse(savedStats);
+        setStats(prev => ({
+          ...prev,
+          ...parsed,
+          rxAttempted: parsed.rxAttempted || 0,
+          rxCorrect: parsed.rxCorrect || 0
+        }));
       } catch (e) {
         console.error('Failed to parse stats', e);
       }
@@ -367,6 +393,8 @@ export default function App() {
             wins: Math.max(stats.wins, cloudData.stats?.wins || 0),
             streak: Math.max(stats.streak, cloudData.stats?.streak || 0),
             maxStreak: Math.max(stats.maxStreak, cloudData.stats?.maxStreak || 0),
+            rxAttempted: Math.max(stats.rxAttempted || 0, cloudData.stats?.rxAttempted || 0),
+            rxCorrect: Math.max(stats.rxCorrect || 0, cloudData.stats?.rxCorrect || 0),
             distribution: stats.distribution.map((val, idx) => 
               Math.max(val, cloudData.stats?.distribution?.[idx] || 0)
             )
@@ -521,10 +549,33 @@ export default function App() {
       .filter(m => 
         m.name.toLowerCase().includes(term) || 
         m.commonName.toLowerCase().includes(term) ||
-        m.taxonomy.toLowerCase().includes(term)
+        m.taxonomy.toLowerCase().includes(term) ||
+        (m.buzzwords && m.buzzwords.toLowerCase().includes(term))
       )
       .slice(0, 6);
   }, [searchTerm, guesses]);
+
+  const handleKeyDown = (e) => {
+    if (!isSearchOpen || availableMicrobes.length === 0) return;
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setSearchSelectedIndex(prev => (prev + 1) % availableMicrobes.length);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setSearchSelectedIndex(prev => (prev - 1 + availableMicrobes.length) % availableMicrobes.length);
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (searchSelectedIndex >= 0 && searchSelectedIndex < availableMicrobes.length) {
+        handleSelectMicrobe(availableMicrobes[searchSelectedIndex]);
+      } else if (availableMicrobes.length > 0) {
+        handleSelectMicrobe(availableMicrobes[0]);
+      }
+    } else if (e.key === 'Escape') {
+      setIsSearchOpen(false);
+      setSearchSelectedIndex(-1);
+    }
+  };
 
   const handleSelectMicrobe = (organism) => {
     if (gameOver || guesses.length >= maxGuesses) return;
@@ -536,6 +587,7 @@ export default function App() {
     setGuesses(newGuesses);
     setSearchTerm('');
     setIsSearchOpen(false);
+    setSearchSelectedIndex(-1);
 
     // Staggered audio chime for the revealed row
     [0, 1, 2, 3, 4].forEach((idx) => {
@@ -617,7 +669,8 @@ export default function App() {
           const newWins = stats.wins + 1;
           const currentProg = calculateUserProgression(
             newWins,
-            unlockedBugIds.length + (!unlockedBugIds.includes(target.id) ? 1 : 0)
+            unlockedBugIds.length + (!unlockedBugIds.includes(target.id) ? 1 : 0),
+            (stats.rxCorrect || 0) * 50
           );
 
           let guestId = localStorage.getItem('microbledle_guest_id');
@@ -896,41 +949,57 @@ export default function App() {
               <input
                 ref={searchInputRef}
                 type="text"
-                placeholder="Search medical pathogen (e.g., S. aureus, E. coli, TB)..."
+                placeholder="Search pathogen or buzzword (e.g., S. aureus, currant jelly, lockjaw, TB)..."
                 value={searchTerm}
                 onChange={(e) => {
                   setSearchTerm(e.target.value);
                   setIsSearchOpen(true);
+                  setSearchSelectedIndex(-1);
                 }}
+                onKeyDown={handleKeyDown}
                 onFocus={() => setIsSearchOpen(true)}
                 className="w-full pl-12 pr-4 py-3.5 bg-slate-900/90 border border-slate-700/80 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500/60 focus:border-emerald-500 text-white placeholder-slate-500 shadow-xl transition"
               />
             </div>
 
-            {/* Autocomplete Dropdown */}
+            {/* Autocomplete Dropdown with Buzzword Matching & Keyboard Selection */}
             {isSearchOpen && availableMicrobes.length > 0 && (
               <div className="absolute z-30 left-0 right-0 mt-2 bg-slate-900 border border-slate-700/90 rounded-2xl shadow-2xl overflow-hidden divide-y divide-slate-800 backdrop-blur-md">
-                {availableMicrobes.map((bug) => {
+                {availableMicrobes.map((bug, idx) => {
+                  const isSelected = idx === searchSelectedIndex;
                   const gramInfo = getGramBadge(bug.morphology.gram);
+                  const termLower = searchTerm.trim().toLowerCase();
+                  const matchedBuzzword = bug.buzzwords && termLower.length >= 3 && bug.buzzwords.toLowerCase().includes(termLower)
+                    ? bug.buzzwords.split(',').find(b => b.toLowerCase().includes(termLower))
+                    : null;
+
                   return (
                     <button
                       key={bug.id}
                       onClick={() => handleSelectMicrobe(bug)}
-                      className="w-full text-left px-4 py-3 hover:bg-slate-800/80 transition flex items-center justify-between group"
+                      onMouseEnter={() => setSearchSelectedIndex(idx)}
+                      className={`w-full text-left px-4 py-3 transition flex items-center justify-between group ${
+                        isSelected ? 'bg-slate-800/95 ring-1 ring-emerald-500/50' : 'hover:bg-slate-800/60'
+                      }`}
                     >
-                      <div>
-                        <div className="font-semibold text-emerald-400 italic group-hover:text-emerald-300 flex items-center gap-2">
-                          {bug.name}
+                      <div className="min-w-0 pr-2">
+                        <div className="font-semibold text-emerald-400 italic group-hover:text-emerald-300 flex items-center gap-2 flex-wrap">
+                          <span>{bug.name}</span>
                           <span className={`not-italic text-[10px] font-bold px-2 py-0.5 rounded-full border flex items-center gap-1 ${gramInfo.bg}`}>
                             <span className={`w-1.5 h-1.5 rounded-full ${gramInfo.dot}`} />
                             {gramInfo.label}
                           </span>
+                          {matchedBuzzword && (
+                            <span className="not-italic text-[10px] text-amber-300 font-normal bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 rounded-full truncate max-w-[200px]">
+                              Key: {matchedBuzzword.trim()}
+                            </span>
+                          )}
                         </div>
-                        <div className="text-xs text-slate-400 mt-0.5">
+                        <div className="text-xs text-slate-400 mt-0.5 truncate">
                           <span className="text-slate-300 font-medium">{bug.commonName}</span> • {bug.taxonomy}
                         </div>
                       </div>
-                      <ChevronRight className="w-5 h-5 text-slate-500 group-hover:text-emerald-400 transform group-hover:translate-x-0.5 transition" />
+                      <ChevronRight className={`w-5 h-5 shrink-0 transform transition ${isSelected ? 'text-emerald-400 translate-x-1' : 'text-slate-500 group-hover:text-emerald-400 group-hover:translate-x-0.5'}`} />
                     </button>
                   );
                 })}
@@ -1215,6 +1284,17 @@ export default function App() {
               )}
             </div>
 
+            {/* Empiric Rx Challenge (Post-game Clinical Pharmacology Quiz) */}
+            {gameOver && target && (
+              <RxChallenge
+                target={target}
+                isDaily={!isPractice}
+                dateStr={dateStr}
+                isMuted={isMuted}
+                onAnswer={handleRxAnswer}
+              />
+            )}
+
             {/* Clinical Reveal Card (if Game Over) */}
             {gameOver && (
               <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 mb-6 text-left">
@@ -1276,6 +1356,25 @@ export default function App() {
                 <div className="p-3 bg-slate-800/60 rounded-2xl border border-slate-800">
                   <div className="text-2xl font-black text-cyan-400">{stats.maxStreak}</div>
                   <div className="text-[10px] text-slate-400 uppercase font-semibold">Max</div>
+                </div>
+              </div>
+
+              {/* Empiric Rx Stewardship Stat Row */}
+              <div className="mt-2.5 p-2.5 bg-slate-800/40 rounded-xl border border-slate-800/80 flex items-center justify-between text-xs">
+                <div className="flex items-center gap-2">
+                  <div className="p-1.5 rounded-lg bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
+                    <Pill className="w-3.5 h-3.5" />
+                  </div>
+                  <div>
+                    <span className="font-semibold text-slate-200">Empiric Rx Stewardship</span>
+                    <p className="text-[10px] text-slate-400">
+                      {stats.rxCorrect || 0} of {stats.rxAttempted || 0} solved ({stats.rxAttempted ? Math.round(((stats.rxCorrect || 0) / stats.rxAttempted) * 100) : 0}%)
+                    </p>
+                  </div>
+                </div>
+                <div className="px-2 py-0.5 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 font-bold text-[11px] flex items-center gap-1">
+                  <Sparkles className="w-3 h-3 text-amber-400" />
+                  +{(stats.rxCorrect || 0) * 50} XP
                 </div>
               </div>
             </div>

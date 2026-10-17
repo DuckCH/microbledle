@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   X, User, ShieldCheck, Award, Flame, Trophy, Check, 
-  Sparkles, Stethoscope, ArrowRight, Save, LogOut
+  Sparkles, Stethoscope, ArrowRight, Save, LogOut, Pill
 } from 'lucide-react';
 import { 
   calculateUserProgression, 
@@ -35,7 +35,7 @@ export default function ProfileModal({
 
   if (!isOpen) return null;
 
-  const progression = calculateUserProgression(stats.wins, unlockedCount);
+  const progression = calculateUserProgression(stats.wins, unlockedCount, (stats.rxCorrect || 0) * 50);
   const selectedAvatarObj = AVATAR_OPTIONS.find(a => a.id === avatar) || AVATAR_OPTIONS[0];
 
   const handleSave = (e) => {
@@ -120,7 +120,7 @@ export default function ProfileModal({
         </div>
 
         {/* Career Stats Grid */}
-        <div className="grid grid-cols-4 gap-2 text-center mb-6">
+        <div className="grid grid-cols-4 gap-2 text-center mb-3">
           <div className="p-2.5 bg-slate-800/60 rounded-xl border border-slate-800">
             <div className="text-lg font-black text-white">{stats.played}</div>
             <div className="text-[10px] text-slate-400 uppercase font-semibold">Played</div>
@@ -138,6 +138,26 @@ export default function ProfileModal({
           <div className="p-2.5 bg-slate-800/60 rounded-xl border border-slate-800">
             <div className="text-lg font-black text-cyan-400">{unlockedCount}</div>
             <div className="text-[10px] text-slate-400 uppercase font-semibold">Bugs</div>
+          </div>
+        </div>
+
+        {/* Empiric Rx Stewardship Stats Banner */}
+        <div className="p-3 bg-gradient-to-r from-indigo-950/40 to-slate-900/60 rounded-xl border border-indigo-500/20 mb-6 flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="p-2 rounded-lg bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
+              <Pill className="w-4 h-4" />
+            </div>
+            <div>
+              <div className="text-xs font-bold text-white flex items-center gap-1.5">
+                Empiric Rx Challenge
+                <span className="px-1.5 py-0.2 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                  +{(stats.rxCorrect || 0) * 50} XP
+                </span>
+              </div>
+              <div className="text-[11px] text-slate-400">
+                {stats.rxCorrect || 0} / {stats.rxAttempted || 0} Prescriptions Solved ({stats.rxAttempted ? Math.round(((stats.rxCorrect || 0) / stats.rxAttempted) * 100) : 0}% Accuracy)
+              </div>
+            </div>
           </div>
         </div>
 

@@ -121,3 +121,56 @@ export function playDefeatSound(isMuted = false) {
     });
   } catch (e) {}
 }
+
+export function playRxSuccessSound(isMuted = false) {
+  if (isMuted) return;
+  try {
+    const ctx = getAudioContext();
+    if (!ctx) return;
+
+    // Crisp high-yield sparkle: F5 (698.46), A5 (880), C6 (1046.5)
+    const notes = [698.46, 880, 1046.5];
+    notes.forEach((freq, idx) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      const startTime = ctx.currentTime + idx * 0.08;
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, startTime);
+
+      gain.gain.setValueAtTime(0.12, startTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.35);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(startTime);
+      osc.stop(startTime + 0.4);
+    });
+  } catch (e) {}
+}
+
+export function playRxFailSound(isMuted = false) {
+  if (isMuted) return;
+  try {
+    const ctx = getAudioContext();
+    if (!ctx) return;
+
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(261.63, ctx.currentTime); // C4
+    osc.frequency.exponentialRampToValueAtTime(196.00, ctx.currentTime + 0.25); // G3
+
+    gain.gain.setValueAtTime(0.1, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start();
+    osc.stop(ctx.currentTime + 0.28);
+  } catch (e) {}
+}
+

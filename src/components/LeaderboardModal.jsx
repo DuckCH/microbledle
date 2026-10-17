@@ -279,7 +279,11 @@ export default function LeaderboardModal({
                   const prof = entry.profile || {};
                   const rowStats = entry.stats || {};
                   const avatarObj = AVATAR_OPTIONS.find(a => a.id === prof.avatar) || AVATAR_OPTIONS[0];
-                  const prog = calculateUserProgression(rowStats.wins || 0, (entry.unlockedBugIds || []).length);
+                  const prog = calculateUserProgression(
+                    rowStats.wins || 0, 
+                    (entry.unlockedBugIds || []).length, 
+                    (rowStats.rxCorrect || 0) * 50
+                  );
                   const isCurrentUser = user && user.uid === entry.id;
 
                   return (

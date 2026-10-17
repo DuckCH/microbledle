@@ -51,9 +51,9 @@ export const AVATAR_OPTIONS = [
   { id: 'bug', emoji: '🦠', label: 'Microbe' }
 ];
 
-export function calculateUserProgression(wins = 0, unlockedCount = 0) {
-  // 100 XP per solved case + 50 XP per unique Bugdex unlocked pathogen
-  const totalXp = Math.max(0, (wins * 100) + (unlockedCount * 50));
+export function calculateUserProgression(wins = 0, unlockedCount = 0, bonusXp = 0) {
+  // 100 XP per solved case + 50 XP per unique Bugdex unlocked pathogen + bonus XP
+  const totalXp = Math.max(0, (wins * 100) + (unlockedCount * 50) + Number(bonusXp || 0));
 
   let currentRank = RANKS[0];
   for (let i = RANKS.length - 1; i >= 0; i--) {
