@@ -5,7 +5,8 @@ import {
   Share2, CheckCircle2, X, Sparkles, ChevronRight, Info,
   Microscope, Stethoscope, Dna, FlaskConical, Award, Flame,
   Check, Calendar, Shuffle, Volume2, VolumeX, Clock, TestTube2,
-  BookOpen, User, LogOut, Cloud, ShieldCheck, Smartphone, Pill
+  BookOpen, User, LogOut, Cloud, ShieldCheck, Smartphone, Pill,
+  ArrowLeft, Home
 } from 'lucide-react';
 import microbes from './data/microbes.json';
 import { playTileSound, playSelectSound, playWinSound, playDefeatSound } from './utils/audio';
@@ -16,6 +17,7 @@ import ProfileModal from './components/ProfileModal';
 import LeaderboardModal from './components/LeaderboardModal';
 import InstallModal from './components/InstallModal';
 import RxChallenge from './components/RxChallenge';
+import MainMenu from './components/MainMenu';
 import { 
   auth, 
   logoutUser, 
@@ -213,6 +215,7 @@ export default function App() {
   const dailyInfo = useMemo(() => getDailyTarget(), []);
   const countdown = useUtcCountdown();
 
+  const [currentScreen, setCurrentScreen] = useState('menu'); // 'menu' | 'game'
   const [isPractice, setIsPractice] = useState(false);
   const [target, setTarget] = useState(dailyInfo.target);
   const [dateStr, setDateStr] = useState(dailyInfo.dateStr);
@@ -525,7 +528,7 @@ export default function App() {
           setGuesses(parsed.guesses || []);
           setGameOver(parsed.gameOver || false);
           setWon(parsed.won || false);
-          if (parsed.gameOver) {
+          if (parsed.gameOver && currentScreen === 'game') {
             setShowStatsModal(true);
           }
         } catch (e) {
@@ -718,6 +721,48 @@ export default function App() {
     setSearchTerm('');
   };
 
+  // Daily game status for Main Menu
+  const dailyGameState = useMemo(() => {
+    try {
+      const saved = localStorage.getItem(`microbledle_game_${dailyInfo.dateStr}`);
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    if (!isPractice) {
+      return { gameOver, won, guesses };
+    }
+    return { gameOver: false, won: false, guesses: [] };
+  }, [dailyInfo.dateStr, isPractice, gameOver, won, guesses]);
+
+  const handleStartDaily = () => {
+    setIsPractice(false);
+    setTarget(dailyInfo.target);
+    setDateStr(dailyInfo.dateStr);
+
+    const savedGame = localStorage.getItem(`microbledle_game_${dailyInfo.dateStr}`);
+    if (savedGame) {
+      try {
+        const parsed = JSON.parse(savedGame);
+        setGuesses(parsed.guesses || []);
+        setGameOver(parsed.gameOver || false);
+        setWon(parsed.won || false);
+        if (parsed.gameOver) {
+          setShowStatsModal(true);
+        }
+      } catch (e) {}
+    } else {
+      setGuesses([]);
+      setGameOver(false);
+      setWon(false);
+    }
+    setCurrentScreen('game');
+  };
+
+  const handleStartPractice = () => {
+    setIsPractice(true);
+    startNewPractice();
+    setCurrentScreen('game');
+  };
+
   const copyEmojiGrid = () => {
     const statusMap = { exact: '🟩', partial: '🟨', incorrect: '⬛' };
     const gridRows = guesses.map(g => {
@@ -748,41 +793,85 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center p-3 md:p-6 selection:bg-emerald-500 selection:text-white">
-      {/* Top Navbar */}
-      <header className="w-full max-w-4xl border-b border-slate-800 pb-4 mb-6 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl overflow-hidden border border-emerald-500/40 shadow-lg shadow-emerald-950/50 shrink-0 bg-slate-900 group hover:border-emerald-400 transition-all duration-300 hover:scale-105 ring-2 ring-emerald-500/20 flex items-center justify-center">
-            <img 
-              src="./apple-touch-icon.png" 
-              alt="Microbledle Logo" 
-              className="w-full h-full object-cover rounded-2xl" 
-            />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl md:text-3xl font-black tracking-tight bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">
-                MICROBLEDLE
-              </h1>
-              {isPractice && (
-                <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-400 border border-cyan-800">
-                  Practice
-                </span>
-              )}
+      {currentScreen === 'menu' ? (
+        <MainMenu
+          onStartDaily={handleStartDaily}
+          onStartPractice={handleStartPractice}
+          onOpenBugdex={() => setShowBugdexModal(true)}
+          onOpenLeaderboard={() => setShowLeaderboardModal(true)}
+          onOpenStats={() => setShowStatsModal(true)}
+          onOpenProfile={() => setShowProfileModal(true)}
+          onOpenHelp={() => setShowHelpModal(true)}
+          onOpenAuth={() => setShowAuthModal(true)}
+          onOpenInstall={() => setShowInstallModal(true)}
+          isStandalone={isStandalone}
+          user={user}
+          profile={profile}
+          progression={progression}
+          currentAvatarObj={currentAvatarObj}
+          stats={stats}
+          unlockedBugIds={unlockedBugIds}
+          totalBugsCount={microbes.length}
+          dailyInfo={dailyInfo}
+          countdown={countdown}
+          dailyGameState={dailyGameState}
+          isMuted={isMuted}
+          onToggleMute={toggleMute}
+          cloudSynced={cloudSynced}
+        />
+      ) : (
+        <>
+          {/* Top Navbar */}
+          <header className="w-full max-w-4xl border-b border-slate-800 pb-4 mb-6 flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              {/* Back to Menu Button */}
+              <button
+                onClick={() => setCurrentScreen('menu')}
+                className="p-2 md:px-3 md:py-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-emerald-500/50 hover:bg-slate-800 text-slate-300 hover:text-white transition flex items-center gap-1.5 text-xs font-semibold shadow-sm shrink-0"
+                title="Return to Main Menu"
+              >
+                <ArrowLeft className="w-4 h-4 text-emerald-400" />
+                <span className="hidden sm:inline">Menu</span>
+              </button>
+
+              <div 
+                onClick={() => setCurrentScreen('menu')}
+                className="flex items-center gap-3 cursor-pointer group"
+                title="Return to Main Menu"
+              >
+                <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl overflow-hidden border border-emerald-500/40 shadow-lg shadow-emerald-950/50 shrink-0 bg-slate-900 group-hover:border-emerald-400 transition-all duration-300 group-hover:scale-105 ring-2 ring-emerald-500/20 flex items-center justify-center">
+                  <img 
+                    src="./apple-touch-icon.png" 
+                    alt="Microbledle Logo" 
+                    className="w-full h-full object-cover rounded-2xl" 
+                  />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h1 className="text-2xl md:text-3xl font-black tracking-tight bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent group-hover:opacity-90 transition">
+                      MICROBLEDLE
+                    </h1>
+                    {isPractice && (
+                      <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-400 border border-cyan-800">
+                        Practice
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-3 text-xs text-slate-400 mt-0.5">
+                    <span className="flex items-center gap-1">
+                      <Calendar className="w-3.5 h-3.5 text-slate-500" />
+                      {isPractice ? 'Free Practice' : dateStr}
+                    </span>
+                    {!isPractice && (
+                      <span className="flex items-center gap-1 text-slate-400 bg-slate-900 px-2 py-0.5 rounded-full border border-slate-800">
+                        <Clock className="w-3 h-3 text-emerald-400" />
+                        Next in <span className="font-mono text-emerald-300 font-semibold">{countdown}</span>
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="flex items-center gap-3 text-xs text-slate-400 mt-0.5">
-              <span className="flex items-center gap-1">
-                <Calendar className="w-3.5 h-3.5 text-slate-500" />
-                {isPractice ? 'Free Practice' : dateStr}
-              </span>
-              {!isPractice && (
-                <span className="flex items-center gap-1 text-slate-400 bg-slate-900 px-2 py-0.5 rounded-full border border-slate-800">
-                  <Clock className="w-3 h-3 text-emerald-400" />
-                  Next in <span className="font-mono text-emerald-300 font-semibold">{countdown}</span>
-                </span>
-              )}
-            </div>
-          </div>
-        </div>
 
         {/* Right Action Bar */}
         <div className="flex items-center gap-2 flex-wrap">
@@ -1244,6 +1333,8 @@ export default function App() {
           </div>
         </div>
       </main>
+      </>
+      )}
 
       {/* Outcome & Statistics Modal */}
       {showStatsModal && (
@@ -1459,6 +1550,18 @@ export default function App() {
                   <RotateCcw className="w-4 h-4" /> Next Practice Organism
                 </button>
               )}
+
+              {/* Return to Main Menu button */}
+              <button
+                onClick={() => {
+                  setShowStatsModal(false);
+                  setCurrentScreen('menu');
+                }}
+                className="w-full py-2.5 bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-slate-300 hover:text-white font-semibold rounded-2xl flex items-center justify-center gap-2 transition text-xs"
+              >
+                <ArrowLeft className="w-4 h-4 text-emerald-400" />
+                <span>Return to Main Menu</span>
+              </button>
             </div>
           </div>
         </div>
