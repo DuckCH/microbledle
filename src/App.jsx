@@ -678,7 +678,15 @@ export default function App() {
 
           let guestId = localStorage.getItem('microbledle_guest_id');
           if (!guestId) {
-            guestId = 'guest_' + Math.random().toString(36).substring(2, 9);
+            if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+              guestId = 'guest_' + crypto.randomUUID();
+            } else if (typeof crypto !== 'undefined' && typeof crypto.getRandomValues === 'function') {
+              const buf = new Uint8Array(8);
+              crypto.getRandomValues(buf);
+              guestId = 'guest_' + Array.from(buf, b => b.toString(16).padStart(2, '0')).join('');
+            } else {
+              guestId = 'guest_' + Date.now().toString(36);
+            }
             localStorage.setItem('microbledle_guest_id', guestId);
           }
           const activeUid = user ? user.uid : guestId;

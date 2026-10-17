@@ -42,14 +42,8 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 
-  // Skip non-GET requests and external API calls (Firebase, Google APIs)
-  if (
-    event.request.method !== 'GET' || 
-    url.origin.includes('firestore.googleapis.com') ||
-    url.origin.includes('identitytoolkit.googleapis.com') ||
-    url.origin.includes('firebaseinstallations.googleapis.com') ||
-    url.origin.includes('google-analytics.com')
-  ) {
+  // Only cache same-origin GET requests; skip external API calls (Firebase, Google APIs, Analytics)
+  if (event.request.method !== 'GET' || url.origin !== self.location.origin) {
     return;
   }
 
