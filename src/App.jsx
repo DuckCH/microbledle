@@ -6,7 +6,7 @@ import {
   Microscope, Stethoscope, Dna, FlaskConical, Award, Flame,
   Check, Calendar, Shuffle, Volume2, VolumeX, Clock, TestTube2,
   BookOpen, User, LogOut, Cloud, ShieldCheck, Smartphone, Pill,
-  ArrowLeft, Home
+  ArrowLeft, Home, Sun, Moon, FileText
 } from 'lucide-react';
 import microbes from './data/microbes.json';
 import { playTileSound, playSelectSound, playWinSound, playDefeatSound } from './utils/audio';
@@ -18,6 +18,7 @@ import LeaderboardModal from './components/LeaderboardModal';
 import InstallModal from './components/InstallModal';
 import RxChallenge from './components/RxChallenge';
 import MainMenu from './components/MainMenu';
+import DischargeCardModal from './components/DischargeCardModal';
 import { 
   auth, 
   logoutUser, 
@@ -227,6 +228,7 @@ export default function App() {
   const [gameOver, setGameOver] = useState(false);
   const [won, setWon] = useState(false);
   const [showStatsModal, setShowStatsModal] = useState(false);
+  const [showDischargeModal, setShowDischargeModal] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
   const [showBugdexModal, setShowBugdexModal] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -235,6 +237,30 @@ export default function App() {
   const [showInstallModal, setShowInstallModal] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [isStandalone, setIsStandalone] = useState(false);
+
+  // Theme Management (Light / Dark mode, default to dark or saved preference)
+  const [theme, setTheme] = useState(() => {
+    const saved = localStorage.getItem('microbledle_theme');
+    if (saved === 'light' || saved === 'dark') return saved;
+    return (typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: light)').matches) ? 'light' : 'dark';
+  });
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (theme === 'dark') {
+      root.classList.add('dark');
+      root.classList.remove('light');
+    } else {
+      root.classList.add('light');
+      root.classList.remove('dark');
+    }
+    localStorage.setItem('microbledle_theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
+  };
+
   const isIos = useMemo(() => {
     return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
   }, []);
@@ -791,16 +817,16 @@ export default function App() {
   const getTileStyles = (status) => {
     switch (status) {
       case 'exact':
-        return 'bg-emerald-600/90 border-emerald-500 text-white shadow-emerald-950/40 shadow-sm';
+        return 'bg-emerald-600 border-emerald-500 text-white shadow-emerald-950/40 shadow-sm';
       case 'partial':
-        return 'bg-amber-600/90 border-amber-500 text-white shadow-amber-950/40 shadow-sm';
+        return 'bg-amber-600 border-amber-500 text-white shadow-amber-950/40 shadow-sm';
       default:
-        return 'bg-slate-800/90 border-slate-700 text-slate-300';
+        return 'bg-slate-200 dark:bg-slate-800/90 border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300';
     }
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center p-3 md:p-6 selection:bg-emerald-500 selection:text-white">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col items-center p-3 md:p-6 selection:bg-emerald-500 selection:text-white transition-colors duration-200">
       {currentScreen === 'menu' ? (
         <MainMenu
           onStartDaily={handleStartDaily}
@@ -826,19 +852,21 @@ export default function App() {
           isMuted={isMuted}
           onToggleMute={toggleMute}
           cloudSynced={cloudSynced}
+          theme={theme}
+          onToggleTheme={toggleTheme}
         />
       ) : (
         <>
           {/* Top Navbar */}
-          <header className="w-full max-w-4xl border-b border-slate-800 pb-4 mb-6 flex flex-wrap items-center justify-between gap-4">
+          <header className="w-full max-w-4xl border-b border-slate-200 dark:border-slate-800 pb-4 mb-6 flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               {/* Back to Menu Button */}
               <button
                 onClick={() => setCurrentScreen('menu')}
-                className="p-2 md:px-3 md:py-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-emerald-500/50 hover:bg-slate-800 text-slate-300 hover:text-white transition flex items-center gap-1.5 text-xs font-semibold shadow-sm shrink-0"
+                className="p-2 md:px-3 md:py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500/50 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-white transition flex items-center gap-1.5 text-xs font-semibold shadow-sm shrink-0"
                 title="Return to Main Menu"
               >
-                <ArrowLeft className="w-4 h-4 text-emerald-400" />
+                <ArrowLeft className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
                 <span className="hidden sm:inline">Menu</span>
               </button>
 
@@ -847,7 +875,7 @@ export default function App() {
                 className="flex items-center gap-3 cursor-pointer group"
                 title="Return to Main Menu"
               >
-                <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl overflow-hidden border border-emerald-500/40 shadow-lg shadow-emerald-950/50 shrink-0 bg-slate-900 group-hover:border-emerald-400 transition-all duration-300 group-hover:scale-105 ring-2 ring-emerald-500/20 flex items-center justify-center">
+                <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl overflow-hidden border border-emerald-500/40 shadow-lg shadow-emerald-500/10 dark:shadow-emerald-950/50 shrink-0 bg-white dark:bg-slate-900 group-hover:border-emerald-400 transition-all duration-300 group-hover:scale-105 ring-2 ring-emerald-500/20 flex items-center justify-center">
                   <img 
                     src="./apple-touch-icon.png" 
                     alt="Microbledle Logo" 
@@ -856,24 +884,24 @@ export default function App() {
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <h1 className="text-2xl md:text-3xl font-black tracking-tight bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent group-hover:opacity-90 transition">
+                    <h1 className="text-2xl md:text-3xl font-black tracking-tight bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500 dark:from-emerald-400 dark:via-teal-300 dark:to-cyan-400 bg-clip-text text-transparent group-hover:opacity-90 transition">
                       MICROBLEDLE
                     </h1>
                     {isPractice && (
-                      <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-400 border border-cyan-800">
+                      <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-cyan-100 dark:bg-cyan-950 text-cyan-700 dark:text-cyan-400 border border-cyan-200 dark:border-cyan-800">
                         Practice
                       </span>
                     )}
                   </div>
-                  <div className="flex items-center gap-3 text-xs text-slate-400 mt-0.5">
+                  <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                     <span className="flex items-center gap-1">
-                      <Calendar className="w-3.5 h-3.5 text-slate-500" />
+                      <Calendar className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
                       {isPractice ? 'Practice' : dateStr}
                     </span>
                     {!isPractice && (
-                      <span className="flex items-center gap-1 text-slate-400 bg-slate-900 px-2 py-0.5 rounded-full border border-slate-800">
-                        <Clock className="w-3 h-3 text-emerald-400" />
-                        Next in <span className="font-mono text-emerald-300 font-semibold">{countdown}</span>
+                      <span className="flex items-center gap-1 text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-900 px-2 py-0.5 rounded-full border border-slate-200 dark:border-slate-800">
+                        <Clock className="w-3 h-3 text-emerald-500 dark:text-emerald-400" />
+                        Next in <span className="font-mono text-emerald-600 dark:text-emerald-300 font-semibold">{countdown}</span>
                       </span>
                     )}
                   </div>
@@ -994,9 +1022,18 @@ export default function App() {
             </button>
           )}
 
+          {/* Theme Toggle Button */}
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-amber-400/60 text-slate-700 dark:text-slate-300 hover:text-amber-500 dark:hover:text-amber-400 transition shadow-sm"
+            title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+          >
+            {theme === 'dark' ? <Sun className="w-5 h-5 text-amber-400" /> : <Moon className="w-5 h-5 text-indigo-500" />}
+          </button>
+
           <button
             onClick={() => setShowHelpModal(true)}
-            className="p-2 rounded-xl bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-300 hover:text-emerald-400 transition"
+            className="p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition shadow-sm"
             title="How to play"
           >
             <HelpCircle className="w-5 h-5" />
@@ -1520,22 +1557,34 @@ export default function App() {
             {/* Action buttons */}
             <div className="space-y-2">
               {gameOver && (
-                <button
-                  onClick={copyEmojiGrid}
-                  className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 font-bold rounded-2xl flex items-center justify-center gap-2 text-white shadow-lg shadow-emerald-900/40 transition active:scale-[0.99]"
-                >
-                  {copied ? (
-                    <>
-                      <Check className="w-5 h-5 text-white" />
-                      Copied Spoiler-Free Grid!
-                    </>
-                  ) : (
-                    <>
-                      <Share2 className="w-5 h-5" />
-                      Share Diagnostic Grid
-                    </>
-                  )}
-                </button>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {/* Export Visual Graphic Discharge Card Button */}
+                  <button
+                    onClick={() => setShowDischargeModal(true)}
+                    className="w-full py-3.5 px-4 bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 font-bold rounded-2xl flex items-center justify-center gap-2 text-white shadow-lg shadow-emerald-950/40 transition active:scale-[0.99] text-xs sm:text-sm"
+                  >
+                    <FileText className="w-4 h-4" />
+                    <span>Export Discharge Card</span>
+                  </button>
+
+                  {/* Copy Text Grid Button */}
+                  <button
+                    onClick={copyEmojiGrid}
+                    className="w-full py-3.5 px-4 bg-slate-800 hover:bg-slate-750 border border-slate-700 font-bold rounded-2xl flex items-center justify-center gap-2 text-slate-100 transition active:scale-[0.99] text-xs sm:text-sm"
+                  >
+                    {copied ? (
+                      <>
+                        <Check className="w-4 h-4 text-emerald-400" />
+                        <span>Copied Text Grid!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Share2 className="w-4 h-4" />
+                        <span>Share Emoji Grid</span>
+                      </>
+                    )}
+                  </button>
+                </div>
               )}
 
               {/* View Global Leaderboard Button */}
@@ -1675,6 +1724,21 @@ export default function App() {
         onInstallClick={handleInstallClick}
         canInstallPrompt={Boolean(deferredPrompt)}
         isIos={isIos}
+      />
+
+      {/* Visual Clinical Discharge Summary Report Modal (Canvas Graphic) */}
+      <DischargeCardModal
+        isOpen={showDischargeModal}
+        onClose={() => setShowDischargeModal(false)}
+        target={target}
+        guesses={guesses}
+        won={won}
+        isPractice={isPractice}
+        dateStr={dateStr}
+        profile={profile}
+        progression={progression}
+        stats={stats}
+        theme={theme}
       />
     </div>
   );
