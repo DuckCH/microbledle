@@ -68,14 +68,17 @@ function useUtcCountdown() {
   return timeLeft;
 }
 
-// Gram stain badge helper
+// Diagnostic category / Gram stain badge helper
 function getGramBadge(gram) {
   const g = gram.toLowerCase();
-  if (g.includes('positive')) {
-    return { bg: 'bg-purple-950/70 border-purple-700/60 text-purple-300', dot: 'bg-purple-400', label: 'Gram +' };
+  if (g.includes('virus') || g.includes('viral') || g.includes('rna') || g.includes('dna')) {
+    return { bg: 'bg-emerald-950/70 border-emerald-700/60 text-emerald-300', dot: 'bg-emerald-400', label: 'Virus' };
   }
-  if (g.includes('negative')) {
-    return { bg: 'bg-rose-950/70 border-rose-700/60 text-rose-300', dot: 'bg-rose-400', label: 'Gram −' };
+  if (g.includes('parasite') || g.includes('protozo') || g.includes('flagellate') || g.includes('amoeba')) {
+    return { bg: 'bg-teal-950/70 border-teal-700/60 text-teal-300', dot: 'bg-teal-400', label: 'Parasite' };
+  }
+  if (g.includes('fungal') || g.includes('fungi') || g.includes('yeast') || g.includes('mold')) {
+    return { bg: 'bg-amber-950/70 border-amber-700/60 text-amber-300', dot: 'bg-amber-400', label: 'Fungi' };
   }
   if (g.includes('acid-fast')) {
     return { bg: 'bg-red-950/70 border-red-700/60 text-red-300', dot: 'bg-red-400', label: 'Acid-Fast' };
@@ -83,7 +86,16 @@ function getGramBadge(gram) {
   if (g.includes('spirochete')) {
     return { bg: 'bg-cyan-950/70 border-cyan-700/60 text-cyan-300', dot: 'bg-cyan-400', label: 'Spirochete' };
   }
-  return { bg: 'bg-amber-950/70 border-amber-700/60 text-amber-300', dot: 'bg-amber-400', label: 'Fungi' };
+  if (g.includes('no cell wall') || g.includes('atypical') || g.includes('intracellular')) {
+    return { bg: 'bg-indigo-950/70 border-indigo-700/60 text-indigo-300', dot: 'bg-indigo-400', label: 'Atypical' };
+  }
+  if (g.includes('positive')) {
+    return { bg: 'bg-purple-950/70 border-purple-700/60 text-purple-300', dot: 'bg-purple-400', label: 'Gram +' };
+  }
+  if (g.includes('negative')) {
+    return { bg: 'bg-rose-950/70 border-rose-700/60 text-rose-300', dot: 'bg-rose-400', label: 'Gram −' };
+  }
+  return { bg: 'bg-slate-800/70 border-slate-700/60 text-slate-300', dot: 'bg-slate-400', label: 'Microbe' };
 }
 
 // Comparison evaluator logic for the 5 diagnostic columns
@@ -98,7 +110,21 @@ function evaluateGuess(guess, target) {
     (guessTax.includes('firmicutes') && targetTax.includes('firmicutes')) ||
     (guessTax.includes('pseudomonadota') && targetTax.includes('pseudomonadota')) ||
     (guessTax.includes('gram-positive') && targetTax.includes('gram-positive')) ||
-    (guessTax.includes('gram-negative') && targetTax.includes('gram-negative'))
+    (guessTax.includes('gram-negative') && targetTax.includes('gram-negative')) ||
+    (guessTax.includes('virus') && targetTax.includes('virus')) ||
+    (guessTax.includes('fungi') && targetTax.includes('fungi')) ||
+    (guessTax.includes('parasite') && targetTax.includes('parasite')) ||
+    (guessTax.includes('protozoa') && targetTax.includes('protozoa')) ||
+    (guessTax.includes('spirochaetota') && targetTax.includes('spirochaetota')) ||
+    (guessTax.includes('spirochete') && targetTax.includes('spirochete')) ||
+    (guessTax.includes('ascomycota') && targetTax.includes('ascomycota')) ||
+    (guessTax.includes('apicomplexa') && targetTax.includes('apicomplexa')) ||
+    (guessTax.includes('flaviviridae') && targetTax.includes('flaviviridae')) ||
+    (guessTax.includes('retroviridae') && targetTax.includes('retroviridae')) ||
+    (guessTax.includes('herpesviridae') && targetTax.includes('herpesviridae')) ||
+    (guessTax.includes('orthomyxoviridae') && targetTax.includes('orthomyxoviridae')) ||
+    (guessTax.includes('rhabdoviridae') && targetTax.includes('rhabdoviridae')) ||
+    (guessTax.includes('pneumoviridae') && targetTax.includes('pneumoviridae'))
   ) {
     taxStatus = 'partial';
   }
@@ -119,7 +145,8 @@ function evaluateGuess(guess, target) {
     respStatus = 'exact';
   } else if (
     (guess.respiration.includes('Anaerobe') && target.respiration.includes('Anaerobe')) ||
-    (guess.respiration.includes('Aerobe') && target.respiration.includes('Aerobe'))
+    (guess.respiration.includes('Aerobe') && target.respiration.includes('Aerobe')) ||
+    (guess.respiration.toLowerCase().includes('intracellular') && target.respiration.toLowerCase().includes('intracellular'))
   ) {
     respStatus = 'partial';
   }

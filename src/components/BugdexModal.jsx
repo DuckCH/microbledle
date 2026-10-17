@@ -8,11 +8,14 @@ import microbes from '../data/microbes.json';
 
 function getGramBadge(gram) {
   const g = gram.toLowerCase();
-  if (g.includes('positive')) {
-    return { bg: 'bg-purple-950/70 border-purple-700/60 text-purple-300', dot: 'bg-purple-400', label: 'Gram +' };
+  if (g.includes('virus') || g.includes('viral') || g.includes('rna') || g.includes('dna')) {
+    return { bg: 'bg-emerald-950/70 border-emerald-700/60 text-emerald-300', dot: 'bg-emerald-400', label: 'Virus' };
   }
-  if (g.includes('negative')) {
-    return { bg: 'bg-rose-950/70 border-rose-700/60 text-rose-300', dot: 'bg-rose-400', label: 'Gram −' };
+  if (g.includes('parasite') || g.includes('protozo') || g.includes('flagellate') || g.includes('amoeba')) {
+    return { bg: 'bg-teal-950/70 border-teal-700/60 text-teal-300', dot: 'bg-teal-400', label: 'Parasite' };
+  }
+  if (g.includes('fungal') || g.includes('fungi') || g.includes('yeast') || g.includes('mold')) {
+    return { bg: 'bg-amber-950/70 border-amber-700/60 text-amber-300', dot: 'bg-amber-400', label: 'Fungi' };
   }
   if (g.includes('acid-fast')) {
     return { bg: 'bg-red-950/70 border-red-700/60 text-red-300', dot: 'bg-red-400', label: 'Acid-Fast' };
@@ -20,7 +23,16 @@ function getGramBadge(gram) {
   if (g.includes('spirochete')) {
     return { bg: 'bg-cyan-950/70 border-cyan-700/60 text-cyan-300', dot: 'bg-cyan-400', label: 'Spirochete' };
   }
-  return { bg: 'bg-amber-950/70 border-amber-700/60 text-amber-300', dot: 'bg-amber-400', label: 'Fungi' };
+  if (g.includes('no cell wall') || g.includes('atypical') || g.includes('intracellular')) {
+    return { bg: 'bg-indigo-950/70 border-indigo-700/60 text-indigo-300', dot: 'bg-indigo-400', label: 'Atypical' };
+  }
+  if (g.includes('positive')) {
+    return { bg: 'bg-purple-950/70 border-purple-700/60 text-purple-300', dot: 'bg-purple-400', label: 'Gram +' };
+  }
+  if (g.includes('negative')) {
+    return { bg: 'bg-rose-950/70 border-rose-700/60 text-rose-300', dot: 'bg-rose-400', label: 'Gram −' };
+  }
+  return { bg: 'bg-slate-800/70 border-slate-700/60 text-slate-300', dot: 'bg-slate-400', label: 'Microbe' };
 }
 
 export default function BugdexModal({ isOpen, onClose, unlockedBugIds = [] }) {
@@ -31,18 +43,43 @@ export default function BugdexModal({ isOpen, onClose, unlockedBugIds = [] }) {
 
   const unlockedSet = useMemo(() => new Set(unlockedBugIds), [unlockedBugIds]);
 
-  const filterOptions = ['All', 'Gram-Positive', 'Gram-Negative', 'Acid-Fast', 'Fungi', 'Spirochete'];
+  const filterOptions = [
+    'All', 
+    'Bacteria', 
+    'Viruses', 
+    'Fungi', 
+    'Parasites', 
+    'Gram +', 
+    'Gram −', 
+    'Acid-Fast', 
+    'Spirochete'
+  ];
 
   const filteredMicrobes = useMemo(() => {
     return microbes.filter(bug => {
       // Filter category
       if (activeFilter !== 'All') {
         const gram = bug.morphology.gram.toLowerCase();
-        if (activeFilter === 'Gram-Positive' && !gram.includes('positive')) return false;
-        if (activeFilter === 'Gram-Negative' && !gram.includes('negative')) return false;
-        if (activeFilter === 'Acid-Fast' && !gram.includes('acid-fast')) return false;
-        if (activeFilter === 'Fungi' && !gram.includes('fungal')) return false;
-        if (activeFilter === 'Spirochete' && !gram.includes('spirochete')) return false;
+        const tax = bug.taxonomy.toLowerCase();
+
+        if (activeFilter === 'Bacteria') {
+          const isNonBacterial = tax.includes('virus') || tax.includes('fungi') || tax.includes('parasite') || tax.includes('apicomplexa') || tax.includes('metamonada') || tax.includes('amoebozoa') || tax.includes('ascomycota') || tax.includes('basidiomycota') || gram.includes('viral') || gram.includes('fungal') || gram.includes('parasite');
+          if (isNonBacterial) return false;
+        } else if (activeFilter === 'Viruses') {
+          if (!tax.includes('virus') && !gram.includes('viral')) return false;
+        } else if (activeFilter === 'Fungi') {
+          if (!tax.includes('fungi') && !tax.includes('ascomycota') && !tax.includes('basidiomycota') && !gram.includes('fungal')) return false;
+        } else if (activeFilter === 'Parasites') {
+          if (!tax.includes('parasite') && !tax.includes('protozoa') && !tax.includes('apicomplexa') && !tax.includes('metamonada') && !tax.includes('amoebozoa') && !gram.includes('parasite')) return false;
+        } else if (activeFilter === 'Gram +') {
+          if (!gram.includes('positive')) return false;
+        } else if (activeFilter === 'Gram −') {
+          if (!gram.includes('negative')) return false;
+        } else if (activeFilter === 'Acid-Fast') {
+          if (!gram.includes('acid-fast')) return false;
+        } else if (activeFilter === 'Spirochete') {
+          if (!gram.includes('spirochete') && !tax.includes('spirochaetota')) return false;
+        }
       }
 
       // Search term

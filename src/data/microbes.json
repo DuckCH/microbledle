@@ -358,5 +358,445 @@
     "virulence": "Cytolethal distending toxin (CDT) causes DNA damage and cell cycle arrest; molecular mimicry between LOS and host gangliosides (GM1) triggers Guillain-Barré syndrome.",
     "transmission": "Undercooked poultry, unpasteurized milk, contaminated water, contact with infected domestic puppies.",
     "buzzwords": "Seagull-wing shaped, Grows at 42°C ('Campers like hot campfires'), Guillain-Barré syndrome (ascending paralysis), Reactive arthritis."
+  },
+  {
+    "id": "dengue",
+    "name": "Dengue virus",
+    "commonName": "Dengue / Breakbone Virus",
+    "taxonomy": "Flaviviridae (ssRNA+ Virus)",
+    "morphology": {
+      "gram": "Viral (ssRNA Enveloped)",
+      "shape": "Icosahedral spherical"
+    },
+    "respiration": "Obligate Intracellular",
+    "keyTest": "NS1 Antigen ELISA, RT-PCR, Tourniquet test (+), Severe Thrombocytopenia",
+    "tropism": "Bone Marrow, Endothelium, Liver, Reticuloendothelial",
+    "firstLineRx": "Supportive hydration (judicious IV fluids), Acetaminophen (Avoid NSAIDs/Aspirin)",
+    "smear": "Viruses cannot be resolved on standard light microscopy; electron microscopy demonstrates spherical enveloped virions (~50 nm) with icosahedral capsid symmetry.",
+    "culture": "Cultured in mosquito cell lines (C6/36) or Vero cells; diagnosed clinically via NS1 viral antigen capture or serum RT-PCR in early acute phase.",
+    "vignette": "A 24-year-old traveler returning from Southeast Asia presents with severe retro-orbital headache, 40°C saddleback fever, severe generalized arthralgia and myalgia ('breakbone fever'), petechiae upon blood pressure cuff inflation, and platelet count of 42,000/µL.",
+    "virulence": "Antibody-dependent enhancement (ADE) by sub-neutralizing heterotypic antibodies from prior infection promotes severe Dengue Hemorrhagic Fever / Shock Syndrome; NS1 causes capillary leak.",
+    "transmission": "Bite of diurnal Aedes aegypti / Aedes albopictus mosquitoes.",
+    "buzzwords": "Breakbone fever, Retro-orbital pain, Tourniquet test (+), Aedes mosquito, Antibody-dependent enhancement (ADE), Plasma leak."
+  },
+  {
+    "id": "rabies",
+    "name": "Rabies lyssavirus",
+    "commonName": "Rabies Virus",
+    "taxonomy": "Rhabdoviridae (ssRNA- Virus)",
+    "morphology": {
+      "gram": "Viral (ssRNA Enveloped)",
+      "shape": "Bullet-shaped"
+    },
+    "respiration": "Obligate Intracellular",
+    "keyTest": "Negri bodies (eosinophilic cytoplasmic inclusions), RT-PCR of saliva/nuchal skin, Direct fluorescent antibody (DFA)",
+    "tropism": "Peripheral Nerves, CNS (Limbic system / Hippocampus / Purkinje cells), Salivary Glands",
+    "firstLineRx": "Post-exposure prophylaxis: Rabies Immunoglobulin (HRIG) wound infiltration + 4-dose Inactivated Vaccine (days 0, 3, 7, 14)",
+    "smear": "Histopathology reveals pathognomonic round, eosinophilic cytoplasmic Negri inclusion bodies in cerebellar Purkinje cells and hippocampal pyramidal neurons.",
+    "culture": "Confirmed via direct fluorescent antibody (DFA) testing on frozen brain tissue or reverse-transcriptase PCR of saliva or full-thickness nuchal skin biopsy.",
+    "vignette": "A 32-year-old caver presents with agitation, autonomic instability, excruciating pharyngeal spasms triggered by trying to drink a glass of water (hydrophobia), hypersalivation, and bizarre behavior 6 weeks after waking with a bat in the bedroom.",
+    "virulence": "Glycoprotein G binds nicotinic acetylcholine receptors (nAChR) at neuromuscular junction; travels by retrograde axonal transport along peripheral nerves (dynein motor) into dorsal root ganglia and CNS.",
+    "transmission": "Bite or scratch from infected animals (bats #1 in USA, dogs #1 worldwide, raccoons, skunks, foxes).",
+    "buzzwords": "Bullet-shaped virion, Negri bodies in Purkinje cells, Hydrophobia & aerophobia, Retrograde dynein axonal transport, 100% case fatality once symptoms appear."
+  },
+  {
+    "id": "hiv",
+    "name": "Human immunodeficiency virus 1",
+    "commonName": "HIV-1",
+    "taxonomy": "Retroviridae (ssRNA+ Diploid Virus)",
+    "morphology": {
+      "gram": "Viral (ssRNA Enveloped)",
+      "shape": "Conical capsid spherical"
+    },
+    "respiration": "Obligate Intracellular",
+    "keyTest": "4th gen HIV-1/2 Antigen/Antibody combination immunoassay (p24), Confirmatory differentiation assay, Quantitative HIV-RNA PCR",
+    "tropism": "Immune System (CD4+ T Cells, Macrophages, Dendritic cells)",
+    "firstLineRx": "Combination Antiretroviral Therapy (cART): 2 NRTIs (e.g. Tenofovir + Emtricitabine) + 1 INSTI (e.g. Bictegravir / Dolutegravir)",
+    "smear": "Electron microscopy reveals spherical enveloped virion containing unique truncated cone-shaped capsid core composed of p24 major capsid protein.",
+    "culture": "Screened with 4th generation antigen/antibody combo immunoassay detecting both p24 capsid antigen and anti-HIV IgM/IgG; viral load quantified by real-time RT-PCR.",
+    "vignette": "A 34-year-old male presents with persistent oral candidiasis, chronic diarrhea, 15-pound weight loss, and diffuse lymphadenopathy; laboratory workup reveals CD4+ count of 140 cells/µL.",
+    "virulence": "gp120 binds CD4 and chemokine co-receptors (CCR5 for macrophage-tropic, CXCR4 for T-cell-tropic); gp41 mediates viral membrane fusion; reverse transcriptase lacks proofreading leading to rapid mutational escape.",
+    "transmission": "Sexual contact, parenteral inoculation (blood transfusion, shared IV needles), vertical transmission (transplacental, intrapartum, breastfeeding).",
+    "buzzwords": "gp120 / gp41, p24 capsid antigen, CCR5 mutation (homozygous Δ32 confers resistance), Opportunistic infections when CD4 < 200, Retroviral diploid RNA."
+  },
+  {
+    "id": "influenza",
+    "name": "Influenza A virus",
+    "commonName": "Flu Virus",
+    "taxonomy": "Orthomyxoviridae (ssRNA- Segmented Virus)",
+    "morphology": {
+      "gram": "Viral (ssRNA Enveloped)",
+      "shape": "Pleomorphic spherical"
+    },
+    "respiration": "Obligate Intracellular",
+    "keyTest": "Rapid molecular NAAT / RT-PCR, Rapid Influenza Diagnostic Antigen Test (RIDT)",
+    "tropism": "Respiratory Tract (Ciliated Epithelium)",
+    "firstLineRx": "Oseltamivir (oral neuraminidase inhibitor) or Baloxavir marboxil (cap-dependent endonuclease inhibitor)",
+    "smear": "Enveloped helical nucleocapsid virus possessing 8 negative-sense, single-stranded RNA gene segments studded with hemagglutinin and neuraminidase glycoprotein spikes.",
+    "culture": "Propagated in embryonated chicken eggs or Madin-Darby canine kidney (MDCK) cells; diagnostic confirmation achieved within hours via multiplex respiratory PCR panel.",
+    "vignette": "In January, a 42-year-old schoolteacher presents with sudden onset of 39.4°C fever, severe diffuse body myalgias, prominent retrosternal burning chest pain, non-productive cough, and prostration.",
+    "virulence": "Hemagglutinin (HA) binds sialic acid receptors promoting viral endocytosis; Neuraminidase (NA) cleaves sialic acid to release progeny virions; Antigenic drift (point mutations) causes seasonal epidemics; Antigenic shift (segment reassortment) causes global pandemics.",
+    "transmission": "Respiratory droplets and contaminated fomites; secondary bacterial superinfection with S. aureus or S. pneumoniae can cause fatal pneumonia.",
+    "buzzwords": "8 RNA segments, Hemagglutinin & Neuraminidase, Antigenic drift (mutations) vs Shift (reassortment), Secondary S. aureus pneumonia, Oseltamivir."
+  },
+  {
+    "id": "hsv1",
+    "name": "Herpes simplex virus 1",
+    "commonName": "HSV-1",
+    "taxonomy": "Herpesviridae (dsDNA Enveloped Virus)",
+    "morphology": {
+      "gram": "Viral (dsDNA Enveloped)",
+      "shape": "Icosahedral spherical"
+    },
+    "respiration": "Obligate Intracellular",
+    "keyTest": "CSF / Lesion PCR, Tzanck smear (multinucleated giant cells), Cowdry A intranuclear inclusions",
+    "tropism": "Oral Mucosa, Trigeminal Ganglia (Latency), Temporal Lobes (Encephalitis)",
+    "firstLineRx": "Oral / IV Acyclovir or Valacyclovir",
+    "smear": "Tzanck prep of unroofed vesicle base demonstrates multinucleated giant cells with molding and ground-glass nuclei containing eosinophilic Cowdry A intranuclear inclusion bodies.",
+    "culture": "Rapid cytopathic effect on human diploid fibroblast monolayers showing ballooning degeneration; PCR is gold standard for CSF and mucocutaneous specimens.",
+    "vignette": "A 50-year-old woman develops fever, olfactory hallucinations, bizarre behavioral changes, and focal seizures; brain MRI shows hyperintensity restricted to the left frontotemporal lobe, and CSF PCR is diagnostic.",
+    "virulence": "Enters latency in sensory nerve ganglia (trigeminal ganglia for HSV-1); reactivated by physical or emotional stress, fever, UV light, or immunosuppression; downregulates MHC Class I expression.",
+    "transmission": "Direct contact with infectious saliva or vesicular fluid (cold sores, gingivostomatitis, keratoconjunctivitis).",
+    "buzzwords": "Temporal lobe encephalitis, Cowdry A inclusion bodies, Tzanck smear multinucleated giant cells, Trigeminal ganglion latency, Gingivostomatitis."
+  },
+  {
+    "id": "rsv",
+    "name": "Respiratory syncytial virus",
+    "commonName": "RSV",
+    "taxonomy": "Pneumoviridae (ssRNA- Virus)",
+    "morphology": {
+      "gram": "Viral (ssRNA Enveloped)",
+      "shape": "Pleomorphic spherical"
+    },
+    "respiration": "Obligate Intracellular",
+    "keyTest": "Multiplex respiratory viral PCR panel, Rapid antigen detection",
+    "tropism": "Respiratory Tract (Bronchioles, Alveoli)",
+    "firstLineRx": "Supportive oxygenation & hydration (Palivizumab monoclonal antibody prophylaxis for premature infants; Nirsevimab; Ribavirin for severe SCID)",
+    "smear": "Enveloped single-stranded negative-sense RNA virus expressing surface Fusion (F) protein and Glycoprotein (G).",
+    "culture": "Inoculation in tissue culture leads to characteristic syncytia formation (large multinucleated giant cells from cell-to-cell fusion).",
+    "vignette": "A 3-month-old infant in winter presents with low-grade fever, rhinorrhea, severe wheezing, tachypnea (68 breaths/min), and intercostal retractions; CXR shows hyperinflation with peribronchial cuffing.",
+    "virulence": "Fusion (F) protein induces syncytium formation causing mucosal sloughing, epithelial necrosis, and micro-plugging of infant bronchioles with mucus and fibrin.",
+    "transmission": "Respiratory droplets and fomites in daycare centers; #1 cause of fatal bronchiolitis and pneumonia in infants under 1 year of age.",
+    "buzzwords": "F protein syncytia formation, #1 cause of bronchiolitis in infants, Palivizumab monoclonal antibody, Winter epidemics, Hyperinflation on chest radiograph."
+  },
+  {
+    "id": "pfalciparum",
+    "name": "Plasmodium falciparum",
+    "commonName": "Malignant Tertian Malaria",
+    "taxonomy": "Apicomplexa (Parasite / Protozoa)",
+    "morphology": {
+      "gram": "Parasite (Protozoan)",
+      "shape": "Ring-form trophozoite & Banana gametocyte"
+    },
+    "respiration": "Microaerophilic",
+    "keyTest": "Giemsa-stained thin & thick blood smears, Rapid Antigen Test (BinaxNOW / PfHRP2)",
+    "tropism": "Bloodstream (Erythrocytes of all ages), Liver (Schizogony), Brain Microvasculature",
+    "firstLineRx": "Artemisinin-based combination therapy (ACT, e.g. Artemether-lumefantrine) or IV Artesunate for severe malaria",
+    "smear": "Giemsa-stained peripheral blood smear reveals multiple delicate ring-form trophozoites within single non-enlarged RBCs and diagnostic crescent / banana-shaped gametocytes; Maurer clefts present.",
+    "culture": "Diagnosed directly from whole-blood microscopy or PfHRP2/aldolase rapid lateral flow antigen strip; artificial culture requires specialized microaerophilic RPMI red cell medium.",
+    "vignette": "A 31-year-old traveler returning from Nigeria develops irregular cyclic fever, drenching sweats, dark urine ('blackwater fever'), confusion, and severe hemolytic anemia with parasitemia of 8%.",
+    "virulence": "PfEMP1 (Plasmodium falciparum erythrocyte membrane protein 1) on erythrocyte surface knobs binds ICAM-1 and CD36 on microvascular endothelium causing cytoadherence and microvascular occlusion (cerebral malaria).",
+    "transmission": "Bite of nocturnal female Anopheles mosquito; blood transfusion; congenital transmission.",
+    "buzzwords": "Banana/crescent-shaped gametocytes, Multiple rings per RBC, Cerebral malaria, Blackwater fever, Sickle cell trait (HbAS) confers resistance."
+  },
+  {
+    "id": "glamblia",
+    "name": "Giardia lamblia (duodenalis)",
+    "commonName": "Beaver Fever / Giardia",
+    "taxonomy": "Metamonada (Parasite / Flagellate)",
+    "morphology": {
+      "gram": "Parasite (Flagellate)",
+      "shape": "Pear-shaped binucleated trophozoite"
+    },
+    "respiration": "Anaerobe",
+    "keyTest": "Stool Ova & Parasite (O&P) exam, Stool Giardia antigen EIA / NAAT",
+    "tropism": "GI Tract (Duodenum & Jejunum)",
+    "firstLineRx": "Metronidazole or Tinidazole / Nitazoxanide",
+    "smear": "Stool smear wet mount shows pear-shaped, dorsally convex trophozoites with two nuclei resembling 'spectacles' or 'smiling face' and four pairs of flagella exhibiting characteristic falling-leaf motility; oval quadrinucleated cysts in formed stool.",
+    "culture": "Not routinely cultured; diagnosed via fecal ELISA antigen detection or microscopic demonstration of cysts and trophozoites in stool or duodenal aspirate.",
+    "vignette": "A 27-year-old backpacker who drank untreated mountain stream water on a Rocky Mountain hiking trip develops foul-smelling, greasy floating stools (steatorrhea), sulfurous burps, abdominal distension, and weight loss 2 weeks later.",
+    "virulence": "Ventral concave adhesive suction disk attaches tightly to duodenal brush border enterocytes, producing mechanical villous blunting and malabsorption without tissue invasion.",
+    "transmission": "Fecal-oral ingestion of chlorination-resistant cysts from contaminated stream water or daycares; common in campers and beaver habitats.",
+    "buzzwords": "Falling leaf motility, Smiling face / spectacles binucleated trophozoite, Greasy foul-smelling steatorrhea, Beaver fever, IgA deficiency predisposes to chronic infection."
+  },
+  {
+    "id": "ehistolytica",
+    "name": "Entamoeba histolytica",
+    "commonName": "Amoeba of Dysentery",
+    "taxonomy": "Amoebozoa (Parasite / Amoeba)",
+    "morphology": {
+      "gram": "Parasite (Amoeba)",
+      "shape": "Amoeboid trophozoite with ingested RBCs"
+    },
+    "respiration": "Microaerophilic",
+    "keyTest": "Stool E. histolytica antigen / PCR, Stool microscopy for erythrophagocytosis, Serum amebic serology",
+    "tropism": "GI Tract (Cecum & Colon), Liver (Right Lobe Abscess)",
+    "firstLineRx": "Metronidazole or Tinidazole (tissue amebicide) followed by Paromomycin or Iodoquinol (luminal cysticide)",
+    "smear": "Fresh stool warm saline wet mount reveals active amoeboid trophozoites with single spherical nucleus containing central pinpoint karyosome and pathognomonic engulfed red blood cells (erythrophagocytosis).",
+    "culture": "Diagnostic amebic stool antigen ELISA or PCR differentiates pathogenic E. histolytica from non-pathogenic E. dispar; liver aspirate reveals odorless thick reddish-brown fluid.",
+    "vignette": "A 39-year-old immigrant from Central America presents with right upper quadrant abdominal pain, fever, weight loss, and an 8-cm solitary hypoechoic cyst in the right hepatic lobe; liver aspiration yields 'anchovy-paste' exudate.",
+    "virulence": "Gal/GalNAc lectin mediates adherence to colonic mucin and host enterocytes; Amoebapore peptides create holes in host membranes causing cell lysis; cysteine proteases degrade extracellular matrix producing flask-shaped ulcers.",
+    "transmission": "Fecal-oral ingestion of infectious 4-nucleated mature cysts in fecally contaminated food or water.",
+    "buzzwords": "Flask-shaped intestinal ulcers, Anchovy paste liver abscess, Erythrophagocytosis (RBCs inside amoeba), Luminal cysticide required (Paromomycin)."
+  },
+  {
+    "id": "tgondii",
+    "name": "Toxoplasma gondii",
+    "commonName": "Toxoplasma",
+    "taxonomy": "Apicomplexa (Parasite / Protozoa)",
+    "morphology": {
+      "gram": "Parasite (Protozoan)",
+      "shape": "Crescent-shaped tachyzoite"
+    },
+    "respiration": "Obligate Intracellular",
+    "keyTest": "Brain MRI (Multiple ring-enhancing lesions), Toxoplasma IgG/IgM serology, Biopsy demonstrating tachyzoites",
+    "tropism": "CNS (Basal Ganglia), Retina, Skeletal & Cardiac Muscle",
+    "firstLineRx": "Sulfadiazine + Pyrimethamine (supplemented with Leucovorin / folinic acid)",
+    "smear": "Giemsa or Wright-stained biopsy shows crescent-shaped tachyzoites (rapidly dividing form) with pointed anterior end or dormant pseudocysts packed with bradyzoites.",
+    "culture": "Confirmed through serologic testing, real-time PCR of CSF/amniotic fluid, or characteristic radiographic imaging; mice inoculation used in reference labs.",
+    "vignette": "An HIV patient with CD4 count of 45 cells/µL presents with progressive focal left-sided hemiparesis and new-onset seizures; head MRI reveals multiple bilateral ring-enhancing lesions with surrounding edema in the basal ganglia.",
+    "virulence": "Invasive microneme and rhoptry proteins discharge to construct a protective parasitophorous vacuole avoiding phagolysosome degradation; latent bradyzoite tissue cysts reactivate during cellular immunosuppression.",
+    "transmission": "Ingestion of oocysts from domestic cat feces (litter box) or tissue cysts in undercooked pork/lamb; transplacental transmission causes congenital toxoplasmosis.",
+    "buzzwords": "Multiple ring-enhancing lesions on brain MRI, Cat feces / litter box, Congenital triad (chorioretinitis, hydrocephalus, intracranial calcifications), Pyrimethamine + Sulfadiazine."
+  },
+  {
+    "id": "linterrogans",
+    "name": "Leptospira interrogans",
+    "commonName": "Leptospira / Weil's Disease",
+    "taxonomy": "Spirochaetota (Spirochete)",
+    "morphology": {
+      "gram": "Spirochete (Not visible on Gram)",
+      "shape": "Helical with hooked ends"
+    },
+    "respiration": "Obligate Aerobe",
+    "keyTest": "Microscopic Agglutination Test (MAT), Leptospira PCR, Darkfield microscopy",
+    "tropism": "Kidneys (Renal Tubules), Liver, Bloodstream, Conjunctiva",
+    "firstLineRx": "Doxycycline (mild); IV Penicillin G or Ceftriaxone (severe Weil disease)",
+    "smear": "Very thin, delicate, tightly coiled spirochetes with characteristic hooked ends resembling question marks or ice-tongs visible on darkfield microscopy or silver impregnation stain.",
+    "culture": "Grows slowly (takes weeks) in specialized protein-rich Fletcher or EMJH semisolid media; routinely diagnosed via serology (MAT) or serum/urine PCR.",
+    "vignette": "A triathlete who competed in freshwater river kayaking in Hawaii presents with high fever, intense calf muscle tenderness, jaundice, elevated creatinine (acute kidney injury), and prominent bilateral conjunctival suffusion without purulent discharge.",
+    "virulence": "Outer membrane proteins (LipL32, OmpL1) facilitate rapid burrowing through abraded skin and intact mucous membranes; hemolysins cause capillary endothelial injury and hemorrhage.",
+    "transmission": "Exposure of broken skin or mucosal membranes to freshwater, mud, or soil contaminated with urine of infected rodents or domestic livestock.",
+    "buzzwords": "Conjunctival suffusion without exudate, Hooked ends like question mark / ice tongs, Severe calf tenderness, Weil disease (triad: jaundice, renal failure, hemorrhage), Freshwater kayaking / surfing in Hawaii."
+  },
+  {
+    "id": "bburgdorferi",
+    "name": "Borrelia burgdorferi",
+    "commonName": "Lyme Disease Spirochete",
+    "taxonomy": "Spirochaetota (Spirochete)",
+    "morphology": {
+      "gram": "Spirochete (Giemsa / Wright stain)",
+      "shape": "Loose irregular coils"
+    },
+    "respiration": "Microaerophilic",
+    "keyTest": "Two-tier serology (Enzyme Immunoassay screen + Western blot confirmation)",
+    "tropism": "Skin, Joints (Large joints / Knee), Cardiovascular (AV block), CNS (Facial nerve)",
+    "firstLineRx": "Doxycycline (Amoxicillin in pregnant women and young children; IV Ceftriaxone for heart block/neuroborreliosis)",
+    "smear": "Unlike Treponema, Borrelia is larger and can be visualized under light microscopy using Giemsa or Wright aniline stains as loosely coiled, flexible spiral micro-organisms.",
+    "culture": "Barbour-Stoenner-Kelly (BSK) liquid medium under microaerophilic conditions; clinical diagnosis relies predominantly on two-tiered serologic antibody testing.",
+    "vignette": "A 35-year-old gardener in Connecticut presents in summer with a growing, painless 12-cm annular erythematous rash with central clearing ('bull's-eye') on his thigh, accompanied by flu-like fatigue and headache.",
+    "virulence": "OspA and OspC surface lipoproteins mediate adherence within tick midgut and migration to salivary gland; antigenic variation of VlsE surface protein allows chronic immune evasion.",
+    "transmission": "Bite of Ixodes scapularis / pacificus deer tick (must feed for >36–48 hours for spirochete transmission); white-footed mouse is primary reservoir, white-tailed deer is obligate mating host.",
+    "buzzwords": "Erythema migrans (bull's-eye rash), Ixodes deer tick, Bilateral facial nerve palsy (Bell palsy), Third-degree AV heart block, Migratory asymmetric monoarthritis of the knee."
+  },
+  {
+    "id": "mpneumoniae",
+    "name": "Mycoplasma pneumoniae",
+    "commonName": "Walking Pneumonia",
+    "taxonomy": "Mollicutes (Atypical Bacteria)",
+    "morphology": {
+      "gram": "No Cell Wall (Pleomorphic)",
+      "shape": "Pleomorphic spindle-shaped"
+    },
+    "respiration": "Obligate Aerobe",
+    "keyTest": "Cold Agglutinins titer (IgM), Respiratory PCR, 'Fried-egg' colonies on Eaton agar",
+    "tropism": "Respiratory Tract (Tracheobronchial Epithelium)",
+    "firstLineRx": "Macrolides (Azithromycin) or Doxycycline / Respiratory Fluoroquinolones (Inherent resistance to beta-lactams!)",
+    "smear": "Lacks peptidoglycan cell wall completely; enclosed only by single sterol-containing lipid trilaminar membrane; not visible on Gram stain.",
+    "culture": "Eaton agar supplemented with cholesterol; extremely slow growth showing tiny microscopic 'fried-egg' colonies with dense central core; diagnosed clinically by PCR or cold agglutinin titer.",
+    "vignette": "A 19-year-old military recruit develops insidious dry hacking cough, low-grade fever, sore throat, and bullous myringitis; chest X-ray looks dramatically worse than the patient appears, revealing diffuse bilateral interstitial infiltrates.",
+    "virulence": "P1 cytoadhesin binds sialic acid receptors at base of respiratory cilia, inhibiting ciliary clearance; Community-Acquired Respiratory Distress Syndrome (CARDS) toxin causes mucosal vacuolation.",
+    "transmission": "Respiratory droplets in close contact settings (military barracks, boarding schools, college dormitories).",
+    "buzzwords": "No cell wall (resistant to penicillins/cephalosporins), Cold agglutinins (IgM causes hemolytic anemia), Bullous myringitis, Eaton agar fried-egg colonies, CXR looks worse than patient."
+  },
+  {
+    "id": "ctrachomatis",
+    "name": "Chlamydia trachomatis",
+    "commonName": "Chlamydia",
+    "taxonomy": "Chlamydiaceae (Atypical Bacteria)",
+    "morphology": {
+      "gram": "Obligate Intracellular",
+      "shape": "Elementary & Reticulate bodies"
+    },
+    "respiration": "Obligate Intracellular",
+    "keyTest": "Nucleic Acid Amplification Test (NAAT), Giemsa stain (intracytoplasmic inclusions)",
+    "tropism": "Genitourinary Tract, Conjunctiva, Synovium",
+    "firstLineRx": "Doxycycline (100 mg BID x 7 days) or single-dose Azithromycin (plus Ceftriaxone to co-treat Gonorrhea)",
+    "smear": "Gram stain reveals polymorphonuclear leukocytes (pus cells) without visible bacteria; Giemsa stain or direct fluorescent antibody reveals glycogen-rich perinuclear cytoplasmic inclusion bodies.",
+    "culture": "Obligate intracellular parasite that cannot grow on cell-free media; requires McCoy cell monolayer culture; NAAT on first-catch urine or vaginal swab is standard of care.",
+    "vignette": "A 22-year-old sexually active woman presents with mild mucopurulent cervical discharge, cervical motion tenderness, and irregular postcoital spotting; her partner reports watery urethral discharge and painful unilateral knee arthritis.",
+    "virulence": "Unique biphasic life cycle: Elementary body (EB) is infectious and survives extracellularly; Reticulate body (RB) replicates intracellularly via binary fission; lacks typical peptidoglycan muramic acid.",
+    "transmission": "Sexual contact; perinatal transmission during delivery (neonatal staccato cough pneumonia and inclusion conjunctivitis).",
+    "buzzwords": "Elementary body (infectious) vs Reticulate body (replicates), NAAT first-catch urine, #1 bacterial STI worldwide, Reactive arthritis triad (can't see, can't pee, can't climb a tree), Lymphogranuloma venereum (LGV L1-L3)."
+  },
+  {
+    "id": "bpertussis",
+    "name": "Bordetella pertussis",
+    "commonName": "Whooping Cough Bacillus",
+    "taxonomy": "Pseudomonadota (Gram-Negative)",
+    "morphology": {
+      "gram": "Gram-Negative",
+      "shape": "Small Coccobacilli"
+    },
+    "respiration": "Obligate Aerobe",
+    "keyTest": "Bordet-Gengou / Regan-Lowe agar ('mercury drops'), Pertussis PCR, Marked lymphocytosis",
+    "tropism": "Respiratory Tract (Ciliated Bronchial Epithelium)",
+    "firstLineRx": "Azithromycin / Clarithromycin (Macrolide prophylaxis for all close household contacts)",
+    "smear": "Extremely small, ovoid, faintly staining Gram-negative coccobacilli arranged singly or in small clusters.",
+    "culture": "Specialized Bordet-Gengou (potato-glycerol-blood) or Regan-Lowe charcoal-horse blood medium; produces small, shiny, glistening silver-gray colonies resembling 'mercury droplets' or split pearls.",
+    "vignette": "An unvaccinated 4-year-old child experiences 2 weeks of catarrhal rhinorrhea followed by severe paroxysms of 20 consecutive hacking coughs terminating in a high-pitched inspiratory gasp and post-tussive emesis; WBC is 45,000/µL with 80% lymphocytes.",
+    "virulence": "Pertussis toxin ADP-ribosylates Gi alpha, permanently turning off Gi and increasing cAMP; Tracheal cytotoxin destroys ciliated epithelial cells; Filamentous hemagglutinin (FHA) mediates epithelial tethering.",
+    "transmission": "Airborne respiratory droplets; highly contagious in catarrhal phase.",
+    "buzzwords": "100-day cough, Inspiratory whoop & post-tussive vomiting, Bordet-Gengou mercury droplet colonies, Marked lymphocytosis with leukemoid reaction, Gi protein inhibition via ADP-ribosylation."
+  },
+  {
+    "id": "ftularensis",
+    "name": "Francisella tularensis",
+    "commonName": "Rabbit Fever Bacillus",
+    "taxonomy": "Pseudomonadota (Gram-Negative)",
+    "morphology": {
+      "gram": "Gram-Negative",
+      "shape": "Very Small Coccobacilli"
+    },
+    "respiration": "Obligate Aerobe",
+    "keyTest": "Requires Cysteine (BCYE or Chocolate agar), Serum agglutination titers, Tier 1 Select Agent precautions",
+    "tropism": "Skin, Reticuloendothelial (Regional Lymph Nodes, Spleen), Lungs",
+    "firstLineRx": "Streptomycin or Gentamicin / Doxycycline",
+    "smear": "Minute, pleomorphic, faintly counterstaining Gram-negative coccobacilli that are near the resolution limit of standard light microscopy.",
+    "culture": "Strictly requires cysteine for growth; dangerous laboratory biohazard (easily aerosolized with low infectious dose <10 organisms); requires biosafety level 3 (BSL-3).",
+    "vignette": "A hunter who skinned wild rabbits in Arkansas develops an ulcerated erythematous papule with a punched-out base on his index finger, followed by painful suppurative axillary lymphadenopathy and 40°C fever.",
+    "virulence": "Facultative intracellular bacterium that escapes macrophage phagosome into host cytoplasm; lipid-rich capsule inhibits complement-mediated lysis; extremely low infectious dose.",
+    "transmission": "Direct contact with infected animal tissues (rabbits, rodents), bites from Dermacentor dog ticks or deer flies (Chrysops), ingestion of undercooked game meat, or aerosol inhalation.",
+    "buzzwords": "Punched-out skin ulcer + tender regional bubo, Rabbit hunter / skinning, Requires cysteine for growth, Dermacentor tick / deer fly vector, Potential aerosol bioterror agent."
+  },
+  {
+    "id": "calbicans",
+    "name": "Candida albicans",
+    "commonName": "Oral Thrush / Monilia",
+    "taxonomy": "Ascomycota (Fungi / Yeast)",
+    "morphology": {
+      "gram": "Fungal (Gram-Positive Staining)",
+      "shape": "Pseudohyphae & Budding yeasts"
+    },
+    "respiration": "Facultative Anaerobe",
+    "keyTest": "Germ tube test (+) at 37°C in serum, True hyphae & pseudohyphae, Chlamydospores at 20°C",
+    "tropism": "Oral Cavity, Genital Tract (Vagina), Skin Folds, Bloodstream (Central Lines)",
+    "firstLineRx": "Fluconazole (Oral/Vaginal); Echinocandin (Caspofungin / Micafungin) for invasive candidemia",
+    "smear": "Gram stain demonstrates strongly Gram-positive ovoid budding yeast cells (blastoconidia) with elongated pseudohyphae; incubation in human serum at 37°C for 3 hours produces diagnostic germ tubes (parallel-walled outgrowths without constrictions).",
+    "culture": "Grows rapidly on Sabouraud dextrose agar yielding creamy, convex, white colonies with distinct yeasty bread odor; green colonies on CHROMagar Candida.",
+    "vignette": "A 28-year-old asthmatic patient who uses an inhaled fluticasone inhaler without a spacer develops white curd-like plaques on the tongue and buccal mucosa that bleed when scraped with a tongue depressor.",
+    "virulence": "Phenotypic switching between yeast (commensal) and filamentous hyphae (invasive tissue form); secreted aspartyl proteinases (Saps) and candidalysin toxin degrade host mucosal barriers.",
+    "transmission": "Normal commensal flora of GI tract, skin, and female reproductive tract; opportunistically overgrows during antibiotic therapy, corticosteroid use, diabetes mellitus, or neutropenia.",
+    "buzzwords": "Germ tube positive at 37°C, Scrapeable white plaques with erythema, Pseudohyphae and budding yeast, Inhaled steroid thrush, Diaper dermatitis with satellite lesions."
+  },
+  {
+    "id": "afumigatus",
+    "name": "Aspergillus fumigatus",
+    "commonName": "Aspergillus Mold",
+    "taxonomy": "Ascomycota (Fungi / Mold)",
+    "morphology": {
+      "gram": "Fungal (Septate Mold)",
+      "shape": "Acute 45° angle branching hyphae"
+    },
+    "respiration": "Obligate Aerobe",
+    "keyTest": "Galactomannan antigen EIA, Acute 45° dichotomous branching septate hyphae, Fruiting conidial heads",
+    "tropism": "Respiratory Tract (Pre-existing cavities), Sinuses, Brain (Angioinvasive in neutropenia)",
+    "firstLineRx": "Voriconazole or Isavuconazole (Surgical resection for aspergilloma)",
+    "smear": "Silver (GMS) or PAS stain reveals uniform septate hyphae that branch dichotomously at narrow acute angles (~45°) without yeast forms.",
+    "culture": "Rapidly growing mold on Sabouraud dextrose agar with velvety, smoky gray-green powdery surface; microscopic examination shows conidiophore with vesicle bearing phialides in single row.",
+    "vignette": "A 62-year-old man with a history of treated cavitary tuberculosis presents with intermittent massive hemoptysis; chest CT demonstrates a rounded, mobile gravity-dependent soft-tissue mass inside an upper-lobe cavity with a crescent of surrounding air ('air-crescent sign').",
+    "virulence": "Angioinvasive properties allow hyphae to penetrate vascular endothelium causing thrombosis, infarction, and tissue necrosis; produces gliotoxin and aflatoxin (A. flavus).",
+    "transmission": "Inhalation of ubiquitous airborne environmental conidia/spores from decaying compost or hospital construction sites.",
+    "buzzwords": "Acute 45° angle branching septate hyphae, Aspergilloma fungus ball in pre-existing TB cavity, Air-crescent sign on CT, Allergic Bronchopulmonary Aspergillosis (ABPA) in CF/asthma, Voriconazole."
+  },
+  {
+    "id": "hcapsulatum",
+    "name": "Histoplasma capsulatum",
+    "commonName": "Histoplasma / Ohio Valley Fungus",
+    "taxonomy": "Ascomycota (Fungi / Dimorphic)",
+    "morphology": {
+      "gram": "Fungal (Thermal Dimorphic)",
+      "shape": "Small yeast inside macrophages"
+    },
+    "respiration": "Obligate Aerobe",
+    "keyTest": "Urine & Serum Histoplasma antigen EIA, Giemsa stain showing yeast packed in macrophages, Tuberculate macroconidia at 25°C",
+    "tropism": "Reticuloendothelial (Spleen, Liver, Bone Marrow), Lungs",
+    "firstLineRx": "Itraconazole (mild/moderate); Liposomal Amphotericin B (severe disseminated disease)",
+    "smear": "Wright or Giemsa-stained bone marrow or peripheral blood smear demonstrates numerous tiny, oval budding yeast cells (2–4 µm) with narrow bases packed inside host monocytes and macrophages.",
+    "culture": "Thermally dimorphic: grows as white-to-brown mold with tuberculate round macroconidia at room temperature (25°C), and converts to small budding yeast phase at 37°C.",
+    "vignette": "A 45-year-old spelunker who explored bat caves in Kentucky develops fever, dry cough, hepatosplenomegaly, and bilateral reticulonodular pulmonary infiltrates; urinary Histoplasma antigen test is positive.",
+    "virulence": "Survives and replicates inside macrophage phagolysosomes by alkalinizing luminal pH with urease and capture of essential iron and calcium.",
+    "transmission": "Inhalation of microconidia aerosolized from soil enriched with bird (starling) or bat guano along Ohio and Mississippi River valleys.",
+    "buzzwords": "'Bird or bat droppings', Ohio and Mississippi river valleys, Spelunking in caves, Yeast hiding inside macrophages (smaller than RBC), Coin lesions & calcified granulomas mimicking TB."
+  },
+  {
+    "id": "ngonorrhoeae",
+    "name": "Neisseria gonorrhoeae",
+    "commonName": "Gonococcus",
+    "taxonomy": "Pseudomonadota (Gram-Negative)",
+    "morphology": {
+      "gram": "Gram-Negative",
+      "shape": "Kidney bean diplococci"
+    },
+    "respiration": "Obligate Aerobe",
+    "keyTest": "Ferments Glucose only (NOT maltose), Oxidase (+), Thayer-Martin / NYC medium",
+    "tropism": "Genitourinary Tract, Synovium (Septic Arthritis), Pharynx, Anorectum",
+    "firstLineRx": "Ceftriaxone (500 mg IM single dose) + Doxycycline (to cover Chlamydia unless ruled out)",
+    "smear": "Abundant polymorphonuclear leukocytes with diagnostic pairs of Gram-negative kidney-bean-shaped diplococci nestled within cytoplasm of neutrophils (intracellular).",
+    "culture": "Requires selective enriched Thayer-Martin chocolate agar (vancomycin, colistin, nystatin, trimethoprim) incubated with 5% CO2; produces acid from glucose only (vs N. meningitidis which ferments maltose and glucose).",
+    "vignette": "A 24-year-old male presents with acute profuse yellow-green purulent urethral discharge and intense dysuria; urethral swab demonstrates Gram-negative intracellular diplococci within polymorphonuclear leukocytes.",
+    "virulence": "Pili exhibit high-frequency antigenic and phase variation (no protective immunity / recurrent infections possible); IgA protease cleaves mucosal IgA; Lipooligosaccharide (LOS) lacks O-antigen.",
+    "transmission": "Sexual contact; vertical transmission during vaginal delivery causes ophthalmia neonatorum (prevented with erythromycin eye ointment).",
+    "buzzwords": "Intracellular Gram-negative diplococci, Ferments Glucose only, Asymmetric migratory polyarthralgias with pustular skin lesions (DGI), Thayer-Martin chocolate agar."
+  },
+  {
+    "id": "cbotulinum",
+    "name": "Clostridium botulinum",
+    "commonName": "Botulinum Bacillus",
+    "taxonomy": "Firmicutes (Gram-Positive)",
+    "morphology": {
+      "gram": "Gram-Positive",
+      "shape": "Spore-forming Bacilli"
+    },
+    "respiration": "Obligate Anaerobe",
+    "keyTest": "Mouse bioassay for botulinum neurotoxin, Anaerobic spore-forming rods, Toxin neutralization test",
+    "tropism": "Neuromuscular Junction (Peripheral Cholinergic Synapses)",
+    "firstLineRx": "Equine Botulinum Heptavalent Antitoxin (or BabyBIG human antitoxin for infants) + Respiratory ventilatory support",
+    "smear": "Gram-positive, straight rods with oval subterminal spores with tennis-racket or club appearance under strictly anaerobic conditions.",
+    "culture": "Grows under strictly anaerobic conditions on egg yolk agar producing characteristic iridescent lipase-positive sheen on colony surface.",
+    "vignette": "A 5-month-old infant given natural raw honey by grandparents develops severe constipation, progressive lethargy, poor sucking reflex, weak cry, ptosis, and generalized profound hypotonia ('floppy baby syndrome').",
+    "virulence": "Botulinum neurotoxin (AB toxin) light chain is a zinc endopeptidase that cleaves SNARE proteins (SNAP-25, synaptobrevin), irreversibly blocking acetylcholine exocytosis from motor nerve terminals.",
+    "transmission": "Ingestion of preformed heat-labile toxin in improperly canned alkaline vegetables/smoked fish (adult foodborne botulism) or ingestion of honey spores that germinate in infant intestine (infant botulism).",
+    "buzzwords": "Floppy baby syndrome, Ingestion of raw honey, Cleaves SNARE proteins blocking ACh release, Descending symmetric flaccid paralysis with cranial nerve palsies, Diplopia & ptosis."
+  },
+  {
+    "id": "ctetani",
+    "name": "Clostridium tetani",
+    "commonName": "Tetanus Bacillus",
+    "taxonomy": "Firmicutes (Gram-Positive)",
+    "morphology": {
+      "gram": "Gram-Positive",
+      "shape": "Drumstick / Tennis-racket Bacilli"
+    },
+    "respiration": "Obligate Anaerobe",
+    "keyTest": "Clinical diagnosis, Anaerobic cultivation, Round terminal spores ('drumstick' morphology)",
+    "tropism": "CNS (Renshaw Cells / Inhibitory Interneurons in Spinal Cord)",
+    "firstLineRx": "Wound debridement + Metronidazole + Human Tetanus Immunoglobulin (HTIG) + Tetanus Toxoid Vaccine booster",
+    "smear": "Slender Gram-positive bacilli with prominent spherical terminal spores giving distinctive appearance of a bass drumstick or squash racket.",
+    "culture": "Strict obligate anaerobe; colonies on blood agar exhibit fine swarming film across entire surface of plate due to vigorous peritrichous flagellar motility.",
+    "vignette": "An unimmunized 60-year-old farmer steps on a rusty barbed-wire nail; 8 days later he develops lockjaw (trismus), involuntary painful facial grimacing (risus sardonicus), severe back arching (opisthotonos), and violent spasms triggered by light or noise.",
+    "virulence": "Tetanospasmin neurotoxin travels retrogradely along motor axons to spinal cord inhibitory interneurons (Renshaw cells), cleaving synaptobrevin to block release of inhibitory neurotransmitters GABA and glycine.",
+    "transmission": "Deep puncture wounds, contaminated trauma, or unsterile umbilical cord cutting (neonatal tetanus) introducing spores from soil or animal feces.",
+    "buzzwords": "Drumstick terminal spores, Risus sardonicus (sardonic smile), Trismus (lockjaw), Opisthotonos (arched back), Cleaves synaptobrevin blocking GABA and glycine release."
   }
 ]
