@@ -155,7 +155,7 @@ export default function ProfileModal({
                 </span>
               </div>
               <div className="text-[11px] text-slate-400">
-                {stats.rxCorrect || 0} / {stats.rxAttempted || 0} Prescriptions Solved ({stats.rxAttempted ? Math.round(((stats.rxCorrect || 0) / stats.rxAttempted) * 100) : 0}% Accuracy)
+                {stats.rxCorrect || 0} / {stats.rxAttempted || 0} Solved ({stats.rxAttempted ? Math.round(((stats.rxCorrect || 0) / stats.rxAttempted) * 100) : 0}% Accuracy)
               </div>
             </div>
           </div>

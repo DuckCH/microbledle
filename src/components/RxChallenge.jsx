@@ -124,9 +124,9 @@ export default function RxChallenge({ target, isDaily, dateStr, isMuted, onAnswe
           </div>
           <div>
             <h4 className="text-xs font-black uppercase tracking-wider text-indigo-300 flex items-center gap-1.5">
-              Attending's Empiric Rx Challenge
+              Empiric Rx Challenge
             </h4>
-            <p className="text-[11px] text-slate-400">Post-Diagnosis Pharmacology Round</p>
+            <p className="text-[11px] text-slate-400">Bonus Question</p>
           </div>
         </div>
 
@@ -139,8 +139,7 @@ export default function RxChallenge({ target, isDaily, dateStr, isMuted, onAnswe
       {/* Case Question */}
       <div className="mb-4">
         <p className="text-xs sm:text-sm text-slate-200 leading-relaxed font-medium">
-          A patient is confirmed with <span className="font-bold text-emerald-400 italic">{target.name}</span> infection. 
-          Which antimicrobial regimen is the recommended <strong className="text-white">first-line empiric therapy</strong>?
+          What is the recommended <strong className="text-white">first-line empiric therapy</strong> for this patient?
         </p>
       </div>
 
@@ -207,24 +206,24 @@ export default function RxChallenge({ target, isDaily, dateStr, isMuted, onAnswe
             <div className="p-3 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 flex items-center gap-2.5 text-xs sm:text-sm">
               <Award className="w-5 h-5 text-emerald-400 shrink-0" />
               <div>
-                <span className="font-bold">Correct Antimicrobial Selection!</span>
-                <p className="text-[11px] text-emerald-200/90 mt-0.5">+50 Bonus XP credited toward your Medical Rank progression.</p>
+                <span className="font-bold">Correct Prescription!</span>
+                <p className="text-[11px] text-emerald-200/90 mt-0.5">+50 Bonus XP awarded!</p>
               </div>
             </div>
           ) : (
             <div className="p-3 rounded-xl bg-rose-500/20 border border-rose-500/40 text-rose-300 flex items-center gap-2.5 text-xs sm:text-sm">
               <ShieldAlert className="w-5 h-5 text-rose-400 shrink-0" />
               <div>
-                <span className="font-bold">Sub-optimal Empiric Choice!</span>
-                <p className="text-[11px] text-rose-200/90 mt-0.5">The primary guideline therapy is highlighted in green above.</p>
+                <span className="font-bold">Incorrect Choice</span>
+                <p className="text-[11px] text-rose-200/90 mt-0.5">The guideline therapy is shown in green above.</p>
               </div>
             </div>
           )}
 
-          {/* Pharmacology Pearl Card */}
+          {/* Clinical Pearl Card */}
           <div className="p-3.5 rounded-xl bg-slate-950/80 border border-indigo-500/20 text-xs space-y-1.5">
             <div className="flex items-center gap-1.5 font-bold text-indigo-400 uppercase tracking-wider text-[10px]">
-              <Stethoscope className="w-3.5 h-3.5" /> High-Yield Clinical Pearl
+              <Stethoscope className="w-3.5 h-3.5" /> Clinical Pearl
             </div>
             <p className="text-slate-300 leading-relaxed">
               <strong className="text-white">{target.name}</strong> ({target.commonName}): {target.buzzwords}

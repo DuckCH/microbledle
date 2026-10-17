@@ -860,7 +860,7 @@ export default function App() {
                   <div className="flex items-center gap-3 text-xs text-slate-400 mt-0.5">
                     <span className="flex items-center gap-1">
                       <Calendar className="w-3.5 h-3.5 text-slate-500" />
-                      {isPractice ? 'Free Practice' : dateStr}
+                      {isPractice ? 'Practice' : dateStr}
                     </span>
                     {!isPractice && (
                       <span className="flex items-center gap-1 text-slate-400 bg-slate-900 px-2 py-0.5 rounded-full border border-slate-800">
@@ -1004,11 +1004,11 @@ export default function App() {
             <span className="hidden sm:inline">Rankings</span>
           </button>
 
-          {/* Your Career Statistics */}
+          {/* Statistics Button */}
           <button
             onClick={() => setShowStatsModal(true)}
             className="p-2 rounded-xl bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-300 hover:text-cyan-400 transition"
-            title="Your Career Statistics"
+            title="Statistics"
           >
             <Award className="w-5 h-5 text-cyan-400" />
           </button>
@@ -1038,7 +1038,7 @@ export default function App() {
               <input
                 ref={searchInputRef}
                 type="text"
-                placeholder="Search pathogen or buzzword (e.g., S. aureus, currant jelly, lockjaw, TB)..."
+                placeholder="Search pathogen or sign (e.g., S. aureus, lockjaw, TB)..."
                 value={searchTerm}
                 onChange={(e) => {
                   setSearchTerm(e.target.value);
@@ -1369,8 +1369,8 @@ export default function App() {
                 )
               ) : (
                 <div>
-                  <h2 className="text-xl font-bold text-slate-200">Microbledle Performance</h2>
-                  <p className="text-xs text-slate-400">Continuous microbiology learning metrics</p>
+                  <h2 className="text-xl font-bold text-slate-200">Statistics</h2>
+                  <p className="text-xs text-slate-400">Career stats & win rate</p>
                 </div>
               )}
             </div>
@@ -1457,9 +1457,9 @@ export default function App() {
                     <Pill className="w-3.5 h-3.5" />
                   </div>
                   <div>
-                    <span className="font-semibold text-slate-200">Empiric Rx Stewardship</span>
+                    <span className="font-semibold text-slate-200">Empiric Treatment (Rx)</span>
                     <p className="text-[10px] text-slate-400">
-                      {stats.rxCorrect || 0} of {stats.rxAttempted || 0} solved ({stats.rxAttempted ? Math.round(((stats.rxCorrect || 0) / stats.rxAttempted) * 100) : 0}%)
+                      {stats.rxCorrect || 0} of {stats.rxAttempted || 0} solved ({stats.rxAttempted ? Math.round(((stats.rxCorrect || 0) / stats.rxAttempted) * 100) : 0}% accuracy)
                     </p>
                   </div>
                 </div>
@@ -1616,7 +1616,7 @@ export default function App() {
               </div>
               <div className="flex items-center gap-2 text-slate-400">
                 <Calendar className="w-4 h-4 shrink-0 text-slate-500" />
-                <span>Deterministic daily pathogen updates every day at 00:00 UTC.</span>
+                <span>New daily case arrives every day at 00:00 UTC.</span>
               </div>
             </div>
           </div>
