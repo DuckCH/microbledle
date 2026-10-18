@@ -7,7 +7,7 @@ import {
   Check, Calendar, Shuffle, Volume2, VolumeX, Clock, TestTube2,
   BookOpen, User, LogOut, Cloud, ShieldCheck, Pill,
   ArrowLeft, Home, Sun, Moon, FileText, BarChart2,
-  Mail, AlertTriangle
+  Mail, AlertTriangle, Menu
 } from 'lucide-react';
 import microbes from './data/microbes.json';
 import { playTileSound, playSelectSound, playWinSound, playDefeatSound } from './utils/audio';
@@ -287,6 +287,16 @@ export default function App() {
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showLeaderboardModal, setShowLeaderboardModal] = useState(false);
   const [infoModalTab, setInfoModalTab] = useState(null); // 'about' | 'contact' | 'privacy' | 'terms' | 'sources' | null
+  const [mobileClueTab, setMobileClueTab] = useState('clinical'); // 'clinical' | 'smear' | 'culture' | 'vignette'
+  const [showMobileToolsModal, setShowMobileToolsModal] = useState(false);
+
+  // Auto-switch mobile clue tab to newest unlocked clue
+  useEffect(() => {
+    if (guesses.length === 0) setMobileClueTab('clinical');
+    else if (guesses.length === 2) setMobileClueTab('smear');
+    else if (guesses.length === 3) setMobileClueTab('culture');
+    else if (guesses.length >= 4) setMobileClueTab('vignette');
+  }, [guesses.length]);
   // Theme Management (Light / Dark mode, strictly defaults to dark theme on first visit)
   const [theme, setTheme] = useState(() => {
     const saved = localStorage.getItem('microbledle_theme');
@@ -965,6 +975,7 @@ export default function App() {
     setShowStatsModal(false);
     setShowCaseResultModal(false);
     setSearchTerm('');
+    setMobileClueTab('clinical');
   };
 
   // Daily game status for Main Menu
@@ -1097,8 +1108,100 @@ export default function App() {
         />
       ) : (
         <>
-          {/* Top Navbar */}
-          <header className="w-full max-w-4xl border-b border-slate-200 dark:border-slate-800 pb-4 mb-6 flex flex-wrap items-center justify-between gap-4">
+          {/* Mobile Top Navbar (< md screens) */}
+          <header className="flex md:hidden w-full items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-2.5 mb-3">
+            <div className="flex items-center gap-2">
+              {/* Back to Menu Button */}
+              <button
+                onClick={() => setCurrentScreen('menu')}
+                className="p-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:text-emerald-500 transition shadow-sm shrink-0"
+                title="Return to Main Menu"
+              >
+                <ArrowLeft className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
+              </button>
+
+              <div 
+                onClick={() => setCurrentScreen('menu')}
+                className="flex items-center gap-2 cursor-pointer"
+                title="Return to Main Menu"
+              >
+                <div className="w-8 h-8 rounded-xl overflow-hidden border border-emerald-500/40 shadow-sm shrink-0 bg-slate-950 flex items-center justify-center">
+                  <img 
+                    src="./apple-touch-icon.png" 
+                    alt="Microbledle" 
+                    className="w-full h-full object-cover rounded-xl" 
+                  />
+                </div>
+                <div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-base font-black tracking-tight bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500 dark:from-emerald-400 dark:via-teal-300 dark:to-cyan-400 bg-clip-text text-transparent">
+                      MICROBLEDLE
+                    </span>
+                    {isPractice ? (
+                      <span className="text-[9px] uppercase font-bold tracking-wider px-1.5 py-0.2 rounded-full bg-cyan-100 dark:bg-cyan-950 text-cyan-700 dark:text-cyan-400 border border-cyan-200 dark:border-cyan-800">
+                        PRAC
+                      </span>
+                    ) : (
+                      <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">
+                        {countdown}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right: Quick actions on mobile */}
+            <div className="flex items-center gap-1.5">
+              {/* Microdex Compendium Pill */}
+              <button
+                onClick={() => setShowMicrodexModal(true)}
+                className="px-2 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:text-emerald-500 transition flex items-center gap-1 text-[11px] font-semibold shadow-sm"
+                title="Microdex Compendium"
+              >
+                <BookOpen className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" />
+                <span className="text-[10px] px-1 py-0.2 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 font-mono font-bold">
+                  {unlockedBugIds.length}/{microbes.length}
+                </span>
+              </button>
+
+              {/* Audio Mute/Unmute */}
+              <button
+                onClick={toggleMute}
+                className={`p-1.5 rounded-xl border transition shadow-sm ${
+                  isMuted 
+                    ? 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-500' 
+                    : 'bg-emerald-50 dark:bg-emerald-950/60 border-emerald-300 dark:border-emerald-500/40 text-emerald-700 dark:text-emerald-300'
+                }`}
+                title={isMuted ? 'Unmute Sound' : 'Mute Sound'}
+              >
+                {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+              </button>
+
+              {/* Practice restart quick button if in practice */}
+              {isPractice && (
+                <button
+                  onClick={startNewPractice}
+                  className="p-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:text-cyan-500 transition shadow-sm"
+                  title="Next Random Pathogen"
+                >
+                  <RotateCcw className="w-4 h-4" />
+                </button>
+              )}
+
+              {/* Mobile More / Tools Button */}
+              <button
+                onClick={() => setShowMobileToolsModal(true)}
+                className="p-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:text-emerald-500 transition shadow-sm flex items-center justify-center"
+                title="Game Menu & Tools"
+              >
+                <Menu className="w-4 h-4" />
+              </button>
+            </div>
+          </header>
+
+          {/* Desktop & Tablet Top Navbar (>= md screens) */}
+          <header className="hidden md:flex w-full max-w-4xl border-b border-slate-200 dark:border-slate-800 pb-4 mb-6 flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               {/* Back to Menu Button */}
               <button
@@ -1300,13 +1403,13 @@ export default function App() {
       </header>
 
       {/* Main Container */}
-      <main className="w-full max-w-4xl flex-1 flex flex-col gap-6">
+      <main className="w-full max-w-4xl flex-1 flex flex-col gap-3 sm:gap-6">
         
         {/* Search & Deduction Input */}
         {!gameOver ? (
           <div className="relative w-full max-w-xl mx-auto">
             <div className="relative group">
-              <Search className="absolute left-4 top-3.5 h-5 w-5 text-emerald-500 dark:text-emerald-400 group-focus-within:text-emerald-400 transition" />
+              <Search className="absolute left-3.5 sm:left-4 top-3 sm:top-3.5 h-4 sm:h-5 w-4 sm:w-5 text-emerald-500 dark:text-emerald-400 group-focus-within:text-emerald-400 transition" />
               <input
                 ref={searchInputRef}
                 type="text"
@@ -1319,13 +1422,13 @@ export default function App() {
                 }}
                 onKeyDown={handleKeyDown}
                 onFocus={() => setIsSearchOpen(true)}
-                className="w-full pl-12 pr-4 py-3.5 bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-600 hover:border-slate-400 dark:hover:border-slate-500 focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-4 focus:ring-emerald-500/20 rounded-2xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-400 text-sm font-medium shadow-lg transition"
+                className="w-full pl-10 sm:pl-12 pr-4 py-2.5 sm:py-3.5 bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-600 hover:border-slate-400 dark:hover:border-slate-500 focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-4 focus:ring-emerald-500/20 rounded-2xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-400 text-xs sm:text-sm font-medium shadow-lg transition"
               />
             </div>
 
             {/* Autocomplete Dropdown with Keyboard Selection */}
             {isSearchOpen && availableMicrobes.length > 0 && (
-              <div className="absolute z-30 left-0 right-0 mt-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/90 rounded-2xl shadow-2xl overflow-hidden divide-y divide-slate-100 dark:divide-slate-800 backdrop-blur-md">
+              <div className="absolute z-30 left-0 right-0 mt-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/90 rounded-2xl shadow-2xl overflow-hidden divide-y divide-slate-100 dark:divide-slate-800 backdrop-blur-md max-h-56 sm:max-h-72 overflow-y-auto">
                 {availableMicrobes.map((bug, idx) => {
                   const isSelected = idx === searchSelectedIndex;
                   const gramInfo = getGramBadge(bug.morphology.gram);
@@ -1387,8 +1490,175 @@ export default function App() {
           </div>
         )}
 
-        {/* Progressive Clues Section (Initial Clinical at 0, Smear at 2, Culture at 3, Full Case at 4) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        {/* Mobile Progressive Clues (< md screens): Interactive 4-Tab Clue Selector */}
+        <div className="block md:hidden space-y-2">
+          {/* 4 Tabs */}
+          <div className="grid grid-cols-4 gap-1 p-1 bg-slate-900/90 border border-slate-800 rounded-2xl text-[11px] font-semibold">
+            {/* Tab 1: Clinical */}
+            <button
+              onClick={() => setMobileClueTab('clinical')}
+              className={`py-1.5 px-1 rounded-xl transition flex flex-col items-center justify-center gap-0.5 ${
+                mobileClueTab === 'clinical'
+                  ? 'bg-indigo-950/80 border border-indigo-500/50 text-indigo-300 shadow-sm'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <div className="flex items-center gap-1">
+                <FileText className="w-3.5 h-3.5 text-indigo-400" />
+                <span className="truncate">Clinical</span>
+              </div>
+              <span className="text-[9px] text-indigo-300 font-mono">0/0</span>
+            </button>
+
+            {/* Tab 2: Smear */}
+            <button
+              onClick={() => setMobileClueTab('smear')}
+              className={`py-1.5 px-1 rounded-xl transition flex flex-col items-center justify-center gap-0.5 ${
+                mobileClueTab === 'smear'
+                  ? 'bg-cyan-950/80 border border-cyan-500/50 text-cyan-300 shadow-sm'
+                  : guesses.length >= 2 ? 'text-slate-300' : 'text-slate-500'
+              }`}
+            >
+              <div className="flex items-center gap-1">
+                <Microscope className="w-3.5 h-3.5 text-cyan-400" />
+                <span className="truncate">Smear</span>
+              </div>
+              <span className={`text-[9px] font-mono ${guesses.length >= 2 ? 'text-cyan-400 font-bold' : 'text-slate-500'}`}>
+                {guesses.length >= 2 ? 'READY' : `${Math.min(guesses.length, 2)}/2`}
+              </span>
+            </button>
+
+            {/* Tab 3: Culture */}
+            <button
+              onClick={() => setMobileClueTab('culture')}
+              className={`py-1.5 px-1 rounded-xl transition flex flex-col items-center justify-center gap-0.5 ${
+                mobileClueTab === 'culture'
+                  ? 'bg-teal-950/80 border border-teal-500/50 text-teal-300 shadow-sm'
+                  : guesses.length >= 3 ? 'text-slate-300' : 'text-slate-500'
+              }`}
+            >
+              <div className="flex items-center gap-1">
+                <TestTube2 className="w-3.5 h-3.5 text-teal-400" />
+                <span className="truncate">Culture</span>
+              </div>
+              <span className={`text-[9px] font-mono ${guesses.length >= 3 ? 'text-teal-400 font-bold' : 'text-slate-500'}`}>
+                {guesses.length >= 3 ? 'READY' : `${Math.min(guesses.length, 3)}/3`}
+              </span>
+            </button>
+
+            {/* Tab 4: Full Case */}
+            <button
+              onClick={() => setMobileClueTab('vignette')}
+              className={`py-1.5 px-1 rounded-xl transition flex flex-col items-center justify-center gap-0.5 ${
+                mobileClueTab === 'vignette'
+                  ? 'bg-amber-950/80 border border-amber-500/50 text-amber-300 shadow-sm'
+                  : guesses.length >= 4 ? 'text-slate-300' : 'text-slate-500'
+              }`}
+            >
+              <div className="flex items-center gap-1">
+                <Stethoscope className="w-3.5 h-3.5 text-amber-400" />
+                <span className="truncate">Case</span>
+              </div>
+              <span className={`text-[9px] font-mono ${guesses.length >= 4 ? 'text-amber-400 font-bold' : 'text-slate-500'}`}>
+                {guesses.length >= 4 ? 'READY' : `${Math.min(guesses.length, 4)}/4`}
+              </span>
+            </button>
+          </div>
+
+          {/* Active Tab Clue Body */}
+          <div className="p-3 rounded-2xl border transition-all duration-300 bg-slate-900/90 border-slate-800 shadow-md">
+            {mobileClueTab === 'clinical' && (
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-[10px] uppercase font-bold text-indigo-400 flex items-center gap-1">
+                    <FileText className="w-3.5 h-3.5" /> Initial Clinical Clue
+                  </span>
+                  <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-indigo-950 text-indigo-300 border border-indigo-800 font-medium">
+                    START
+                  </span>
+                </div>
+                <p className="text-xs text-indigo-100 font-serif italic leading-relaxed">
+                  "{target.chiefComplaint || target.vignette}"
+                </p>
+              </div>
+            )}
+
+            {mobileClueTab === 'smear' && (
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-[10px] uppercase font-bold text-cyan-400 flex items-center gap-1">
+                    <Microscope className="w-3.5 h-3.5" /> Microscopic Smear Clue
+                  </span>
+                  <span className={`text-[9px] px-1.5 py-0.2 rounded-full font-medium ${
+                    guesses.length >= 2 
+                      ? 'bg-cyan-950 text-cyan-300 border border-cyan-800' 
+                      : 'bg-slate-800 text-slate-500'
+                  }`}>
+                    {guesses.length >= 2 ? 'UNLOCKED' : `Guess 2 (${Math.min(guesses.length, 2)}/2)`}
+                  </span>
+                </div>
+                <p className="text-xs leading-relaxed">
+                  {guesses.length >= 2 ? (
+                    <span className="text-cyan-100 font-serif italic">"{target.smear}"</span>
+                  ) : (
+                    <span className="text-slate-500 italic">Reveals microscopic morphology and cellular arrangement at Guess 2...</span>
+                  )}
+                </p>
+              </div>
+            )}
+
+            {mobileClueTab === 'culture' && (
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-[10px] uppercase font-bold text-teal-400 flex items-center gap-1">
+                    <TestTube2 className="w-3.5 h-3.5" /> Diagnostic Culture Clue
+                  </span>
+                  <span className={`text-[9px] px-1.5 py-0.2 rounded-full font-medium ${
+                    guesses.length >= 3 
+                      ? 'bg-teal-950 text-teal-300 border border-teal-800' 
+                      : 'bg-slate-800 text-slate-500'
+                  }`}>
+                    {guesses.length >= 3 ? 'UNLOCKED' : `Guess 3 (${Math.min(guesses.length, 3)}/3)`}
+                  </span>
+                </div>
+                <p className="text-xs leading-relaxed">
+                  {guesses.length >= 3 ? (
+                    <span className="text-teal-100 font-serif italic">"{target.culture}"</span>
+                  ) : (
+                    <span className="text-slate-500 italic">Reveals growth media, colony appearance, and pigment at Guess 3...</span>
+                  )}
+                </p>
+              </div>
+            )}
+
+            {mobileClueTab === 'vignette' && (
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-[10px] uppercase font-bold text-amber-400 flex items-center gap-1">
+                    <Stethoscope className="w-3.5 h-3.5" /> Full Case Presentation
+                  </span>
+                  <span className={`text-[9px] px-1.5 py-0.2 rounded-full font-medium ${
+                    guesses.length >= 4 
+                      ? 'bg-amber-950 text-amber-300 border border-amber-800' 
+                      : 'bg-slate-800 text-slate-500'
+                  }`}>
+                    {guesses.length >= 4 ? 'UNLOCKED' : `Guess 4 (${Math.min(guesses.length, 4)}/4)`}
+                  </span>
+                </div>
+                <p className="text-xs leading-relaxed">
+                  {guesses.length >= 4 ? (
+                    <span className="text-amber-100 font-serif italic">"{target.vignette}"</span>
+                  ) : (
+                    <span className="text-slate-500 italic">Reveals full clinical vignette and case presentation at Guess 4...</span>
+                  )}
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Desktop & Tablet Progressive Clues (>= md screens): Full 4-Card Grid */}
+        <div className="hidden md:grid md:grid-cols-4 gap-3">
           
           {/* 1. Initial Clinical Clue (Unlocked from start at guess >= 0) */}
           <div className="p-3.5 rounded-2xl border transition-all duration-300 bg-slate-900/80 border-indigo-500/40 text-slate-200 shadow-md shadow-indigo-950/20">
@@ -1500,34 +1770,40 @@ export default function App() {
         </div>
 
         {/* Comparative Diagnostic Grid */}
-        <div className="bg-slate-900/70 border border-slate-800 rounded-2xl p-4 shadow-2xl overflow-hidden">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-3 mb-3 border-b border-slate-800/80 gap-2">
+        <div className="bg-slate-900/70 border border-slate-800 rounded-2xl p-3 sm:p-4 shadow-2xl overflow-hidden">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-2.5 sm:pb-3 mb-2.5 sm:mb-3 border-b border-slate-800/80 gap-2">
             <div className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
               <FlaskConical className="w-4 h-4 text-emerald-400" />
               <span>Your Guesses ({guesses.length}/{maxGuesses})</span>
             </div>
             {/* Color Legend */}
-            <div className="flex items-center gap-3 text-xs flex-wrap">
+            <div className="flex items-center gap-2 sm:gap-3 text-[11px] sm:text-xs flex-wrap">
               <span className="flex items-center gap-1.5">
-                <span className="w-3 h-3 rounded-md bg-emerald-600 inline-block shadow-sm"></span>
+                <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-md bg-emerald-600 inline-block shadow-sm"></span>
                 <span className="text-slate-300 font-medium">Exact Match</span>
               </span>
               <span className="flex items-center gap-1.5">
-                <span className="w-3 h-3 rounded-md bg-amber-600 inline-block shadow-sm"></span>
+                <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-md bg-amber-600 inline-block shadow-sm"></span>
                 <span className="text-slate-300 font-medium">Partial Match</span>
               </span>
               <span className="flex items-center gap-1.5">
-                <span className="w-3 h-3 rounded-md bg-slate-800 border border-slate-700 inline-block"></span>
+                <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-md bg-slate-800 border border-slate-700 inline-block"></span>
                 <span className="text-slate-400">Incorrect</span>
               </span>
             </div>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse min-w-[760px]">
+          {/* Mobile Swipe Hint */}
+          <div className="md:hidden flex items-center justify-between text-[10px] text-slate-400 pb-2 px-1">
+            <span className="font-semibold text-emerald-400">📌 Pinned Organism</span>
+            <span className="text-slate-500">Swipe for lab tests →</span>
+          </div>
+
+          <div className="overflow-x-auto relative">
+            <table className="w-full border-collapse min-w-[720px] sm:min-w-[760px]">
               <thead>
                 <tr className="text-left text-[11px] uppercase tracking-wider text-slate-400 border-b border-slate-800">
-                  <th className="py-2.5 px-3 w-[180px]">Organism</th>
+                  <th className="py-2.5 px-3 w-[150px] sm:w-[180px] sticky left-0 bg-slate-900 z-20 shadow-[3px_0_6px_-2px_rgba(0,0,0,0.5)]">Organism</th>
                   <th className="py-2.5 px-2 text-center">Group</th>
                   <th className="py-2.5 px-2 text-center">Gram & Shape</th>
                   <th className="py-2.5 px-2 text-center">Oxygen</th>
@@ -1542,52 +1818,52 @@ export default function App() {
 
                   return (
                     <tr key={rowIndex} className="tile-reveal">
-                      {/* Pathogen Name & Badge */}
-                      <td className="py-3 px-3">
-                        <div className="font-semibold text-emerald-300 italic text-sm">
+                      {/* Pathogen Name & Badge (Sticky on mobile) */}
+                      <td className="py-2 sm:py-3 px-2 sm:px-3 sticky left-0 bg-slate-900 z-10 shadow-[3px_0_6px_-2px_rgba(0,0,0,0.5)]">
+                        <div className="font-semibold text-emerald-300 italic text-xs sm:text-sm truncate max-w-[130px] sm:max-w-none">
                           {item.guess.name}
                         </div>
-                        <div className="flex items-center gap-1.5 mt-0.5">
-                          <span className={`text-[9px] font-bold px-1.5 py-0.2 rounded-full border ${gramBadge.bg}`}>
+                        <div className="flex items-center gap-1 sm:gap-1.5 mt-0.5">
+                          <span className={`text-[8px] sm:text-[9px] font-bold px-1.5 py-0.2 rounded-full border ${gramBadge.bg}`}>
                             {gramBadge.label}
                           </span>
-                          <span className="text-[11px] text-slate-400 not-italic">
+                          <span className="text-[10px] sm:text-[11px] text-slate-400 not-italic truncate max-w-[90px] sm:max-w-none">
                             {item.guess.commonName}
                           </span>
                         </div>
                       </td>
 
                       {/* 1. Taxonomy */}
-                      <td className="py-3 px-1.5 align-middle">
-                        <div className={`p-2.5 rounded-xl border text-xs font-semibold leading-snug text-center ${getTileStyles(taxonomy.status)}`}>
+                      <td className="py-2 sm:py-3 px-1 sm:px-1.5 align-middle">
+                        <div className={`p-2 sm:p-2.5 rounded-xl border text-[11px] sm:text-xs font-semibold leading-snug text-center ${getTileStyles(taxonomy.status)}`}>
                           {taxonomy.value}
                         </div>
                       </td>
 
                       {/* 2. Morphology */}
-                      <td className="py-3 px-1.5 align-middle">
-                        <div className={`p-2.5 rounded-xl border text-xs font-semibold leading-snug text-center ${getTileStyles(morphology.status)}`}>
+                      <td className="py-2 sm:py-3 px-1 sm:px-1.5 align-middle">
+                        <div className={`p-2 sm:p-2.5 rounded-xl border text-[11px] sm:text-xs font-semibold leading-snug text-center ${getTileStyles(morphology.status)}`}>
                           <div>{morphology.value}</div>
                         </div>
                       </td>
 
                       {/* 3. Respiration */}
-                      <td className="py-3 px-1.5 align-middle">
-                        <div className={`p-2.5 rounded-xl border text-xs font-semibold leading-snug text-center ${getTileStyles(respiration.status)}`}>
+                      <td className="py-2 sm:py-3 px-1 sm:px-1.5 align-middle">
+                        <div className={`p-2 sm:p-2.5 rounded-xl border text-[11px] sm:text-xs font-semibold leading-snug text-center ${getTileStyles(respiration.status)}`}>
                           {respiration.value}
                         </div>
                       </td>
 
                       {/* 4. Key Test */}
-                      <td className="py-3 px-1.5 align-middle">
-                        <div className={`p-2.5 rounded-xl border text-xs font-semibold leading-snug text-center ${getTileStyles(keyTest.status)}`}>
+                      <td className="py-2 sm:py-3 px-1 sm:px-1.5 align-middle">
+                        <div className={`p-2 sm:p-2.5 rounded-xl border text-[11px] sm:text-xs font-semibold leading-snug text-center ${getTileStyles(keyTest.status)}`}>
                           {keyTest.value}
                         </div>
                       </td>
 
                       {/* 5. Tropism */}
-                      <td className="py-3 px-1.5 align-middle">
-                        <div className={`p-2.5 rounded-xl border text-xs font-semibold leading-snug text-center ${getTileStyles(tropism.status)}`}>
+                      <td className="py-2 sm:py-3 px-1 sm:px-1.5 align-middle">
+                        <div className={`p-2 sm:p-2.5 rounded-xl border text-[11px] sm:text-xs font-semibold leading-snug text-center ${getTileStyles(tropism.status)}`}>
                           {tropism.value}
                         </div>
                       </td>
@@ -1598,14 +1874,14 @@ export default function App() {
                 {/* Empty remaining placeholder rows */}
                 {Array.from({ length: Math.max(0, maxGuesses - guesses.length) }).map((_, i) => (
                   <tr key={`empty-${i}`} className="opacity-25 select-none">
-                    <td className="py-3 px-3 text-slate-500 font-mono text-xs">
+                    <td className="py-2 sm:py-3 px-2 sm:px-3 text-slate-500 font-mono text-[10px] sm:text-xs sticky left-0 bg-slate-900 z-10 shadow-[3px_0_6px_-2px_rgba(0,0,0,0.5)]">
                       Attempt {guesses.length + i + 1}
                     </td>
-                    <td className="py-3 px-1.5"><div className="h-12 rounded-xl bg-slate-900 border border-slate-800/80"></div></td>
-                    <td className="py-3 px-1.5"><div className="h-12 rounded-xl bg-slate-900 border border-slate-800/80"></div></td>
-                    <td className="py-3 px-1.5"><div className="h-12 rounded-xl bg-slate-900 border border-slate-800/80"></div></td>
-                    <td className="py-3 px-1.5"><div className="h-12 rounded-xl bg-slate-900 border border-slate-800/80"></div></td>
-                    <td className="py-3 px-1.5"><div className="h-12 rounded-xl bg-slate-900 border border-slate-800/80"></div></td>
+                    <td className="py-2 sm:py-3 px-1 sm:px-1.5"><div className="h-9 sm:h-12 rounded-xl bg-slate-900 border border-slate-800/80"></div></td>
+                    <td className="py-2 sm:py-3 px-1 sm:px-1.5"><div className="h-9 sm:h-12 rounded-xl bg-slate-900 border border-slate-800/80"></div></td>
+                    <td className="py-2 sm:py-3 px-1 sm:px-1.5"><div className="h-9 sm:h-12 rounded-xl bg-slate-900 border border-slate-800/80"></div></td>
+                    <td className="py-2 sm:py-3 px-1 sm:px-1.5"><div className="h-9 sm:h-12 rounded-xl bg-slate-900 border border-slate-800/80"></div></td>
+                    <td className="py-2 sm:py-3 px-1 sm:px-1.5"><div className="h-9 sm:h-12 rounded-xl bg-slate-900 border border-slate-800/80"></div></td>
                   </tr>
                 ))}
               </tbody>
@@ -2045,6 +2321,109 @@ export default function App() {
         onClose={() => setInfoModalTab(null)}
         initialTab={infoModalTab || 'about'}
       />
+
+      {/* Mobile Tools & Options Bottom Sheet / Modal */}
+      {showMobileToolsModal && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm animate-fade">
+          <div className="w-full max-w-sm bg-white dark:bg-slate-900 border-t sm:border border-slate-200 dark:border-slate-800 rounded-t-3xl sm:rounded-3xl p-5 shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto">
+            {/* Header */}
+            <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+              <div className="flex items-center gap-2">
+                <span className="text-base font-bold text-slate-900 dark:text-white">Game Options</span>
+              </div>
+              <button
+                onClick={() => setShowMobileToolsModal(false)}
+                className="p-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Profile Row */}
+            <div 
+              onClick={() => {
+                setShowMobileToolsModal(false);
+                setShowProfileModal(true);
+              }}
+              className="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700/60 flex items-center justify-between cursor-pointer hover:border-emerald-500/40 transition"
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">{currentAvatarObj.emoji}</span>
+                <div>
+                  <div className="text-sm font-bold text-slate-900 dark:text-white">{profile.displayName || 'Player'}</div>
+                  <div className="text-xs text-amber-600 dark:text-amber-400 font-semibold">{progression.badge} Level {progression.level} • {progression.title}</div>
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-slate-400" />
+            </div>
+
+            {/* Action Buttons Grid */}
+            <div className="grid grid-cols-2 gap-2">
+              {/* Daily / Practice Switch */}
+              <button
+                onClick={() => {
+                  setShowMobileToolsModal(false);
+                  if (isPractice) {
+                    setIsPractice(false);
+                  } else {
+                    setIsPractice(true);
+                    startNewPractice();
+                  }
+                }}
+                className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 flex flex-col items-center justify-center gap-1.5 text-center text-xs font-semibold text-slate-800 dark:text-slate-200 hover:border-emerald-500/40 transition shadow-sm"
+              >
+                <Shuffle className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
+                <span>{isPractice ? 'Switch to Daily' : 'Switch to Practice'}</span>
+              </button>
+
+              {/* Theme Toggle */}
+              <button
+                onClick={toggleTheme}
+                className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 flex flex-col items-center justify-center gap-1.5 text-center text-xs font-semibold text-slate-800 dark:text-slate-200 hover:border-amber-500/40 transition shadow-sm"
+              >
+                {theme === 'dark' ? <Sun className="w-5 h-5 text-amber-500 dark:text-amber-400" /> : <Moon className="w-5 h-5 text-indigo-500 dark:text-indigo-400" />}
+                <span>{theme === 'dark' ? 'Light Theme' : 'Dark Theme'}</span>
+              </button>
+
+              {/* Leaderboard */}
+              <button
+                onClick={() => {
+                  setShowMobileToolsModal(false);
+                  setShowLeaderboardModal(true);
+                }}
+                className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 flex flex-col items-center justify-center gap-1.5 text-center text-xs font-semibold text-slate-800 dark:text-slate-200 hover:border-amber-500/40 transition shadow-sm"
+              >
+                <Trophy className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+                <span>Leaderboard</span>
+              </button>
+
+              {/* Personal Statistics */}
+              <button
+                onClick={() => {
+                  setShowMobileToolsModal(false);
+                  setShowStatsModal(true);
+                }}
+                className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 flex flex-col items-center justify-center gap-1.5 text-center text-xs font-semibold text-slate-800 dark:text-slate-200 hover:border-cyan-500/40 transition shadow-sm"
+              >
+                <Award className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
+                <span>Personal Stats</span>
+              </button>
+
+              {/* How to Play */}
+              <button
+                onClick={() => {
+                  setShowMobileToolsModal(false);
+                  setShowHelpModal(true);
+                }}
+                className="col-span-2 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 flex items-center justify-center gap-2 text-xs font-semibold text-slate-800 dark:text-slate-200 hover:border-emerald-500/40 transition shadow-sm"
+              >
+                <HelpCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                <span>How to Play & Clue Rules</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

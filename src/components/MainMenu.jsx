@@ -102,25 +102,25 @@ export default function MainMenu({
       </div>
 
       {/* Hero Header */}
-      <div className="flex flex-col items-center text-center pt-2">
-        <div className="relative mb-3 group">
+      <div className="flex flex-col items-center text-center pt-1 sm:pt-2">
+        <div className="relative mb-2 sm:mb-3 group">
           <div className="absolute -inset-1.5 bg-gradient-to-r from-emerald-500/30 to-cyan-500/30 rounded-3xl blur-lg group-hover:blur-xl transition duration-500" />
-          <div className="relative w-20 h-20 md:w-24 md:h-24 rounded-3xl overflow-hidden border-2 border-emerald-500/50 shadow-2xl shadow-emerald-950/80 bg-slate-950 ring-4 ring-emerald-500/20 flex items-center justify-center transform group-hover:scale-105 transition duration-300">
+          <div className="relative w-14 h-14 sm:w-20 md:w-24 sm:h-20 md:h-24 rounded-2xl sm:rounded-3xl overflow-hidden border-2 border-emerald-500/50 shadow-2xl shadow-emerald-950/80 bg-slate-950 ring-2 sm:ring-4 ring-emerald-500/20 flex items-center justify-center transform group-hover:scale-105 transition duration-300">
             <img 
               src="./apple-touch-icon.png" 
               alt="Microbledle Logo" 
-              className="w-full h-full object-cover rounded-2xl" 
+              className="w-full h-full object-cover rounded-xl sm:rounded-2xl" 
             />
           </div>
         </div>
 
-        <h1 className="text-4xl md:text-5xl font-black tracking-tight bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500 dark:from-emerald-400 dark:via-teal-300 dark:to-cyan-400 bg-clip-text text-transparent drop-shadow-sm">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500 dark:from-emerald-400 dark:via-teal-300 dark:to-cyan-400 bg-clip-text text-transparent drop-shadow-sm">
           MICROBLEDLE
         </h1>
-        <p className="text-xs sm:text-sm font-bold text-emerald-600 dark:text-emerald-400 mt-1 uppercase tracking-wider">
+        <p className="text-xs sm:text-sm font-bold text-emerald-600 dark:text-emerald-400 mt-0.5 sm:mt-1 uppercase tracking-wider">
           Daily Medical Microbiology Wordle
         </p>
-        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+        <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 mt-0.5">
           Find the pathogen • Choose the treatment
         </p>
       </div>
@@ -128,13 +128,13 @@ export default function MainMenu({
       {/* Physician Profile Card (Click to Edit) */}
       <div 
         onClick={onOpenProfile}
-        className="w-full bg-gradient-to-r from-emerald-50/70 via-white to-teal-50/70 dark:from-slate-900/90 dark:via-slate-900/80 dark:to-slate-950/90 border border-slate-200 dark:border-slate-700/80 hover:border-emerald-500/60 rounded-3xl p-4 sm:p-5 shadow-md dark:shadow-2xl relative overflow-hidden cursor-pointer group transition-all duration-300 hover:shadow-emerald-950/30 text-left"
+        className="w-full bg-gradient-to-r from-emerald-50/70 via-white to-teal-50/70 dark:from-slate-900/90 dark:via-slate-900/80 dark:to-slate-950/90 border border-slate-200 dark:border-slate-700/80 hover:border-emerald-500/60 rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 shadow-md dark:shadow-2xl relative overflow-hidden cursor-pointer group transition-all duration-300 hover:shadow-emerald-950/30 text-left"
       >
         <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3.5">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500/20 via-slate-100 dark:via-slate-800 to-cyan-500/20 border border-emerald-500/40 flex items-center justify-center text-3xl shadow-inner shrink-0 group-hover:scale-105 transition">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+          <div className="flex items-center gap-3 sm:gap-3.5">
+            <div className="w-11 h-11 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-gradient-to-br from-emerald-500/20 via-slate-100 dark:via-slate-800 to-cyan-500/20 border border-emerald-500/40 flex items-center justify-center text-2xl sm:text-3xl shadow-inner shrink-0 group-hover:scale-105 transition">
               {currentAvatarObj.emoji}
             </div>
             <div>
@@ -158,7 +158,7 @@ export default function MainMenu({
             </div>
           </div>
 
-          <div className="flex sm:flex-col items-end justify-between sm:justify-center border-t sm:border-t-0 border-slate-200 dark:border-slate-800 pt-3 sm:pt-0">
+          <div className="flex sm:flex-col items-end justify-between sm:justify-center border-t sm:border-t-0 border-slate-200 dark:border-slate-800 pt-2.5 sm:pt-0">
             <div className="text-xs text-slate-500 dark:text-slate-400 sm:text-right">
               <span className="font-bold text-slate-900 dark:text-white text-sm">{progression.totalXp}</span> XP Total
             </div>
@@ -170,8 +170,8 @@ export default function MainMenu({
         </div>
 
         {/* Progress Bar */}
-        <div className="mt-3.5 space-y-1">
-          <div className="w-full bg-slate-200 dark:bg-slate-950/80 rounded-full h-2.5 overflow-hidden border border-slate-300 dark:border-slate-800">
+        <div className="mt-2.5 sm:mt-3.5 space-y-1">
+          <div className="w-full bg-slate-200 dark:bg-slate-950/80 rounded-full h-2 sm:h-2.5 overflow-hidden border border-slate-300 dark:border-slate-800">
             <div 
               className="bg-gradient-to-r from-emerald-500 to-cyan-400 h-full rounded-full transition-all duration-700 shadow-sm"
               style={{ width: `${progression.progressPercent}%` }}
@@ -189,7 +189,7 @@ export default function MainMenu({
       </div>
 
       {/* New Daily Case Available Countdown Bar */}
-      <div className="w-full py-3.5 px-4 rounded-3xl bg-white/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 flex flex-col items-center justify-center gap-1.5 text-center shadow-sm">
+      <div className="w-full py-2.5 sm:py-3.5 px-3.5 sm:px-4 rounded-2xl sm:rounded-3xl bg-white/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 flex flex-col items-center justify-center gap-1 sm:gap-1.5 text-center shadow-sm">
         <div className="flex items-center justify-center gap-2">
           <div className="p-1 rounded-md bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
             <Clock className="w-3.5 h-3.5" />
@@ -198,16 +198,16 @@ export default function MainMenu({
             New Daily Case Available in
           </span>
         </div>
-        <div className="font-mono text-emerald-600 dark:text-emerald-400 font-black text-2xl sm:text-3xl tracking-widest bg-emerald-50/80 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 px-5 py-1 rounded-2xl shadow-sm">
+        <div className="font-mono text-emerald-600 dark:text-emerald-400 font-black text-xl sm:text-3xl tracking-widest bg-emerald-50/80 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 px-4 sm:px-5 py-0.5 sm:py-1 rounded-xl sm:rounded-2xl shadow-sm">
           {countdown || '--:--:--'}
         </div>
       </div>
 
       {/* Main Game Mode Cards (Daily vs Practice) */}
-      <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
         
         {/* CARD 1: DAILY CASE */}
-        <div className="rounded-3xl border-2 border-emerald-500/50 bg-gradient-to-br from-emerald-50/90 via-white to-slate-50 dark:from-emerald-950/40 dark:via-slate-900 dark:to-slate-950 p-5 sm:p-6 shadow-md dark:shadow-2xl relative overflow-hidden flex flex-col justify-between group hover:border-emerald-400 transition-all duration-300">
+        <div className="rounded-2xl sm:rounded-3xl border-2 border-emerald-500/50 bg-gradient-to-br from-emerald-50/90 via-white to-slate-50 dark:from-emerald-950/40 dark:via-slate-900 dark:to-slate-950 p-4 sm:p-6 shadow-md dark:shadow-2xl relative overflow-hidden flex flex-col justify-between group hover:border-emerald-400 transition-all duration-300">
           <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
           
           <div>
