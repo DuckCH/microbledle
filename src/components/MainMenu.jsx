@@ -121,7 +121,7 @@ export default function MainMenu({
           Daily Medical Microbiology Wordle
         </p>
         <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-          Find the pathogen • Choose first-line treatment
+          Find the pathogen • Choose the treatment
         </p>
       </div>
 
@@ -296,13 +296,16 @@ export default function MainMenu({
               {unlockedBugIds.length}/{totalBugsCount}
             </span>
           </div>
-          <div>
+          <div className="w-full">
             <div className="text-base sm:text-lg font-black text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-300 transition">
               Microdex
             </div>
-            <p className="text-xs sm:text-[13px] text-slate-500 dark:text-slate-400 mt-1 leading-snug">
-              Library ({microdexPercentage}%)
-            </p>
+            <div className="w-full bg-slate-200 dark:bg-slate-950/80 rounded-full h-2 overflow-hidden border border-slate-300 dark:border-slate-800 mt-2">
+              <div 
+                className="bg-gradient-to-r from-emerald-500 to-cyan-400 h-full rounded-full transition-all duration-500 shadow-sm"
+                style={{ width: `${Math.min(100, Math.max(0, microdexPercentage))}%` }}
+              />
+            </div>
           </div>
         </button>
 
@@ -329,7 +332,7 @@ export default function MainMenu({
           </div>
         </button>
 
-        {/* CAREER STATISTICS */}
+        {/* PERSONAL STATISTICS */}
         <button
           onClick={onOpenStats}
           className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 hover:border-cyan-500/50 hover:bg-slate-50 dark:hover:bg-slate-800/80 transition flex flex-col justify-between text-left group shadow-sm dark:shadow-lg"
@@ -347,7 +350,7 @@ export default function MainMenu({
               Statistics
             </div>
             <p className="text-xs sm:text-[13px] text-slate-500 dark:text-slate-400 mt-1 leading-snug">
-              Career stats & streak
+              Personal stats & streak
             </p>
           </div>
         </button>

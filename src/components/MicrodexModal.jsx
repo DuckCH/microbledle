@@ -117,16 +117,11 @@ export default function MicrodexModal({ isOpen, onClose, unlockedBugIds = [], in
               <BookOpen className="w-6 h-6" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-xl md:text-2xl font-black text-white tracking-tight">
-                  Microdex Library
-                </h2>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800">
-                  Quick Guide
-                </span>
-              </div>
-              <p className="text-xs text-slate-400">
-                Pathogen Guide & High-Yield Exam Notes
+              <h2 className="text-xl md:text-2xl font-black text-white tracking-tight">
+                Microdex Library
+              </h2>
+              <p className="text-xs text-slate-400 mt-0.5">
+                Pathogen Guide & High-Yield Keyword
               </p>
             </div>
           </div>
@@ -257,7 +252,7 @@ export default function MicrodexModal({ isOpen, onClose, unlockedBugIds = [], in
                   <div className="mt-3 pt-2 border-t border-slate-800/80 flex items-center justify-between text-[10px] text-slate-400">
                     <span className="truncate max-w-[170px]">{bug.tropism}</span>
                     <span className="text-emerald-400 font-semibold group-hover:translate-x-0.5 transition flex items-center gap-0.5">
-                      View Flashcard <ArrowRight className="w-3 h-3" />
+                      View <ArrowRight className="w-3 h-3" />
                     </span>
                   </div>
                 )}

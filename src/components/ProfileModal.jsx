@@ -119,7 +119,7 @@ export default function ProfileModal({
           </div>
         </div>
 
-        {/* View Career Statistics Button */}
+        {/* View Personal Statistics Button */}
         <button
           type="button"
           onClick={() => {
@@ -133,7 +133,7 @@ export default function ProfileModal({
               <BarChart2 className="w-4 h-4" />
             </div>
             <div className="text-left">
-              <div className="font-bold text-slate-100 text-sm">Career Statistics</div>
+              <div className="font-bold text-slate-100 text-sm">Personal Statistics</div>
               <div className="text-[11px] text-slate-400">View games, win %, streaks & antibiotic record</div>
             </div>
           </div>

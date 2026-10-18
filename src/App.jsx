@@ -1772,7 +1772,7 @@ export default function App() {
         </div>
       )}
 
-      {/* Career Statistics Modal */}
+      {/* Personal Statistics Modal */}
       {showStatsModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade">
           <div className="bg-slate-900 border border-slate-700/80 rounded-3xl p-6 max-w-lg w-full shadow-2xl relative max-h-[90vh] overflow-y-auto">
@@ -1789,8 +1789,7 @@ export default function App() {
               <div className="inline-flex items-center justify-center p-3 rounded-2xl bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 mb-2">
                 <BarChart2 className="w-7 h-7" />
               </div>
-              <h2 className="text-2xl font-black text-white">Career Statistics</h2>
-              <p className="text-xs text-slate-400">Clinical performance & diagnostic accuracy</p>
+              <h2 className="text-2xl font-black text-white">Personal Statistics</h2>
             </div>
 
             {/* Overall Statistics */}
