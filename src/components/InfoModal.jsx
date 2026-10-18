@@ -171,7 +171,7 @@ export default function InfoModal({ isOpen, onClose, initialTab = 'about' }) {
               <div>
                 <h3 className="text-base font-bold text-white mb-1">Get in Touch</h3>
                 <p className="text-xs text-slate-400">
-                  Have feedback, detected a medical inaccuracy, want to suggest a new bug, or discuss academic collaboration? We'd love to hear from you.
+                  Have feedback, detected a medical inaccuracy, want to suggest a new pathogen, or discuss academic collaboration? We'd love to hear from you.
                 </p>
               </div>
 
@@ -221,7 +221,7 @@ export default function InfoModal({ isOpen, onClose, initialTab = 'about' }) {
                 <div className="flex flex-wrap gap-1.5">
                   {[
                     'General Feedback', 
-                    'Bug Report / Correction', 
+                    'Issue Report / Correction', 
                     'Pathogen Suggestion', 
                     'Academic Collaboration'
                   ].map((cat) => (
@@ -296,7 +296,7 @@ export default function InfoModal({ isOpen, onClose, initialTab = 'about' }) {
                 <div className="p-3 rounded-xl bg-slate-800/40 border border-slate-700/60 space-y-1">
                   <strong className="text-emerald-400 text-xs block">3. Analytics & Cookies</strong>
                   <p>
-                    We use Google Analytics for Firebase to record anonymous aggregated metrics (e.g. daily case participation rates, general completion rates) to improve game balance and fix bugs. No intrusive tracking cookies are deployed.
+                    We use Google Analytics for Firebase to record anonymous aggregated metrics (e.g. daily case participation rates, general completion rates) to improve game balance and fix technical issues. No intrusive tracking cookies are deployed.
                   </p>
                 </div>
 

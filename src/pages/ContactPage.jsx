@@ -80,7 +80,7 @@ export default function ContactPage() {
           Get in Touch
         </h1>
         <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-          Have feedback, spotted a typo, want to suggest a bug, or just want to say hi? We'd love to hear from you.
+          Have feedback, spotted a typo, want to suggest a pathogen, or just want to say hi? We'd love to hear from you.
         </p>
       </div>
 
@@ -187,7 +187,7 @@ export default function ContactPage() {
               <div className="flex flex-wrap gap-2">
                 {[
                   'Feedback / Suggestion',
-                  'Bug / Typo in a Case',
+                  'Issue / Typo in a Case',
                   'Suggest a Pathogen',
                   'School / Study Group',
                   'Other'

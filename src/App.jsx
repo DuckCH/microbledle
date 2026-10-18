@@ -817,7 +817,7 @@ export default function App() {
             origin: { y: 0.6 }
           });
 
-          // Unlock bug in Bugdex & Save to BOTH Local and Cloud
+          // Unlock pathogen in Bugdex & Save to BOTH Local and Cloud
           setUnlockedBugIds(prev => {
             if (!prev.includes(target.id)) {
               const updated = [...prev, target.id];
@@ -1512,7 +1512,7 @@ export default function App() {
 
                   return (
                     <tr key={rowIndex} className="tile-reveal">
-                      {/* Bug Name & Badge */}
+                      {/* Pathogen Name & Badge */}
                       <td className="py-3 px-3">
                         <div className="font-semibold text-emerald-300 italic text-sm">
                           {item.guess.name}

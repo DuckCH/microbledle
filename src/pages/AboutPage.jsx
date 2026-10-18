@@ -48,7 +48,7 @@ export default function AboutPage({ onStartDaily, onStartPractice }) {
               1
             </div>
             <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-              <span>Daily Mystery Bug</span>
+              <span>Daily Mystery Pathogen</span>
             </h3>
             <p className="text-slate-600 dark:text-slate-400 text-xs leading-relaxed">
               A new organism is chosen every day at midnight UTC. You have 6 guesses. Color-coded tiles guide your next guess: green for exact matches, yellow for close matches, and gray for misses.
@@ -64,7 +64,7 @@ export default function AboutPage({ onStartDaily, onStartPractice }) {
               <span>Helpful Clues as You Guess</span>
             </h3>
             <p className="text-slate-600 dark:text-slate-400 text-xs leading-relaxed">
-              Stuck on a tricky bug? Hints unlock as you play: Gram stain at Guess 2, lab test hint at Guess 3, and a short patient story at Guess 4.
+              Stuck on a tricky pathogen? Hints unlock as you play: Gram stain at Guess 2, lab test hint at Guess 3, and a short patient story at Guess 4.
             </p>
           </div>
 
@@ -77,7 +77,7 @@ export default function AboutPage({ onStartDaily, onStartPractice }) {
               <span>Treatment Bonus Round (Rx)</span>
             </h3>
             <p className="text-slate-600 dark:text-slate-400 text-xs leading-relaxed">
-              Once you solve the bug, choose the right first-line antibiotic or medicine to reinforce real-world clinical knowledge and earn bonus XP.
+              Once you solve the pathogen, choose the right first-line antibiotic or medicine to reinforce real-world clinical knowledge and earn bonus XP.
             </p>
           </div>
 
@@ -90,7 +90,7 @@ export default function AboutPage({ onStartDaily, onStartPractice }) {
               <span>Your Bugdex Collection</span>
             </h3>
             <p className="text-slate-600 dark:text-slate-400 text-xs leading-relaxed">
-              Every bug you solve unlocks in your Bugdex library, complete with high-yield facts, key symptoms, and microscopy pictures for easy review.
+              Every pathogen you solve unlocks in your Bugdex library, complete with high-yield facts, key symptoms, and microscopy pictures for easy review.
             </p>
           </div>
         </div>
