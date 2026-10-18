@@ -1387,10 +1387,25 @@ export default function App() {
           </div>
         )}
 
-        {/* Progressive Clues Section (Smear at 2, Culture at 3, Vignette at 4) */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        {/* Progressive Clues Section (Initial Clinical at 0, Smear at 2, Culture at 3, Full Case at 4) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           
-          {/* 1. Microscopic Smear Clue (Unlocks at guess >= 2) */}
+          {/* 1. Initial Clinical Clue (Unlocked from start at guess >= 0) */}
+          <div className="p-3.5 rounded-2xl border transition-all duration-300 bg-slate-900/80 border-indigo-500/40 text-slate-200 shadow-md shadow-indigo-950/20">
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="text-[11px] uppercase tracking-wider font-bold flex items-center gap-1 text-indigo-400">
+                <FileText className="w-3.5 h-3.5" /> Clinical Clue
+              </span>
+              <span className="text-[10px] px-1.5 py-0.5 rounded-full font-medium bg-indigo-950 text-indigo-300 border border-indigo-800">
+                START
+              </span>
+            </div>
+            <p className="text-xs leading-relaxed">
+              <span className="italic text-indigo-100 font-serif">"{target.chiefComplaint || target.vignette}"</span>
+            </p>
+          </div>
+
+          {/* 2. Microscopic Smear Clue (Unlocks at guess >= 2) */}
           <div className={`p-3.5 rounded-2xl border transition-all duration-300 ${
             guesses.length >= 2
               ? 'bg-slate-900/80 border-cyan-500/40 text-slate-200 shadow-md shadow-cyan-950/20' 
@@ -1407,7 +1422,7 @@ export default function App() {
                   ? 'bg-cyan-950 text-cyan-300 border border-cyan-800' 
                   : 'bg-slate-800 text-slate-500'
               }`}>
-                {guesses.length >= 2 ? 'UNLOCKED' : `Guess 2 (${guesses.length}/2)`}
+                {guesses.length >= 2 ? 'UNLOCKED' : `Guess 2 (${Math.min(guesses.length, 2)}/2)`}
               </span>
             </div>
             <p className="text-xs leading-relaxed">
@@ -1421,7 +1436,7 @@ export default function App() {
             </p>
           </div>
 
-          {/* 2. Diagnostic Culture Clue (Unlocks at guess >= 3) */}
+          {/* 3. Diagnostic Culture Clue (Unlocks at guess >= 3) */}
           <div className={`p-3.5 rounded-2xl border transition-all duration-300 ${
             guesses.length >= 3
               ? 'bg-slate-900/80 border-teal-500/40 text-slate-200 shadow-md shadow-teal-950/20' 
@@ -1438,7 +1453,7 @@ export default function App() {
                   ? 'bg-teal-950 text-teal-300 border border-teal-800' 
                   : 'bg-slate-800 text-slate-500'
               }`}>
-                {guesses.length >= 3 ? 'UNLOCKED' : `Guess 3 (${guesses.length}/3)`}
+                {guesses.length >= 3 ? 'UNLOCKED' : `Guess 3 (${Math.min(guesses.length, 3)}/3)`}
               </span>
             </div>
             <p className="text-xs leading-relaxed">
@@ -1452,7 +1467,7 @@ export default function App() {
             </p>
           </div>
 
-          {/* 3. Patient Story Clue (Unlocks at guess >= 4) */}
+          {/* 4. Patient Story Clue (Unlocks at guess >= 4) */}
           <div className={`p-3.5 rounded-2xl border transition-all duration-300 ${
             guesses.length >= 4 
               ? 'bg-slate-900/80 border-amber-500/40 text-slate-200 shadow-md shadow-amber-950/20' 
@@ -1462,14 +1477,14 @@ export default function App() {
               <span className={`text-[11px] uppercase tracking-wider font-bold flex items-center gap-1 ${
                 guesses.length >= 4 ? 'text-amber-400' : 'text-slate-500'
               }`}>
-                <Stethoscope className="w-3.5 h-3.5" /> Patient Story Clue
+                <Stethoscope className="w-3.5 h-3.5" /> Full Case Clue
               </span>
               <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${
                 guesses.length >= 4 
                   ? 'bg-amber-950 text-amber-300 border border-amber-800' 
                   : 'bg-slate-800 text-slate-500'
               }`}>
-                {guesses.length >= 4 ? 'UNLOCKED' : `Guess 4 (${guesses.length}/4)`}
+                {guesses.length >= 4 ? 'UNLOCKED' : `Guess 4 (${Math.min(guesses.length, 4)}/4)`}
               </span>
             </div>
             <p className="text-xs leading-relaxed">
@@ -1477,7 +1492,7 @@ export default function App() {
                 <span className="italic text-amber-100 font-serif">"{target.vignette}"</span>
               ) : (
                 <span className="italic text-slate-500">
-                  Reveals patient symptoms and case presentation...
+                  Reveals full clinical vignette and case presentation...
                 </span>
               )}
             </p>
@@ -1942,9 +1957,13 @@ export default function App() {
             </div>
 
             <div className="border-t border-slate-800 pt-3 text-xs text-slate-400 space-y-2">
+              <div className="flex items-center gap-2 text-indigo-300">
+                <FileText className="w-4 h-4 shrink-0" />
+                <span><strong>Clinical Clue:</strong> Available from the start (age, sex & chief complaint).</span>
+              </div>
               <div className="flex items-center gap-2 text-cyan-300">
                 <Microscope className="w-4 h-4 shrink-0" />
-                <span><strong>Microscope Clue:</strong> Unlocks after Guess 2.</span>
+                <span><strong>Smear Clue:</strong> Unlocks after Guess 2.</span>
               </div>
               <div className="flex items-center gap-2 text-teal-300">
                 <TestTube2 className="w-4 h-4 shrink-0" />
@@ -1952,7 +1971,7 @@ export default function App() {
               </div>
               <div className="flex items-center gap-2 text-amber-300">
                 <Stethoscope className="w-4 h-4 shrink-0" />
-                <span><strong>Patient Story Clue:</strong> Unlocks after Guess 4.</span>
+                <span><strong>Full Case Presentation:</strong> Unlocks after Guess 4.</span>
               </div>
               <div className="flex items-center gap-2 text-slate-400">
                 <Calendar className="w-4 h-4 shrink-0 text-slate-500" />

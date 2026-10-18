@@ -61,10 +61,10 @@ export default function AboutPage({ onStartDaily, onStartPractice }) {
               2
             </div>
             <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-              <span>Helpful Clues as You Guess</span>
+              <span>Progressive Clinical Clues</span>
             </h3>
             <p className="text-slate-600 dark:text-slate-400 text-xs leading-relaxed">
-              Stuck on a tricky pathogen? Hints unlock as you play: Gram stain at Guess 2, lab test hint at Guess 3, and a short patient story at Guess 4.
+              Every case begins with an initial clinical clue (patient demographics & chief complaint). As you guess, deeper evidence unlocks: Smear & morphology at Guess 2, Culture clues at Guess 3, and the full clinical vignette at Guess 4.
             </p>
           </div>
 
