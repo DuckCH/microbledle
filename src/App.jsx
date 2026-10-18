@@ -1446,14 +1446,14 @@ export default function App() {
               <span>Your Guesses ({guesses.length}/{maxGuesses})</span>
             </div>
             {/* Color Legend */}
-            <div className="flex items-center gap-3 text-xs">
+            <div className="flex items-center gap-3 text-xs flex-wrap">
               <span className="flex items-center gap-1.5">
                 <span className="w-3 h-3 rounded-md bg-emerald-600 inline-block shadow-sm"></span>
                 <span className="text-slate-300 font-medium">Exact Match</span>
               </span>
               <span className="flex items-center gap-1.5">
                 <span className="w-3 h-3 rounded-md bg-amber-600 inline-block shadow-sm"></span>
-                <span className="text-slate-300 font-medium">Partial</span>
+                <span className="text-slate-300 font-medium">Partial Match</span>
               </span>
               <span className="flex items-center gap-1.5">
                 <span className="w-3 h-3 rounded-md bg-slate-800 border border-slate-700 inline-block"></span>
