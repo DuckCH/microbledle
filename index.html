@@ -21,6 +21,12 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Microbledle" />
 
+    <!-- Canonical & Search Optimization -->
+    <link rel="canonical" href="https://microbledle.com/" />
+    <meta name="description" content="A daily clinical microbiology deduction game for medical students, doctors, and microbiologists. Deduce the target pathogen in 6 guesses or fewer." />
+    <meta name="keywords" content="microbledle, microbiology game, medical wordle, bacteria deductive game, antibiotic stewardship, usmle step 1, clinical microbiology, infectious disease game" />
+    <meta name="author" content="Microbledle" />
+
     <!-- Social Share Card Preview (Open Graph & Twitter) -->
     <meta property="og:title" content="Microbledle - Daily Medical Microbiology Deduction" />
     <meta property="og:description" content="A daily clinical microbiology deduction game for medical students, doctors, and microbiologists. Deduce the target pathogen in 6 guesses or fewer." />
@@ -32,6 +38,27 @@
     <meta name="twitter:title" content="Microbledle - Daily Medical Microbiology Deduction" />
     <meta name="twitter:description" content="A daily clinical microbiology deduction game for medical students, doctors, and microbiologists. Deduce the target pathogen in 6 guesses or fewer." />
     <meta name="twitter:image" content="https://microbledle.com/microbledle_logo.jpg" />
+
+    <!-- Structured Data (Schema.org JSON-LD for Google Rich Results) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Microbledle",
+      "url": "https://microbledle.com/",
+      "applicationCategory": "EducationalGame",
+      "operatingSystem": "All",
+      "browserRequirements": "Requires JavaScript. Requires HTML5.",
+      "description": "A daily clinical microbiology deduction game for medical students, doctors, and microbiologists. Deduce the target pathogen in 6 guesses or fewer.",
+      "genre": "Medical Educational Deduction Game",
+      "inLanguage": "en",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+    </script>
   </head>
   <body class="bg-slate-950 text-slate-100 min-h-screen selection:bg-emerald-500 selection:text-white">
     <div id="root"></div>

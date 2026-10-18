@@ -25,7 +25,8 @@ import {
   saveUserProgress, 
   loadUserProgress, 
   isFirebaseConfigured,
-  submitDailyScore
+  submitDailyScore,
+  logAnalyticsEvent
 } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 
@@ -258,7 +259,11 @@ export default function App() {
   }, [theme]);
 
   const toggleTheme = () => {
-    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
+    setTheme(prev => {
+      const nextTheme = prev === 'dark' ? 'light' : 'dark';
+      logAnalyticsEvent('theme_toggled', { theme: nextTheme });
+      return nextTheme;
+    });
   };
 
   const isIos = useMemo(() => {
@@ -279,12 +284,16 @@ export default function App() {
   }, []);
 
   const handleInstallClick = async () => {
+    logAnalyticsEvent('pwa_install_prompt', { action: deferredPrompt ? 'native_prompt' : 'manual_modal' });
     if (deferredPrompt) {
       deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
       if (outcome === 'accepted') {
+        logAnalyticsEvent('pwa_install_accepted');
         setDeferredPrompt(null);
         setShowInstallModal(false);
+      } else {
+        logAnalyticsEvent('pwa_install_dismissed');
       }
     } else {
       setShowInstallModal(true);
@@ -628,7 +637,22 @@ export default function App() {
     const isVictory = evalResult.isWin;
     const isLoss = !isVictory && newGuesses.length >= maxGuesses;
 
+    // Track guess submitted
+    logAnalyticsEvent('guess_submitted', {
+      guess_number: newGuesses.length,
+      pathogen: organism.name,
+      is_correct: isVictory,
+      mode: isPractice ? 'practice' : 'daily'
+    });
+
     if (isVictory || isLoss) {
+      logAnalyticsEvent('game_complete', {
+        outcome: isVictory ? 'victory' : 'defeat',
+        guesses_count: newGuesses.length,
+        mode: isPractice ? 'practice' : 'daily',
+        pathogen: target.name
+      });
+
       setTimeout(() => {
         setGameOver(true);
         setWon(isVictory);
@@ -771,6 +795,7 @@ export default function App() {
     setIsPractice(false);
     setTarget(dailyInfo.target);
     setDateStr(dailyInfo.dateStr);
+    logAnalyticsEvent('game_start', { mode: 'daily', date: dailyInfo.dateStr });
 
     const savedGame = localStorage.getItem(`microbledle_game_${dailyInfo.dateStr}`);
     if (savedGame) {
@@ -794,10 +819,12 @@ export default function App() {
   const handleStartPractice = () => {
     setIsPractice(true);
     startNewPractice();
+    logAnalyticsEvent('game_start', { mode: 'practice' });
     setCurrentScreen('game');
   };
 
   const copyEmojiGrid = () => {
+    logAnalyticsEvent('share_clicked', { type: 'emoji_grid', mode: isPractice ? 'practice' : 'daily' });
     const statusMap = { exact: '🟩', partial: '🟨', incorrect: '⬛' };
     const gridRows = guesses.map(g => {
       const { taxonomy, morphology, respiration, keyTest, tropism } = g.results;

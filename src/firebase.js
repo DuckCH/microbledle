@@ -21,7 +21,7 @@ import {
   limit,
   getDocs
 } from 'firebase/firestore';
-import { getAnalytics, isSupported } from 'firebase/analytics';
+import { getAnalytics, isSupported, logEvent as firebaseLogEvent } from 'firebase/analytics';
 
 // Your web app's Firebase configuration (read strictly from Vite environment variables)
 const firebaseConfig = {
@@ -45,6 +45,7 @@ let app = null;
 let auth = null;
 let db = null;
 let googleProvider = null;
+let analytics = null;
 
 if (isFirebaseConfigured) {
   try {
@@ -56,7 +57,9 @@ if (isFirebaseConfigured) {
     // Initialize Analytics when running in browser
     if (typeof window !== 'undefined') {
       isSupported().then(yes => {
-        if (yes && app) getAnalytics(app);
+        if (yes && app) {
+          analytics = getAnalytics(app);
+        }
       }).catch(() => {});
     }
   } catch (err) {
@@ -64,7 +67,18 @@ if (isFirebaseConfigured) {
   }
 }
 
-export { auth, db, googleProvider };
+// Safely log custom game analytics events without breaking gameplay
+export function logAnalyticsEvent(eventName, params = {}) {
+  try {
+    if (analytics) {
+      firebaseLogEvent(analytics, eventName, params);
+    }
+  } catch (err) {
+    // Fail silently in development or when blocked by privacy extensions/adblockers
+  }
+}
+
+export { auth, db, googleProvider, analytics };
 
 // Google Sign-In with popup
 export async function signInWithGoogle() {

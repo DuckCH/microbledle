@@ -3,6 +3,7 @@ import {
   X, Download, Share2, Copy, Check, FileText, 
   Sparkles, Award, ShieldAlert, Pill, ExternalLink, Image as ImageIcon
 } from 'lucide-react';
+import { logAnalyticsEvent } from '../firebase';
 
 export default function DischargeCardModal({
   isOpen,
@@ -373,6 +374,7 @@ export default function DischargeCardModal({
   // 1. Download image file (.png)
   const handleDownload = () => {
     if (!canvasRef.current) return;
+    logAnalyticsEvent('share_clicked', { type: 'discharge_card_download', mode: isPractice ? 'practice' : 'daily' });
     setDownloading(true);
     try {
       const fileName = `microbledle-discharge-${dateStr || 'case'}.png`;
@@ -393,6 +395,7 @@ export default function DischargeCardModal({
   // 2. Share image directly via Web Share API
   const handleShare = async () => {
     if (!imageBlob) return;
+    logAnalyticsEvent('share_clicked', { type: 'discharge_card_webshare', mode: isPractice ? 'practice' : 'daily' });
     const fileName = `microbledle-discharge-${dateStr || 'case'}.png`;
     const file = new File([imageBlob], fileName, { type: 'image/png' });
 
@@ -417,6 +420,7 @@ export default function DischargeCardModal({
   // 3. Copy image to system clipboard
   const handleCopyImage = async () => {
     if (!imageBlob || !navigator.clipboard || !window.ClipboardItem) return;
+    logAnalyticsEvent('share_clicked', { type: 'discharge_card_clipboard', mode: isPractice ? 'practice' : 'daily' });
     try {
       await navigator.clipboard.write([
         new ClipboardItem({ 'image/png': imageBlob })
@@ -431,6 +435,7 @@ export default function DischargeCardModal({
 
   // 4. Copy emoji text grid fallback
   const handleCopyTextGrid = () => {
+    logAnalyticsEvent('share_clicked', { type: 'discharge_card_emoji_text', mode: isPractice ? 'practice' : 'daily' });
     const statusMap = { exact: '🟩', partial: '🟨', incorrect: '⬛' };
     const gridRows = guesses.map(g => {
       const { taxonomy, morphology, respiration, keyTest, tropism } = g.results;
@@ -443,7 +448,7 @@ export default function DischargeCardModal({
 
     navigator.clipboard.writeText(text);
     setCopiedText(true);
-    setTimeout(() => setCopiedText(false), 2000);
+    setTimeout(() => setCopiedText(false), 2200);
   };
 
   return (
