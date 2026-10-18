@@ -282,6 +282,7 @@ export default function App() {
   const [showDischargeModal, setShowDischargeModal] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
   const [showBugdexModal, setShowBugdexModal] = useState(false);
+  const [bugdexInitialBug, setBugdexInitialBug] = useState(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showLeaderboardModal, setShowLeaderboardModal] = useState(false);
@@ -995,6 +996,12 @@ export default function App() {
     setCurrentScreen('game');
   };
 
+  const handleOpenBugdex = (bug = null) => {
+    setBugdexInitialBug(bug || target);
+    setShowCaseResultModal(false);
+    setShowBugdexModal(true);
+  };
+
   const copyEmojiGrid = () => {
     logAnalyticsEvent('share_clicked', { type: 'emoji_grid', mode: isPractice ? 'practice' : 'daily' });
     const statusMap = { exact: '🟩', partial: '🟨', incorrect: '⬛' };
@@ -1665,47 +1672,37 @@ export default function App() {
               )}
             </div>
 
-            {/* Empiric Rx Challenge (Post-game Clinical Pharmacology Quiz) */}
+            {/* Target Organism Identified (Concise & Zero Spoilers) */}
+            <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 mb-5 text-left flex items-center justify-between gap-3">
+              <div>
+                <span className="text-[10px] uppercase font-bold tracking-wider text-emerald-400 block mb-0.5">
+                  Target Organism Identified
+                </span>
+                <div className="text-lg sm:text-xl font-black text-white italic">
+                  {target.name}
+                </div>
+                <div className="text-xs text-slate-400 mt-0.5">{target.commonName} • {target.taxonomy}</div>
+              </div>
+
+              <button
+                onClick={() => handleOpenBugdex(target)}
+                className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-emerald-400 hover:text-emerald-300 border border-slate-700 hover:border-emerald-500/40 text-xs font-bold flex items-center gap-1.5 transition shrink-0 shadow-sm"
+                title="View full facts, images, and vignette in Bugdex"
+              >
+                <BookOpen className="w-3.5 h-3.5" />
+                <span>View in Bugdex</span>
+              </button>
+            </div>
+
+            {/* Empiric Rx Challenge (Post-game Treatment Quiz) */}
             <RxChallenge
               target={target}
               isDaily={!isPractice}
               dateStr={dateStr}
               isMuted={isMuted}
               onAnswer={handleRxAnswer}
+              onOpenBugdex={() => handleOpenBugdex(target)}
             />
-
-            {/* Target Organism Identified */}
-            <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 mb-6 text-left">
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-[10px] uppercase font-bold tracking-wider text-emerald-400">
-                  Target Organism Identified
-                </span>
-                <button
-                  onClick={() => {
-                    setShowCaseResultModal(false);
-                    setShowBugdexModal(true);
-                  }}
-                  className="text-[10px] text-emerald-400 hover:underline font-semibold flex items-center gap-1"
-                >
-                  <BookOpen className="w-3 h-3" /> View in Bugdex
-                </button>
-              </div>
-              <div className="text-xl font-black text-white italic">
-                {target.name}
-              </div>
-              <div className="text-xs text-slate-400 mb-3">{target.commonName} • {target.taxonomy}</div>
-              
-              <div className="space-y-2 text-xs border-t border-slate-800/80 pt-3">
-                <div className="bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
-                  <span className="font-semibold text-emerald-400">💊 First-Line Treatment:</span>
-                  <p className="text-slate-200 mt-0.5">{target.firstLineRx}</p>
-                </div>
-                <div className="bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
-                  <span className="font-semibold text-cyan-400">🧫 Key Lab Culture:</span>
-                  <p className="text-slate-200 mt-0.5">{target.culture}</p>
-                </div>
-              </div>
-            </div>
 
             {/* Countdown to next daily case (if daily mode) */}
             {!isPractice && (
@@ -1977,8 +1974,12 @@ export default function App() {
       {/* Bugdex USMLE Compendium Modal */}
       <BugdexModal 
         isOpen={showBugdexModal}
-        onClose={() => setShowBugdexModal(false)}
+        onClose={() => {
+          setShowBugdexModal(false);
+          setBugdexInitialBug(null);
+        }}
         unlockedBugIds={unlockedBugIds}
+        initialBug={bugdexInitialBug}
       />
 
       {/* Auth & Registration Modal */}

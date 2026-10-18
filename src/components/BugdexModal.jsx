@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { 
   X, Search, BookOpen, CheckCircle2, Lock, Sparkles, 
   Microscope, TestTube2, Stethoscope, Dna, Pill, Eye, EyeOff,
@@ -35,11 +35,17 @@ function getGramBadge(gram) {
   return { bg: 'bg-slate-800/70 border-slate-700/60 text-slate-300', dot: 'bg-slate-400', label: 'Microbe' };
 }
 
-export default function BugdexModal({ isOpen, onClose, unlockedBugIds = [] }) {
+export default function BugdexModal({ isOpen, onClose, unlockedBugIds = [], initialBug = null }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeFilter, setActiveFilter] = useState('All');
   const [studyMode, setStudyMode] = useState(false);
   const [selectedBug, setSelectedBug] = useState(null);
+
+  useEffect(() => {
+    if (isOpen && initialBug) {
+      setSelectedBug(initialBug);
+    }
+  }, [isOpen, initialBug]);
 
   const unlockedSet = useMemo(() => new Set(unlockedBugIds), [unlockedBugIds]);
 

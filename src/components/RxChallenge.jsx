@@ -4,7 +4,7 @@ import { playRxSuccessSound, playRxFailSound } from '../utils/audio';
 import confetti from 'canvas-confetti';
 import microbes from '../data/microbes.json';
 
-export default function RxChallenge({ target, isDaily, dateStr, isMuted, onAnswer }) {
+export default function RxChallenge({ target, isDaily, dateStr, isMuted, onAnswer, onOpenBugdex }) {
   const [selectedChoice, setSelectedChoice] = useState(null);
   const [answered, setAnswered] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
@@ -151,7 +151,7 @@ export default function RxChallenge({ target, isDaily, dateStr, isMuted, onAnswe
       {/* Case Question */}
       <div className="mb-4">
         <p className="text-xs sm:text-sm text-slate-200 leading-relaxed font-medium">
-          What is the best <strong className="text-white">first-line antibiotic treatment</strong> for this patient?
+          What is the recommended <strong className="text-white">first-line treatment</strong> for this patient?
         </p>
       </div>
 
@@ -218,7 +218,7 @@ export default function RxChallenge({ target, isDaily, dateStr, isMuted, onAnswe
             <div className="p-3 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 flex items-center gap-2.5 text-xs sm:text-sm">
               <Award className="w-5 h-5 text-emerald-400 shrink-0" />
               <div>
-                <span className="font-bold">Correct Prescription!</span>
+                <span className="font-bold">Correct Treatment!</span>
                 <p className="text-[11px] text-emerald-200/90 mt-0.5">+50 Bonus XP awarded!</p>
               </div>
             </div>
@@ -227,23 +227,31 @@ export default function RxChallenge({ target, isDaily, dateStr, isMuted, onAnswe
               <ShieldAlert className="w-5 h-5 text-rose-400 shrink-0" />
               <div>
                 <span className="font-bold">Incorrect Choice</span>
-                <p className="text-[11px] text-rose-200/90 mt-0.5">The guideline therapy is shown in green above.</p>
+                <p className="text-[11px] text-rose-200/90 mt-0.5">The recommended treatment is shown in green above.</p>
               </div>
             </div>
           )}
 
-          {/* Clinical Pearl Card */}
-          <div className="p-3.5 rounded-xl bg-slate-950/80 border border-indigo-500/20 text-xs space-y-1.5">
-            <div className="flex items-center gap-1.5 font-bold text-indigo-400 uppercase tracking-wider text-[10px]">
-              <Stethoscope className="w-3.5 h-3.5" /> Clinical Pearl
-            </div>
-            <p className="text-slate-300 leading-relaxed">
-              <strong className="text-white">{target.name}</strong> ({target.commonName}): {target.buzzwords}
-            </p>
-            {target.virulence && (
-              <p className="text-slate-400 text-[11px] leading-relaxed border-t border-slate-800/80 pt-1.5">
-                <span className="text-slate-300 font-semibold">Pathogenesis & Resistance:</span> {target.virulence}
+          {/* Clinical Pearl Card (Concise + Bugdex link) */}
+          <div className="p-3 rounded-xl bg-slate-950/80 border border-indigo-500/20 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+            <div className="flex-1">
+              <span className="font-bold text-indigo-300 text-[11px] uppercase tracking-wider block">
+                Key Association:
+              </span>
+              <p className="text-slate-300 text-xs leading-relaxed mt-0.5">
+                {target.buzzwords}
               </p>
+            </div>
+
+            {onOpenBugdex && (
+              <button
+                type="button"
+                onClick={onOpenBugdex}
+                className="px-3 py-1.5 rounded-xl bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 border border-indigo-500/40 text-xs font-bold flex items-center gap-1.5 transition shrink-0 self-start sm:self-center shadow-sm"
+              >
+                <BookOpen className="w-3.5 h-3.5" />
+                <span>Bugdex</span>
+              </button>
             )}
           </div>
         </div>
