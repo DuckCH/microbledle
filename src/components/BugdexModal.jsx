@@ -113,14 +113,14 @@ export default function BugdexModal({ isOpen, onClose, unlockedBugIds = [] }) {
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-xl md:text-2xl font-black text-white tracking-tight">
-                  Bugdex Compendium
+                  Bugdex Library
                 </h2>
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800">
-                  USMLE Pearls
+                  Quick Guide
                 </span>
               </div>
               <p className="text-xs text-slate-400">
-                Medical Microbiology Encyclopedia & Board Exam Pearls
+                Pathogen Guide & High-Yield Exam Notes
               </p>
             </div>
           </div>

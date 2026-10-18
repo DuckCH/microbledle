@@ -124,7 +124,7 @@ export default function RxChallenge({ target, isDaily, dateStr, isMuted, onAnswe
           </div>
           <div>
             <h4 className="text-xs font-black uppercase tracking-wider text-indigo-300 flex items-center gap-1.5">
-              Empiric Rx Challenge
+              Antibiotic Challenge
             </h4>
             <p className="text-[11px] text-slate-400">Bonus Question</p>
           </div>
@@ -139,7 +139,7 @@ export default function RxChallenge({ target, isDaily, dateStr, isMuted, onAnswe
       {/* Case Question */}
       <div className="mb-4">
         <p className="text-xs sm:text-sm text-slate-200 leading-relaxed font-medium">
-          What is the recommended <strong className="text-white">first-line empiric therapy</strong> for this patient?
+          What is the best <strong className="text-white">first-line antibiotic treatment</strong> for this patient?
         </p>
       </div>
 

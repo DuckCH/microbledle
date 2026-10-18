@@ -1259,7 +1259,7 @@ export default function App() {
             </p>
           </div>
 
-          {/* 3. Clinical Vignette Clue (Unlocks at guess >= 4) */}
+          {/* 3. Patient Story Clue (Unlocks at guess >= 4) */}
           <div className={`p-3.5 rounded-2xl border transition-all duration-300 ${
             guesses.length >= 4 
               ? 'bg-slate-900/80 border-amber-500/40 text-slate-200 shadow-md shadow-amber-950/20' 
@@ -1269,7 +1269,7 @@ export default function App() {
               <span className={`text-[11px] uppercase tracking-wider font-bold flex items-center gap-1 ${
                 guesses.length >= 4 ? 'text-amber-400' : 'text-slate-500'
               }`}>
-                <Stethoscope className="w-3.5 h-3.5" /> Vignette Clue
+                <Stethoscope className="w-3.5 h-3.5" /> Patient Story Clue
               </span>
               <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${
                 guesses.length >= 4 
@@ -1284,7 +1284,7 @@ export default function App() {
                 <span className="italic text-amber-100 font-serif">"{target.vignette}"</span>
               ) : (
                 <span className="italic text-slate-500">
-                  Reveals the complete USMLE patient scenario...
+                  Reveals patient symptoms and case presentation...
                 </span>
               )}
             </p>
@@ -1296,7 +1296,7 @@ export default function App() {
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-3 mb-3 border-b border-slate-800/80 gap-2">
             <div className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
               <FlaskConical className="w-4 h-4 text-emerald-400" />
-              <span>Diagnostic Deduction Table ({guesses.length}/{maxGuesses})</span>
+              <span>Your Guesses ({guesses.length}/{maxGuesses})</span>
             </div>
             {/* Color Legend */}
             <div className="flex items-center gap-3 text-xs">
@@ -1320,11 +1320,11 @@ export default function App() {
               <thead>
                 <tr className="text-left text-[11px] uppercase tracking-wider text-slate-400 border-b border-slate-800">
                   <th className="py-2.5 px-3 w-[180px]">Organism</th>
-                  <th className="py-2.5 px-2 text-center">Taxonomy</th>
-                  <th className="py-2.5 px-2 text-center">Morphology</th>
-                  <th className="py-2.5 px-2 text-center">Respiration</th>
+                  <th className="py-2.5 px-2 text-center">Group</th>
+                  <th className="py-2.5 px-2 text-center">Gram & Shape</th>
+                  <th className="py-2.5 px-2 text-center">Oxygen</th>
                   <th className="py-2.5 px-2 text-center">Key Test</th>
-                  <th className="py-2.5 px-2 text-center">Tropism</th>
+                  <th className="py-2.5 px-2 text-center">Infection Site</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-800/50">
@@ -1482,11 +1482,11 @@ export default function App() {
                 
                 <div className="space-y-2 text-xs border-t border-slate-800/80 pt-3">
                   <div className="bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
-                    <span className="font-semibold text-emerald-400">💊 First-Line Empiric Therapy:</span>
+                    <span className="font-semibold text-emerald-400">💊 First-Line Treatment:</span>
                     <p className="text-slate-200 mt-0.5">{target.firstLineRx}</p>
                   </div>
                   <div className="bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
-                    <span className="font-semibold text-cyan-400">🧫 Diagnostic Culture:</span>
+                    <span className="font-semibold text-cyan-400">🧫 Key Lab Culture:</span>
                     <p className="text-slate-200 mt-0.5">{target.culture}</p>
                   </div>
                 </div>
@@ -1522,14 +1522,14 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Empiric Rx Stewardship Stat Row */}
+              {/* Antibiotic Quiz Stat Row */}
               <div className="mt-2.5 p-2.5 bg-slate-800/40 rounded-xl border border-slate-800/80 flex items-center justify-between text-xs">
                 <div className="flex items-center gap-2">
                   <div className="p-1.5 rounded-lg bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
                     <Pill className="w-3.5 h-3.5" />
                   </div>
                   <div>
-                    <span className="font-semibold text-slate-200">Empiric Treatment (Rx)</span>
+                    <span className="font-semibold text-slate-200">Antibiotic Quiz</span>
                     <p className="text-[10px] text-slate-400">
                       {stats.rxCorrect || 0} of {stats.rxAttempted || 0} solved ({stats.rxAttempted ? Math.round(((stats.rxCorrect || 0) / stats.rxAttempted) * 100) : 0}% accuracy)
                     </p>
@@ -1667,36 +1667,36 @@ export default function App() {
             </h3>
 
             <p className="text-sm text-slate-300 mb-4 leading-relaxed">
-              Deduce the unknown target medical pathogen in <strong>6 guesses or fewer</strong>. Each guess analyzes 5 core diagnostic criteria:
+              Find the mystery pathogen in <strong>6 guesses or fewer</strong>. Each guess compares 5 properties:
             </p>
 
             <div className="space-y-2.5 text-xs mb-5">
               <div className="flex items-start gap-2.5 bg-slate-800/40 p-2 rounded-xl">
                 <span className="w-4 h-4 rounded-md bg-emerald-600 shrink-0 mt-0.5"></span>
-                <span><strong>Emerald Green:</strong> Exact match for that diagnostic property.</span>
+                <span><strong>Emerald Green:</strong> Exact match for that property.</span>
               </div>
               <div className="flex items-start gap-2.5 bg-slate-800/40 p-2 rounded-xl">
                 <span className="w-4 h-4 rounded-md bg-amber-600 shrink-0 mt-0.5"></span>
-                <span><strong>Amber Yellow:</strong> Partial match (e.g. matching Gram stain, shared shape, overlapping organ tropism).</span>
+                <span><strong>Amber Yellow:</strong> Partial match (e.g. matching Gram stain, shared shape, overlapping infection site).</span>
               </div>
               <div className="flex items-start gap-2.5 bg-slate-800/40 p-2 rounded-xl">
                 <span className="w-4 h-4 rounded-md bg-slate-800 border border-slate-700 shrink-0 mt-0.5"></span>
-                <span><strong>Slate Gray:</strong> Incorrect category or no clinical overlap.</span>
+                <span><strong>Slate Gray:</strong> Incorrect category or no overlap.</span>
               </div>
             </div>
 
             <div className="border-t border-slate-800 pt-3 text-xs text-slate-400 space-y-2">
               <div className="flex items-center gap-2 text-cyan-300">
                 <Microscope className="w-4 h-4 shrink-0" />
-                <span><strong>Microscopic Smear Clue:</strong> Unlocks after Guess 2.</span>
+                <span><strong>Microscope Clue:</strong> Unlocks after Guess 2.</span>
               </div>
               <div className="flex items-center gap-2 text-teal-300">
                 <TestTube2 className="w-4 h-4 shrink-0" />
-                <span><strong>Diagnostic Culture Clue:</strong> Unlocks after Guess 3.</span>
+                <span><strong>Culture Clue:</strong> Unlocks after Guess 3.</span>
               </div>
               <div className="flex items-center gap-2 text-amber-300">
                 <Stethoscope className="w-4 h-4 shrink-0" />
-                <span><strong>Clinical Case Vignette:</strong> Unlocks after Guess 4.</span>
+                <span><strong>Patient Story Clue:</strong> Unlocks after Guess 4.</span>
               </div>
               <div className="flex items-center gap-2 text-slate-400">
                 <Calendar className="w-4 h-4 shrink-0 text-slate-500" />

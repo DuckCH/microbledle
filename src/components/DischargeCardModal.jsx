@@ -37,7 +37,7 @@ export default function DischargeCardModal({
     }
   }, []);
 
-  // Draw the high-resolution discharge consult report on Canvas
+  // Draw modern, clean report card on Canvas
   useEffect(() => {
     if (!isOpen || !target) return;
 
@@ -45,133 +45,136 @@ export default function DischargeCardModal({
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
 
-    // Canvas dimensions (2x for retina quality: 1000 x 1400)
-    const W = 1000;
-    const H = 1420;
+    // Canvas dimensions (Retina quality 920 x 1180)
+    const W = 920;
+    const H = 1180;
     canvas.width = W;
     canvas.height = H;
 
-    // Background: High-tech obsidian slate with subtle gradient
+    // Background: Smooth dark obsidian slate gradient
     const bgGradient = ctx.createLinearGradient(0, 0, W, H);
-    bgGradient.addColorStop(0, '#0a0f1d');
-    bgGradient.addColorStop(0.5, '#070b14');
+    bgGradient.addColorStop(0, '#0c1322');
+    bgGradient.addColorStop(0.5, '#080d18');
     bgGradient.addColorStop(1, '#050811');
     ctx.fillStyle = bgGradient;
     ctx.fillRect(0, 0, W, H);
 
-    // Decorative outer border
-    ctx.strokeStyle = won ? '#10b98144' : '#ef444444';
-    ctx.lineWidth = 4;
-    ctx.strokeRect(20, 20, W - 40, H - 40);
-
-    // Inner subtle glow accent lines
-    ctx.strokeStyle = '#1e293b';
-    ctx.lineWidth = 1;
-    ctx.strokeRect(32, 32, W - 64, H - 64);
-
-    // --- HEADER SECTION ---
-    // Hospital / Laboratory Badge Top Banner
-    ctx.fillStyle = '#0f172a';
-    ctx.fillRect(40, 40, W - 80, 110);
-    ctx.strokeStyle = '#1e293b';
-    ctx.strokeRect(40, 40, W - 80, 110);
-
-    // Green/Amber status indicator dot
-    ctx.fillStyle = won ? '#10b981' : '#f43f5e';
+    // Decorative outer card border
+    ctx.strokeStyle = won ? 'rgba(16, 185, 129, 0.4)' : 'rgba(239, 68, 68, 0.4)';
+    ctx.lineWidth = 3;
     ctx.beginPath();
-    ctx.arc(75, 95, 12, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.roundRect(16, 16, W - 32, H - 32, 24);
+    ctx.stroke();
 
-    // Hospital / Brand Name
-    ctx.font = 'bold 32px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-    ctx.fillStyle = '#f8fafc';
-    ctx.fillText('MICROBLEDLE CLINICAL LABS', 105, 88);
+    const contentLeft = 40;
+    const contentW = W - 80; // 840px
 
-    ctx.font = 'bold 15px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-    ctx.fillStyle = '#10b981';
-    ctx.fillText('DIVISION OF CLINICAL MICROBIOLOGY & ANTIMICROBIAL STEWARDSHIP', 105, 115);
-
-    // Case Reference top right
-    ctx.textAlign = 'right';
-    ctx.font = 'bold 16px monospace';
-    ctx.fillStyle = '#94a3b8';
-    ctx.fillText(isPractice ? 'RUN: PRACTICE WARD' : `CASE RECORD #${dateStr}`, W - 65, 88);
-    ctx.font = '13px monospace';
-    ctx.fillStyle = '#64748b';
-    ctx.fillText(`STATUS: ${won ? 'DISCHARGED / CURED' : 'UNRESOLVED / REVIEW'}`, W - 65, 115);
+    // --- 1. HEADER SECTION ---
+    // Microbledle Logo & Title
     ctx.textAlign = 'left';
+    ctx.font = '900 34px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    ctx.fillStyle = '#10b981';
+    ctx.fillText('MICROBLEDLE', contentLeft, 68);
 
-    // --- PHYSICIAN PROFILE SECTION ---
-    ctx.fillStyle = '#111827';
-    ctx.fillRect(40, 170, W - 80, 100);
-    ctx.strokeStyle = '#1f2937';
-    ctx.strokeRect(40, 170, W - 80, 100);
-
-    // Physician info
-    ctx.font = 'bold 22px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-    ctx.fillStyle = '#f1f5f9';
-    const docName = profile?.displayName ? `Dr. ${profile.displayName}` : 'Attending Physician';
-    ctx.fillText(docName, 65, 212);
-
-    ctx.font = '15px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    ctx.font = '600 15px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
     ctx.fillStyle = '#94a3b8';
-    const rankTitle = progression?.title || profile?.status || 'Resident Physician';
-    const levelStr = progression?.level ? ` • Level ${progression.level}` : '';
-    ctx.fillText(`${rankTitle}${levelStr}`, 65, 242);
+    ctx.fillText('Daily Medical Microbiology Wordle', contentLeft, 94);
 
-    // Outcome Badge (Right side of profile)
-    const badgeW = 320;
-    const badgeH = 54;
-    const badgeX = W - 65 - badgeW;
-    const badgeY = 193;
+    // Date / Mode Pill on Right
+    const modeLabel = isPractice ? 'PRACTICE MODE' : `DAILY • ${dateStr}`;
+    ctx.font = 'bold 13px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    const pillTextW = ctx.measureText(modeLabel).width;
+    const pillW = pillTextW + 28;
+    const pillH = 34;
+    const pillX = W - contentLeft - pillW;
+    const pillY = 56;
 
-    ctx.fillStyle = won ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)';
-    ctx.strokeStyle = won ? '#10b981' : '#ef4444';
-    ctx.lineWidth = 2;
+    ctx.fillStyle = '#1e293b';
+    ctx.strokeStyle = '#334155';
+    ctx.lineWidth = 1.5;
     ctx.beginPath();
-    ctx.roundRect(badgeX, badgeY, badgeW, badgeH, 12);
+    ctx.roundRect(pillX, pillY, pillW, pillH, 10);
     ctx.fill();
     ctx.stroke();
 
     ctx.textAlign = 'center';
-    ctx.font = 'bold 18px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-    ctx.fillStyle = won ? '#34d399' : '#f87171';
-    const outcomeText = won 
-      ? `DIAGNOSIS CONFIRMED (${guesses.length}/6)` 
-      : 'DIAGNOSIS FAILED (6/6)';
-    ctx.fillText(outcomeText, badgeX + badgeW / 2, badgeY + 34);
-    ctx.textAlign = 'left';
+    ctx.fillStyle = '#38bdf8';
+    ctx.fillText(modeLabel, pillX + pillW / 2, pillY + 22);
 
-    // --- DIAGNOSTIC MATRIX GRID SECTION ---
-    const gridStartY = 295;
-    ctx.font = 'bold 14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    // --- 2. PLAYER & OUTCOME BAR ---
+    const playerBarY = 120;
+    const playerBarH = 72;
+    ctx.fillStyle = '#0f172a';
+    ctx.strokeStyle = '#1e293b';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.roundRect(contentLeft, playerBarY, contentW, playerBarH, 16);
+    ctx.fill();
+    ctx.stroke();
+
+    // Doctor Name & Level
+    ctx.textAlign = 'left';
+    ctx.font = 'bold 20px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    ctx.fillStyle = '#f8fafc';
+    const docName = profile?.displayName ? `Dr. ${profile.displayName}` : 'Dr. Physician';
+    ctx.fillText(docName, contentLeft + 20, playerBarY + 33);
+
+    ctx.font = '13px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
     ctx.fillStyle = '#94a3b8';
-    ctx.fillText('DIAGNOSTIC WORKUP MATRIX (TRAJECTORY TO CONVERGENCE)', 45, gridStartY);
+    const rankTitle = progression?.title || profile?.status || 'Resident Physician';
+    const levelStr = progression?.level ? ` • Level ${progression.level}` : '';
+    ctx.fillText(`${rankTitle}${levelStr}`, contentLeft + 20, playerBarY + 54);
+
+    // Outcome Badge (Right)
+    const outcomeW = 220;
+    const outcomeH = 44;
+    const outcomeX = contentLeft + contentW - outcomeW - 14;
+    const outcomeY = playerBarY + 14;
+
+    ctx.fillStyle = won ? 'rgba(16, 185, 129, 0.18)' : 'rgba(239, 68, 68, 0.18)';
+    ctx.strokeStyle = won ? '#10b981' : '#ef4444';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.roundRect(outcomeX, outcomeY, outcomeW, outcomeH, 12);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.textAlign = 'center';
+    ctx.font = 'bold 15px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    ctx.fillStyle = won ? '#34d399' : '#f87171';
+    const outcomeText = won ? `SOLVED IN ${guesses.length}/6 🏆` : 'UNSOLVED (6/6)';
+    ctx.fillText(outcomeText, outcomeX + outcomeW / 2, outcomeY + 27);
+
+    // --- 3. GUESS HISTORY MATRIX ---
+    const gridStartY = 212;
+    ctx.textAlign = 'left';
+    ctx.font = 'bold 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    ctx.fillStyle = '#64748b';
+    ctx.fillText('YOUR GUESSES', contentLeft, gridStartY);
 
     // Column Headers
-    const colHeaders = ['TAXONOMY', 'MORPHOLOGY', 'RESPIRATION', 'KEY TEST', 'TROPISM'];
-    const colW = 176;
+    const colHeaders = ['GROUP', 'SHAPE', 'OXYGEN', 'KEY TEST', 'SITE'];
+    const colW = 160;
     const colGap = 10;
-    const gridLeft = 40;
-    const headerY = gridStartY + 15;
+    const headerY = gridStartY + 10;
 
     ctx.fillStyle = '#1e293b';
-    ctx.fillRect(gridLeft, headerY, W - 80, 32);
+    ctx.fillRect(contentLeft, headerY, contentW, 28);
     ctx.strokeStyle = '#334155';
-    ctx.strokeRect(gridLeft, headerY, W - 80, 32);
+    ctx.strokeRect(contentLeft, headerY, contentW, 28);
 
     colHeaders.forEach((col, idx) => {
-      const cx = gridLeft + idx * (colW + colGap) + colW / 2;
+      const cx = contentLeft + idx * (colW + colGap) + colW / 2;
       ctx.textAlign = 'center';
-      ctx.font = 'bold 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+      ctx.font = 'bold 11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
       ctx.fillStyle = '#94a3b8';
-      ctx.fillText(col, cx, headerY + 21);
+      ctx.fillText(col, cx, headerY + 18);
     });
 
-    // Rows of Guesses (up to 6)
-    const rowStartY = headerY + 40;
-    const rowH = 68;
-    const rowGap = 8;
+    // 6 Guess Rows
+    const rowStartY = headerY + 34;
+    const rowH = 50;
+    const rowGap = 6;
 
     for (let r = 0; r < 6; r++) {
       const currentY = rowStartY + r * (rowH + rowGap);
@@ -187,7 +190,7 @@ export default function DischargeCardModal({
         ];
 
         results.forEach((res, cIdx) => {
-          const tileX = gridLeft + cIdx * (colW + colGap);
+          const tileX = contentLeft + cIdx * (colW + colGap);
           let fillColor = '#1e293b';
           let borderColor = '#334155';
           let textColor = '#cbd5e1';
@@ -207,156 +210,154 @@ export default function DischargeCardModal({
           ctx.strokeStyle = borderColor;
           ctx.lineWidth = 1.5;
           ctx.beginPath();
-          ctx.roundRect(tileX, currentY, colW, rowH, 10);
+          ctx.roundRect(tileX, currentY, colW, rowH, 8);
           ctx.fill();
           ctx.stroke();
 
           // Value inside tile
           ctx.textAlign = 'center';
-          ctx.font = 'bold 13px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+          ctx.font = 'bold 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
           ctx.fillStyle = textColor;
           
-          // Truncate text if needed
           const valText = String(res.guessValue || '');
           const words = valText.split(' ');
-          if (words.length > 2 && valText.length > 15) {
-            ctx.fillText(words.slice(0, 2).join(' '), tileX + colW / 2, currentY + 28);
-            ctx.font = '11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-            ctx.fillText(words.slice(2).join(' '), tileX + colW / 2, currentY + 46);
+          if (words.length > 2 && valText.length > 14) {
+            ctx.fillText(words.slice(0, 2).join(' '), tileX + colW / 2, currentY + 20);
+            ctx.font = '10px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+            ctx.fillText(words.slice(2).join(' '), tileX + colW / 2, currentY + 36);
           } else {
-            ctx.fillText(valText, tileX + colW / 2, currentY + 40);
+            ctx.fillText(valText, tileX + colW / 2, currentY + 30);
           }
         });
       } else {
         // Empty row slot
         for (let cIdx = 0; cIdx < 5; cIdx++) {
-          const tileX = gridLeft + cIdx * (colW + colGap);
+          const tileX = contentLeft + cIdx * (colW + colGap);
           ctx.fillStyle = 'rgba(15, 23, 42, 0.4)';
           ctx.strokeStyle = '#1e293b';
           ctx.lineWidth = 1;
           ctx.beginPath();
-          ctx.roundRect(tileX, currentY, colW, rowH, 8);
+          ctx.roundRect(tileX, currentY, colW, rowH, 6);
           ctx.fill();
           ctx.stroke();
 
           ctx.textAlign = 'center';
-          ctx.font = 'bold 14px monospace';
+          ctx.font = 'bold 13px monospace';
           ctx.fillStyle = '#334155';
-          ctx.fillText('—', tileX + colW / 2, currentY + 40);
+          ctx.fillText('—', tileX + colW / 2, currentY + 30);
         }
       }
     }
 
-    // --- CLINICAL IDENTIFICATION SUMMARY ---
-    const summaryY = 825;
+    // --- 4. TARGET PATHOGEN SPOTLIGHT ---
+    const summaryY = 600;
+    const summaryH = 195;
     ctx.fillStyle = '#0f172a';
-    ctx.fillRect(40, summaryY, W - 80, 220);
-    ctx.strokeStyle = won ? '#10b98166' : '#ef444466';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(40, summaryY, W - 80, 220);
+    ctx.strokeStyle = won ? 'rgba(16, 185, 129, 0.5)' : 'rgba(239, 68, 68, 0.5)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.roundRect(contentLeft, summaryY, contentW, summaryH, 16);
+    ctx.fill();
+    ctx.stroke();
 
     // Section title
     ctx.textAlign = 'left';
-    ctx.font = 'bold 13px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    ctx.font = 'bold 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
     ctx.fillStyle = '#10b981';
-    ctx.fillText('MICROBIOLOGICAL SPECIMEN REPORT & TARGET DIAGNOSIS', 65, summaryY + 36);
+    ctx.fillText("TODAY'S TARGET PATHOGEN", contentLeft + 24, summaryY + 30);
 
     // Target Organism Name
-    ctx.font = 'italic bold 32px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    ctx.font = 'italic bold 28px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
     ctx.fillStyle = '#f8fafc';
-    ctx.fillText(target.name, 65, summaryY + 75);
+    ctx.fillText(target.name, contentLeft + 24, summaryY + 65);
 
     // Common Name + Taxonomy
-    ctx.font = '16px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-    ctx.fillStyle = '#94a3b8';
-    ctx.fillText(`${target.commonName}  •  ${target.taxonomy}  •  ${target.morphology}`, 65, summaryY + 105);
-
-    // Divider line
-    ctx.strokeStyle = '#1e293b';
-    ctx.beginPath();
-    ctx.moveTo(65, summaryY + 125);
-    ctx.lineTo(W - 65, summaryY + 125);
-    ctx.stroke();
-
-    // Rx Stewardship row
-    ctx.font = 'bold 15px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-    ctx.fillStyle = '#38bdf8';
-    ctx.fillText('💊 First-Line Empiric Antimicrobial Regimen:', 65, summaryY + 155);
-
-    ctx.font = '15px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-    ctx.fillStyle = '#e2e8f0';
-    ctx.fillText(target.firstLineRx, 65, summaryY + 180);
-
-    // Culture row
-    ctx.font = 'bold 14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-    ctx.fillStyle = '#a78bfa';
-    ctx.fillText('🧫 Key Culture / Diagnostic Confirmation:', 65, summaryY + 208);
-
     ctx.font = '14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
     ctx.fillStyle = '#94a3b8';
-    ctx.fillText(target.culture, 395, summaryY + 208);
+    ctx.fillText(`${target.commonName}  •  ${target.taxonomy}`, contentLeft + 24, summaryY + 92);
 
-    // --- STATISTICAL FOOTER ---
-    const footerY = 1070;
-    const statBoxW = 210;
-    const statBoxH = 75;
-    const statGap = 26;
+    // Divider
+    ctx.strokeStyle = '#1e293b';
+    ctx.beginPath();
+    ctx.moveTo(contentLeft + 24, summaryY + 108);
+    ctx.lineTo(contentLeft + contentW - 24, summaryY + 108);
+    ctx.stroke();
+
+    // Treatment
+    ctx.font = 'bold 14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    ctx.fillStyle = '#38bdf8';
+    ctx.fillText('💊 Best Treatment:', contentLeft + 24, summaryY + 135);
+
+    ctx.font = '14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    ctx.fillStyle = '#e2e8f0';
+    ctx.fillText(target.firstLineRx, contentLeft + 170, summaryY + 135);
+
+    // Key Lab Culture
+    ctx.font = 'bold 14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    ctx.fillStyle = '#a78bfa';
+    ctx.fillText('🧫 Key Lab:', contentLeft + 24, summaryY + 165);
+
+    ctx.font = '13px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    ctx.fillStyle = '#94a3b8';
+    const cultureText = target.culture.length > 70 ? `${target.culture.slice(0, 68)}...` : target.culture;
+    ctx.fillText(cultureText, contentLeft + 120, summaryY + 165);
+
+    // --- 5. STATS ROW ---
+    const statsY = 815;
+    const statBoxW = 198;
+    const statBoxH = 70;
+    const statGap = 16;
 
     const statItems = [
       { label: 'CASES PLAYED', val: stats?.played || 1, color: '#f8fafc' },
-      { label: 'WIN ACCURACY', val: `${stats?.played > 0 ? Math.round((stats.wins / stats.played) * 100) : 100}%`, color: '#34d399' },
-      { label: 'ACTIVE STREAK', val: `${stats?.streak || 1} 🔥`, color: '#fbbf24' },
-      { label: 'MAX STREAK', val: `${stats?.maxStreak || 1} ⚡`, color: '#38bdf8' }
+      { label: 'WIN RATE', val: `${stats?.played > 0 ? Math.round((stats.wins / stats.played) * 100) : 100}%`, color: '#34d399' },
+      { label: 'STREAK', val: `${stats?.streak || 1} 🔥`, color: '#fbbf24' },
+      { label: 'BEST STREAK', val: `${stats?.maxStreak || 1} ⚡`, color: '#38bdf8' }
     ];
 
     statItems.forEach((st, idx) => {
-      const bx = 40 + idx * (statBoxW + statGap);
-      ctx.fillStyle = '#111827';
-      ctx.strokeStyle = '#1f2937';
+      const bx = contentLeft + idx * (statBoxW + statGap);
+      ctx.fillStyle = '#0f172a';
+      ctx.strokeStyle = '#1e293b';
+      ctx.lineWidth = 1;
       ctx.beginPath();
-      ctx.roundRect(bx, footerY, statBoxW, statBoxH, 10);
+      ctx.roundRect(bx, statsY, statBoxW, statBoxH, 12);
       ctx.fill();
       ctx.stroke();
 
       ctx.textAlign = 'center';
-      ctx.font = 'bold 24px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+      ctx.font = 'bold 22px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
       ctx.fillStyle = st.color;
-      ctx.fillText(st.val, bx + statBoxW / 2, footerY + 38);
+      ctx.fillText(st.val, bx + statBoxW / 2, statsY + 36);
 
-      ctx.font = 'bold 11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+      ctx.font = 'bold 10px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
       ctx.fillStyle = '#64748b';
-      ctx.fillText(st.label, bx + statBoxW / 2, footerY + 60);
+      ctx.fillText(st.label, bx + statBoxW / 2, statsY + 56);
     });
 
-    // --- BRAND FOOTER & WATERMARK ---
-    const brandY = 1200;
+    // --- 6. CLEAN BRAND FOOTER ---
+    const footerY = 905;
+    const footerH = 88;
     ctx.fillStyle = '#080d1a';
-    ctx.fillRect(40, brandY, W - 80, 160);
     ctx.strokeStyle = '#1e293b';
-    ctx.strokeRect(40, brandY, W - 80, 160);
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.roundRect(contentLeft, footerY, contentW, footerH, 14);
+    ctx.fill();
+    ctx.stroke();
 
-    ctx.textAlign = 'left';
-    ctx.font = 'bold 20px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.font = 'bold 16px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
     ctx.fillStyle = '#10b981';
-    ctx.fillText('DAILY MEDICAL MICROBIOLOGY WORDLE • TEST YOUR CLINICAL DEDUCTION', 70, brandY + 50);
+    ctx.fillText('MICROBLEDLE', W / 2 - 100, footerY + 38);
 
-    ctx.font = '15px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    ctx.font = '14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
     ctx.fillStyle = '#94a3b8';
-    ctx.fillText('Sharpen pathogen identification, Gram morphology, and empiric antimicrobial therapy.', 70, brandY + 80);
+    ctx.fillText('•   Daily Medical Microbiology Wordle', W / 2 + 55, footerY + 38);
 
-    ctx.font = 'bold 18px monospace';
+    ctx.font = 'bold 14px monospace';
     ctx.fillStyle = '#38bdf8';
-    ctx.fillText('🔗 https://microbledle.com/', 70, brandY + 120);
-
-    // Watermark seal on right
-    ctx.textAlign = 'right';
-    ctx.font = 'bold 13px monospace';
-    ctx.fillStyle = '#475569';
-    ctx.fillText('VERIFIED LAB RECORD', W - 70, brandY + 70);
-    ctx.font = '11px monospace';
-    ctx.fillStyle = '#334155';
-    ctx.fillText(`HASH: MB-${Math.abs(dateStr.split('').reduce((a, b) => (a << 5) - a + b.charCodeAt(0), 0)).toString(16).toUpperCase()}`, W - 70, brandY + 95);
-    ctx.fillText(new Date().toUTCString(), W - 70, brandY + 120);
+    ctx.fillText('Find the pathogen daily at microbledle.com', W / 2, footerY + 64);
 
     // Convert Canvas to Blob and Data URL for preview and sharing
     canvas.toBlob((blob) => {
@@ -377,7 +378,7 @@ export default function DischargeCardModal({
     logAnalyticsEvent('share_clicked', { type: 'discharge_card_download', mode: isPractice ? 'practice' : 'daily' });
     setDownloading(true);
     try {
-      const fileName = `microbledle-discharge-${dateStr || 'case'}.png`;
+      const fileName = `microbledle-${dateStr || 'case'}.png`;
       const canvas = canvasRef.current;
       const link = document.createElement('a');
       link.download = fileName;
@@ -396,15 +397,15 @@ export default function DischargeCardModal({
   const handleShare = async () => {
     if (!imageBlob) return;
     logAnalyticsEvent('share_clicked', { type: 'discharge_card_webshare', mode: isPractice ? 'practice' : 'daily' });
-    const fileName = `microbledle-discharge-${dateStr || 'case'}.png`;
+    const fileName = `microbledle-${dateStr || 'case'}.png`;
     const file = new File([imageBlob], fileName, { type: 'image/png' });
 
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
       try {
         await navigator.share({
           files: [file],
-          title: `Microbledle Clinical Case Report (${won ? `${guesses.length}/6 Solved` : 'Unsolved'})`,
-          text: `Here is my clinical consult discharge report for Microbledle ${dateStr}! Can you deduce today's target pathogen?`
+          title: `Microbledle (${won ? `${guesses.length}/6 Solved` : 'Unsolved'})`,
+          text: `Can you find today's pathogen? Play Microbledle at https://microbledle.com/`
         });
       } catch (err) {
         if (err.name !== 'AbortError') {
@@ -463,12 +464,12 @@ export default function DischargeCardModal({
             </div>
             <div>
               <h3 className="text-lg font-black text-white flex items-center gap-2">
-                Case Discharge Summary
+                Game Summary Card
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-300">
-                  Graphic Report
+                  Ready to Share
                 </span>
               </h3>
-              <p className="text-xs text-slate-400">Official Clinical Consult Export</p>
+              <p className="text-xs text-slate-400">Share your game result with colleagues & friends</p>
             </div>
           </div>
           <button 
@@ -488,14 +489,14 @@ export default function DischargeCardModal({
             <div className="relative rounded-2xl overflow-hidden border border-slate-700/80 shadow-2xl max-w-md w-full bg-slate-950">
               <img 
                 src={imageUrl} 
-                alt="Microbledle Clinical Consult Report" 
+                alt="Microbledle Game Summary Card" 
                 className="w-full h-auto object-contain rounded-2xl select-none"
               />
             </div>
           ) : (
             <div className="h-64 flex flex-col items-center justify-center text-slate-400 text-sm gap-2">
               <Sparkles className="w-6 h-6 text-emerald-400 animate-spin" />
-              Generating high-resolution report card...
+              Generating summary card...
             </div>
           )}
         </div>
@@ -530,7 +531,7 @@ export default function DischargeCardModal({
                 className="py-3 px-4 rounded-xl bg-cyan-600 hover:bg-cyan-500 font-bold text-white text-sm flex items-center justify-center gap-2 transition shadow-lg shadow-cyan-950/50 active:scale-[0.98] disabled:opacity-50"
               >
                 <Share2 className="w-4 h-4" />
-                Share Report
+                Share Image
               </button>
             ) : (
               <button

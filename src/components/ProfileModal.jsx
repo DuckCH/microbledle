@@ -149,7 +149,7 @@ export default function ProfileModal({
             </div>
             <div>
               <div className="text-xs font-bold text-white flex items-center gap-1.5">
-                Empiric Rx Challenge
+                Antibiotic Quiz
                 <span className="px-1.5 py-0.2 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
                   +{(stats.rxCorrect || 0) * 50} XP
                 </span>

@@ -136,7 +136,7 @@ export default function MainMenu({
           Daily Medical Microbiology Wordle
         </p>
         <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-          Deduce the pathogen • Choose first-line treatment
+          Find the pathogen • Choose first-line treatment
         </p>
       </div>
 
@@ -310,11 +310,11 @@ export default function MainMenu({
             <div className="mt-4 p-3 rounded-2xl bg-white/80 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800 space-y-1.5 text-xs shadow-sm">
               <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
                 <span className="w-1.5 h-1.5 rounded-full bg-cyan-500" />
-                <span>Smear, culture & clinical vignette clues</span>
+                <span>Smear, culture & patient story clues</span>
               </div>
               <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
                 <span className="w-1.5 h-1.5 rounded-full bg-cyan-500" />
-                <span>Bonus Empiric Treatment (Rx) questions</span>
+                <span>Bonus Antibiotic Quiz questions</span>
               </div>
               <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
                 <span className="w-1.5 h-1.5 rounded-full bg-cyan-500" />
@@ -335,7 +335,7 @@ export default function MainMenu({
 
       </div>
 
-      {/* Operations Hub (Bugdex, Leaderboard, Statistics, How to Play) */}
+      {/* Feature Hub (Bugdex, Leaderboard, Statistics, How to Play) */}
       <div className="w-full grid grid-cols-2 sm:grid-cols-4 gap-3">
         
         {/* BUGDEX */}
@@ -356,7 +356,7 @@ export default function MainMenu({
               Bugdex
             </div>
             <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-snug">
-              Compendium ({bugdexPercentage}%)
+              Library ({bugdexPercentage}%)
             </p>
           </div>
         </button>
