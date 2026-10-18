@@ -30,31 +30,26 @@ export default function ContactPage() {
     setSubmitError('');
 
     try {
-      const response = await fetch('https://formsubmit.co/ajax/contact@microbledle.com', {
+      const response = await fetch('https://microbledle-contact-api.duckch47.workers.dev', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           name: senderName.trim() || 'Anonymous Player',
           email: senderEmail.trim(),
-          _replyto: senderEmail.trim(),
-          _subject: `[Microbledle Contact] ${category} from ${senderName.trim() || 'Player'}`,
           category: category,
-          message: message.trim(),
-          _template: 'table',
-          _captcha: 'false'
+          message: message.trim()
         })
       });
 
       const data = await response.json();
 
-      if (response.ok || data.success === 'true' || data.success === true) {
+      if (response.ok && (data.success || data.id)) {
         setSubmitSuccess(true);
         setMessage('');
       } else {
-        throw new Error(data.message || 'Failed to send message.');
+        throw new Error(data.error || data.message || 'Failed to send message.');
       }
     } catch (err) {
       console.error('Contact form submission error:', err);
