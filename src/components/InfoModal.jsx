@@ -169,7 +169,7 @@ export default function InfoModal({ isOpen, onClose, initialTab = 'about' }) {
           {activeTab === 'contact' && (
             <div className="space-y-4 animate-fade">
               <div>
-                <h3 className="text-base font-bold text-white mb-1">Contact Us</h3>
+                <h3 className="text-base font-bold text-white mb-1">Get in Touch</h3>
                 <p className="text-xs text-slate-400">
                   Have feedback, detected a medical inaccuracy, want to suggest a new pathogen, or discuss academic collaboration? We'd love to hear from you.
                 </p>

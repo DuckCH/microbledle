@@ -1704,16 +1704,6 @@ export default function App() {
               onOpenMicrodex={() => handleOpenMicrodex(target)}
             />
 
-            {/* Countdown to next daily case (if daily mode) */}
-            {!isPractice && (
-              <div className="mb-4 p-3 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-between text-xs">
-                <span className="text-slate-400 flex items-center gap-1.5">
-                  <Clock className="w-4 h-4 text-emerald-400" /> Next Daily Case:
-                </span>
-                <span className="font-mono text-emerald-300 font-bold text-sm">{countdown}</span>
-              </div>
-            )}
-
             {/* Action buttons */}
             <div className="space-y-2">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -1755,18 +1745,6 @@ export default function App() {
               >
                 <Trophy className="w-4 h-4 text-amber-400" />
                 <span>View Global Leaderboard</span>
-              </button>
-
-              {/* View Career Stats Button */}
-              <button
-                onClick={() => {
-                  setShowCaseResultModal(false);
-                  setShowStatsModal(true);
-                }}
-                className="w-full py-2.5 bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 hover:border-cyan-500/40 text-cyan-300 font-semibold rounded-2xl flex items-center justify-center gap-2 transition text-xs"
-              >
-                <BarChart2 className="w-4 h-4 text-cyan-400" />
-                <span>View Career Statistics</span>
               </button>
 
               {isPractice && (

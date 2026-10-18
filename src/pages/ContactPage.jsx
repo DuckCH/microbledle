@@ -77,7 +77,7 @@ export default function ContactPage() {
           Contact Us
         </span>
         <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
-          Contact Us
+          Get in Touch
         </h1>
         <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
           Have feedback, spotted a typo, want to suggest a pathogen, or just want to say hi? We'd love to hear from you.
