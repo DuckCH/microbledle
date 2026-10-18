@@ -1,5 +1,5 @@
 import React from 'react';
-import { AlertTriangle, ShieldAlert, FileText, CheckCircle2, Scale } from 'lucide-react';
+import { ShieldAlert } from 'lucide-react';
 
 export default function TermsPage() {
   const currentYear = new Date().getFullYear();
@@ -9,10 +9,6 @@ export default function TermsPage() {
       
       {/* Header */}
       <div className="border-b border-slate-200 dark:border-slate-800 pb-5">
-        <span className="text-[11px] font-black uppercase tracking-wider text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800 px-3 py-1 rounded-full inline-flex items-center gap-1.5 mb-2 shadow-sm">
-          <AlertTriangle className="w-3.5 h-3.5" />
-          Legal & Clinical Notice
-        </span>
         <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
           Terms of Service & Medical Disclaimer
         </h1>

@@ -1,5 +1,4 @@
 import React from 'react';
-import { ShieldCheck, Lock, Eye, Database, Trash2, Mail, CheckCircle2 } from 'lucide-react';
 
 export default function PrivacyPage() {
   const currentYear = new Date().getFullYear();
@@ -9,37 +8,12 @@ export default function PrivacyPage() {
       
       {/* Header */}
       <div className="border-b border-slate-200 dark:border-slate-800 pb-5">
-        <span className="text-[11px] font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 px-3 py-1 rounded-full inline-flex items-center gap-1.5 mb-2 shadow-sm">
-          <ShieldCheck className="w-3.5 h-3.5" />
-          Privacy & Trust
-        </span>
         <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
           Privacy Policy
         </h1>
         <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
           Effective Date: January 1, {currentYear} • Last Updated: October {currentYear}
         </p>
-      </div>
-
-      {/* Summary Highlights */}
-      <div className="p-4 sm:p-5 rounded-2xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-500/30 text-xs sm:text-sm text-slate-800 dark:text-slate-200 space-y-2">
-        <strong className="text-emerald-700 dark:text-emerald-400 block text-sm font-bold flex items-center gap-1.5">
-          <Lock className="w-4 h-4" /> Summary of Our Privacy Commitments
-        </strong>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1 text-xs text-slate-700 dark:text-slate-300">
-          <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-            <span>We never sell or monetize your data</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-            <span>Only collect minimal stats to sync progress</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-            <span>Delete your data anytime upon request</span>
-          </div>
-        </div>
       </div>
 
       {/* Detailed Legal Sections */}
