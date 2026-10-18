@@ -1,7 +1,7 @@
 import React from 'react';
 import { 
-  Sparkles, Microscope, TestTube2, Stethoscope, Trophy, 
-  BookOpen, Heart, Award, CheckCircle2, ShieldCheck, Play 
+  Sparkles, CheckCircle2, Heart, Play, 
+  Microscope, Lightbulb, Pill, BookOpen 
 } from 'lucide-react';
 
 export default function AboutPage({ onStartDaily, onStartPractice }) {
@@ -15,104 +15,117 @@ export default function AboutPage({ onStartDaily, onStartPractice }) {
           About Microbledle
         </span>
         <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
-          Gamified Medical Microbiology Deduction
+          Guess the Mystery Microbe Every Day
         </h1>
         <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-          Designed by and for medical students, healthcare trainees, and clinical microbiology enthusiasts.
+          A daily deduction puzzle designed for medical students, healthcare trainees, and science lovers.
         </p>
       </div>
 
-      {/* Hero Banner / Mission */}
+      {/* Intro Box */}
       <div className="p-5 sm:p-6 rounded-2xl bg-gradient-to-br from-emerald-50/80 via-white to-teal-50/50 dark:from-emerald-950/30 dark:via-slate-900 dark:to-teal-950/20 border border-emerald-200 dark:border-emerald-500/30 shadow-sm space-y-3">
-        <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-          <span>Our Mission</span>
+        <h2 className="text-lg font-bold text-slate-900 dark:text-white">
+          Why Microbledle?
         </h2>
         <p className="text-sm text-slate-700 dark:text-slate-300">
-          Medical microbiology is notoriously heavy on memorization — hundreds of bacteria, viruses, fungi, and parasites each with specific Gram stains, culture media, biochemical reactions, and first-line antibiotic regimens.
+          Learning microbiology often means memorizing hundreds of bacteria, viruses, fungi, and parasites — along with their stains, lab tests, and treatments.
         </p>
         <p className="text-sm text-slate-700 dark:text-slate-300">
-          <strong>Microbledle</strong> transforms this challenge into an engaging daily detective game. Instead of passive rote repetition, players analyze clinical clues, compare morphological properties, and refine their differential diagnoses step by step just like a clinical infectious disease team.
+          <strong>Microbledle</strong> turns study time into a fun daily puzzle game. Instead of passive flashcards, you test your deduction skills by analyzing clues, comparing properties, and solving each case in 6 tries or less.
         </p>
       </div>
 
-      {/* Core Game Features */}
+      {/* How It Works */}
       <div className="space-y-4">
-        <h2 className="text-base font-bold text-slate-900 dark:text-white uppercase tracking-wide text-xs">
+        <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
           How It Works
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm">
+          {/* Step 1 */}
           <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/60 space-y-2">
             <div className="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold">
               1
             </div>
-            <h3 className="font-bold text-slate-900 dark:text-white">Daily Mystery Pathogen</h3>
+            <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+              <span>Daily Mystery Bug</span>
+            </h3>
             <p className="text-slate-600 dark:text-slate-400 text-xs leading-relaxed">
-              Every day at 00:00 UTC, a new target pathogen is selected. You have 6 guesses to deduce the organism using color-coded feedback across Morphology & Gram Stain, Respiration, Taxonomy, and Organ Tropism.
+              A new organism is chosen every day at midnight UTC. You have 6 guesses. Color-coded tiles guide your next guess: green for exact matches, yellow for close matches, and gray for misses.
             </p>
           </div>
 
+          {/* Step 2 */}
           <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/60 space-y-2">
             <div className="w-8 h-8 rounded-xl bg-teal-500/10 text-teal-600 dark:text-teal-400 flex items-center justify-center font-bold">
               2
             </div>
-            <h3 className="font-bold text-slate-900 dark:text-white">Unlocking Progressive Clues</h3>
+            <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+              <span>Helpful Clues as You Guess</span>
+            </h3>
             <p className="text-slate-600 dark:text-slate-400 text-xs leading-relaxed">
-              Stuck on a case? Real diagnostic clues unlock as you make guesses:
-              Microscope staining at Guess 2, Culture characteristics at Guess 3, and a real-world patient clinical vignette at Guess 4.
+              Stuck on a tricky bug? Hints unlock as you play: Gram stain at Guess 2, lab test hint at Guess 3, and a short patient story at Guess 4.
             </p>
           </div>
 
+          {/* Step 3 */}
           <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/60 space-y-2">
             <div className="w-8 h-8 rounded-xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 flex items-center justify-center font-bold">
               3
             </div>
-            <h3 className="font-bold text-slate-900 dark:text-white">Rx Challenge (Antimicrobial Practice)</h3>
+            <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+              <span>Treatment Bonus Round (Rx)</span>
+            </h3>
             <p className="text-slate-600 dark:text-slate-400 text-xs leading-relaxed">
-              Upon correctly identifying the bug, you unlock the Rx Challenge — pick the standard first-line antimicrobial therapy to solidify clinical pharmacological decision-making and earn bonus XP.
+              Once you solve the bug, choose the right first-line antibiotic or medicine to reinforce real-world clinical knowledge and earn bonus XP.
             </p>
           </div>
 
+          {/* Step 4 */}
           <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/60 space-y-2">
             <div className="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold">
               4
             </div>
-            <h3 className="font-bold text-slate-900 dark:text-white">Bugdex Compendium</h3>
+            <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+              <span>Your Bugdex Collection</span>
+            </h3>
             <p className="text-slate-600 dark:text-slate-400 text-xs leading-relaxed">
-              Every solved pathogen permanently unlocks in your Bugdex library. View high-yield USMLE buzzwords, virulence factors, transmission vectors, and clinical pictures.
+              Every bug you solve unlocks in your Bugdex library, complete with high-yield facts, key symptoms, and microscopy pictures for easy review.
             </p>
           </div>
         </div>
       </div>
 
-      {/* Who is it for? */}
+      {/* Who Plays */}
       <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/60 space-y-3">
-        <h2 className="text-base font-bold text-slate-900 dark:text-white">Who Plays Microbledle?</h2>
+        <h2 className="text-sm font-bold text-slate-900 dark:text-white">
+          Who Plays Microbledle?
+        </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-700 dark:text-slate-300">
           <div className="flex items-center gap-2">
             <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-            <span>Medical students studying for USMLE, COMLEX & Board Exams</span>
+            <span>Medical, nursing, and pharmacy students</span>
           </div>
           <div className="flex items-center gap-2">
             <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-            <span>Infectious disease fellows and clinical residents</span>
+            <span>Doctors, residents, and healthcare professionals</span>
           </div>
           <div className="flex items-center gap-2">
             <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-            <span>Clinical microbiology and laboratory scientists</span>
+            <span>Clinical laboratory scientists and microbiologists</span>
           </div>
           <div className="flex items-center gap-2">
             <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-            <span>Pharmacy students, nurses, and life science enthusiasts</span>
+            <span>Biology students and word puzzle enthusiasts</span>
           </div>
         </div>
       </div>
 
-      {/* CTA Buttons */}
+      {/* CTA Footer */}
       <div className="pt-4 border-t border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3">
         <div className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
           <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500" />
-          <span>Free, academic, non-commercial education for the global community.</span>
+          <span>100% free and educational for learners everywhere.</span>
         </div>
 
         <div className="flex items-center gap-2">

@@ -175,78 +175,40 @@ export default function InfoModal({ isOpen, onClose, initialTab = 'about' }) {
                 </p>
               </div>
 
-              {/* Email Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="p-4 rounded-2xl bg-slate-800/60 border border-slate-700/80 flex flex-col justify-between">
-                  <div>
-                    <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider block mb-1">
-                      General & Inquiries
-                    </span>
-                    <div className="text-sm font-mono font-bold text-white break-all">
-                      contact@microbledle.com
-                    </div>
-                    <p className="text-[11px] text-slate-400 mt-1">
-                      For general questions, university licenses, or partnership ideas.
-                    </p>
+              {/* Email Card */}
+              <div className="p-4 rounded-2xl bg-slate-800/60 border border-slate-700/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider block mb-1">
+                    Official Email
+                  </span>
+                  <div className="text-sm font-mono font-bold text-white break-all">
+                    contact@microbledle.com
                   </div>
-                  <div className="mt-3 flex items-center gap-2">
-                    <button
-                      onClick={() => handleCopyEmail('contact@microbledle.com')}
-                      className="px-2.5 py-1.5 rounded-lg bg-slate-750 hover:bg-slate-700 text-xs font-semibold text-slate-200 border border-slate-600 transition flex items-center gap-1"
-                    >
-                      {copiedEmail === 'contact@microbledle.com' ? (
-                        <>
-                          <Check className="w-3.5 h-3.5 text-emerald-400" /> Copied!
-                        </>
-                      ) : (
-                        <>
-                          <Copy className="w-3.5 h-3.5" /> Copy
-                        </>
-                      )}
-                    </button>
-                    <a
-                      href="mailto:contact@microbledle.com"
-                      className="px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white transition flex items-center gap-1"
-                    >
-                      <Mail className="w-3.5 h-3.5" /> Email Us
-                    </a>
-                  </div>
+                  <p className="text-[11px] text-slate-400 mt-1">
+                    For feedback, clinical corrections, suggestions, or inquiries.
+                  </p>
                 </div>
-
-                <div className="p-4 rounded-2xl bg-slate-800/60 border border-slate-700/80 flex flex-col justify-between">
-                  <div>
-                    <span className="text-[10px] font-bold text-cyan-400 uppercase tracking-wider block mb-1">
-                      Support & Info
-                    </span>
-                    <div className="text-sm font-mono font-bold text-white break-all">
-                      info@microbledle.com
-                    </div>
-                    <p className="text-[11px] text-slate-400 mt-1">
-                      For clinical corrections, account inquiries, or bug reports.
-                    </p>
-                  </div>
-                  <div className="mt-3 flex items-center gap-2">
-                    <button
-                      onClick={() => handleCopyEmail('info@microbledle.com')}
-                      className="px-2.5 py-1.5 rounded-lg bg-slate-750 hover:bg-slate-700 text-xs font-semibold text-slate-200 border border-slate-600 transition flex items-center gap-1"
-                    >
-                      {copiedEmail === 'info@microbledle.com' ? (
-                        <>
-                          <Check className="w-3.5 h-3.5 text-emerald-400" /> Copied!
-                        </>
-                      ) : (
-                        <>
-                          <Copy className="w-3.5 h-3.5" /> Copy
-                        </>
-                      )}
-                    </button>
-                    <a
-                      href="mailto:info@microbledle.com"
-                      className="px-2.5 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-xs font-bold text-white transition flex items-center gap-1"
-                    >
-                      <Mail className="w-3.5 h-3.5" /> Email Us
-                    </a>
-                  </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <button
+                    onClick={() => handleCopyEmail('contact@microbledle.com')}
+                    className="px-2.5 py-1.5 rounded-lg bg-slate-750 hover:bg-slate-700 text-xs font-semibold text-slate-200 border border-slate-600 transition flex items-center gap-1"
+                  >
+                    {copiedEmail === 'contact@microbledle.com' ? (
+                      <>
+                        <Check className="w-3.5 h-3.5 text-emerald-400" /> Copied!
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-3.5 h-3.5" /> Copy
+                      </>
+                    )}
+                  </button>
+                  <a
+                    href="mailto:contact@microbledle.com"
+                    className="px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white transition flex items-center gap-1"
+                  >
+                    <Mail className="w-3.5 h-3.5" /> Email Us
+                  </a>
                 </div>
               </div>
 
