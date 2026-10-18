@@ -298,21 +298,21 @@ export default function MainMenu({
         {/* BUGDEX */}
         <button
           onClick={onOpenBugdex}
-          className="p-4 rounded-2xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 hover:border-emerald-500/50 hover:bg-slate-50 dark:hover:bg-slate-800/80 transition flex flex-col justify-between text-left group shadow-sm dark:shadow-lg"
+          className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 hover:border-emerald-500/50 hover:bg-slate-50 dark:hover:bg-slate-800/80 transition flex flex-col justify-between text-left group shadow-sm dark:shadow-lg"
         >
           <div className="flex items-center justify-between w-full mb-3">
             <div className="p-2 rounded-xl bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 group-hover:scale-110 transition">
-              <BookOpen className="w-4 h-4" />
+              <BookOpen className="w-4.5 h-4.5 sm:w-5 sm:h-5" />
             </div>
-            <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950 px-1.5 py-0.5 rounded border border-emerald-200 dark:border-emerald-800">
+            <span className="text-xs font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800">
               {unlockedBugIds.length}/{totalBugsCount}
             </span>
           </div>
           <div>
-            <div className="text-sm font-black text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-300 transition">
+            <div className="text-base sm:text-lg font-black text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-300 transition">
               Bugdex
             </div>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-snug">
+            <p className="text-xs sm:text-[13px] text-slate-500 dark:text-slate-400 mt-1 leading-snug">
               Library ({bugdexPercentage}%)
             </p>
           </div>
@@ -321,21 +321,21 @@ export default function MainMenu({
         {/* LEADERBOARD */}
         <button
           onClick={onOpenLeaderboard}
-          className="p-4 rounded-2xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 hover:border-amber-500/50 hover:bg-slate-50 dark:hover:bg-slate-800/80 transition flex flex-col justify-between text-left group shadow-sm dark:shadow-lg"
+          className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 hover:border-amber-500/50 hover:bg-slate-50 dark:hover:bg-slate-800/80 transition flex flex-col justify-between text-left group shadow-sm dark:shadow-lg"
         >
           <div className="flex items-center justify-between w-full mb-3">
             <div className="p-2 rounded-xl bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30 group-hover:scale-110 transition">
-              <Trophy className="w-4 h-4" />
+              <Trophy className="w-4.5 h-4.5 sm:w-5 sm:h-5" />
             </div>
-            <span className="text-[10px] font-bold text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950 px-1.5 py-0.5 rounded border border-amber-200 dark:border-amber-800">
+            <span className="text-xs font-bold text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950 px-2 py-0.5 rounded border border-amber-200 dark:border-amber-800">
               Rankings
             </span>
           </div>
           <div>
-            <div className="text-sm font-black text-slate-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-300 transition">
+            <div className="text-base sm:text-lg font-black text-slate-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-300 transition">
               Leaderboard
             </div>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-snug">
+            <p className="text-xs sm:text-[13px] text-slate-500 dark:text-slate-400 mt-1 leading-snug">
               Global rankings
             </p>
           </div>
@@ -344,21 +344,21 @@ export default function MainMenu({
         {/* CAREER STATISTICS */}
         <button
           onClick={onOpenStats}
-          className="p-4 rounded-2xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 hover:border-cyan-500/50 hover:bg-slate-50 dark:hover:bg-slate-800/80 transition flex flex-col justify-between text-left group shadow-sm dark:shadow-lg"
+          className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 hover:border-cyan-500/50 hover:bg-slate-50 dark:hover:bg-slate-800/80 transition flex flex-col justify-between text-left group shadow-sm dark:shadow-lg"
         >
           <div className="flex items-center justify-between w-full mb-3">
             <div className="p-2 rounded-xl bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30 group-hover:scale-110 transition">
-              <Award className="w-4 h-4" />
+              <Award className="w-4.5 h-4.5 sm:w-5 sm:h-5" />
             </div>
-            <span className="text-[10px] font-bold text-cyan-700 dark:text-cyan-400 bg-cyan-50 dark:bg-cyan-950 px-1.5 py-0.5 rounded border border-cyan-200 dark:border-cyan-800 flex items-center gap-0.5">
-              <Flame className="w-3 h-3 text-amber-500 fill-amber-500" /> {stats.streak}
+            <span className="text-xs font-bold text-cyan-700 dark:text-cyan-400 bg-cyan-50 dark:bg-cyan-950 px-2 py-0.5 rounded border border-cyan-200 dark:border-cyan-800 flex items-center gap-0.5">
+              <Flame className="w-3.5 h-3.5 text-amber-500 fill-amber-500" /> {stats.streak}
             </span>
           </div>
           <div>
-            <div className="text-sm font-black text-slate-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-300 transition">
+            <div className="text-base sm:text-lg font-black text-slate-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-300 transition">
               Statistics
             </div>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-snug">
+            <p className="text-xs sm:text-[13px] text-slate-500 dark:text-slate-400 mt-1 leading-snug">
               Career stats & streak
             </p>
           </div>
@@ -367,21 +367,21 @@ export default function MainMenu({
         {/* HOW TO PLAY */}
         <button
           onClick={onOpenHelp}
-          className="p-4 rounded-2xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 hover:border-indigo-500/50 hover:bg-slate-50 dark:hover:bg-slate-800/80 transition flex flex-col justify-between text-left group shadow-sm dark:shadow-lg"
+          className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 hover:border-indigo-500/50 hover:bg-slate-50 dark:hover:bg-slate-800/80 transition flex flex-col justify-between text-left group shadow-sm dark:shadow-lg"
         >
           <div className="flex items-center justify-between w-full mb-3">
             <div className="p-2 rounded-xl bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 border border-indigo-500/30 group-hover:scale-110 transition">
-              <HelpCircle className="w-4 h-4" />
+              <HelpCircle className="w-4.5 h-4.5 sm:w-5 sm:h-5" />
             </div>
-            <span className="text-[10px] font-bold text-indigo-700 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950 px-1.5 py-0.5 rounded border border-indigo-200 dark:border-indigo-800">
+            <span className="text-xs font-bold text-indigo-700 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950 px-2 py-0.5 rounded border border-indigo-200 dark:border-indigo-800">
               Rules
             </span>
           </div>
           <div>
-            <div className="text-sm font-black text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-300 transition">
+            <div className="text-base sm:text-lg font-black text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-300 transition">
               How to Play
             </div>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-snug">
+            <p className="text-xs sm:text-[13px] text-slate-500 dark:text-slate-400 mt-1 leading-snug">
               Rules & tutorial
             </p>
           </div>
