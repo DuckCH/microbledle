@@ -3,8 +3,7 @@ import {
   Play, Shuffle, BookOpen, Trophy, Award, HelpCircle, 
   User, Volume2, VolumeX, Calendar, Clock, 
   Flame, Sparkles, ChevronRight, CheckCircle2,
-  AlertCircle, ShieldCheck, Pill, Sun, Moon,
-  Info, Mail
+  AlertCircle, ShieldCheck, Pill, Sun, Moon
 } from 'lucide-react';
 
 export default function MainMenu({
@@ -376,25 +375,6 @@ export default function MainMenu({
         </button>
 
       </div>
-
-      {/* Quick Info & Contact Links */}
-      {onOpenInfo && (
-        <div className="w-full flex items-center justify-center gap-3 pt-2 text-xs text-slate-500 dark:text-slate-400">
-          <button 
-            onClick={() => onOpenInfo('about')}
-            className="hover:text-emerald-600 dark:hover:text-emerald-400 transition flex items-center gap-1 font-medium"
-          >
-            <Info className="w-3.5 h-3.5" /> About Microbledle
-          </button>
-          <span className="text-slate-300 dark:text-slate-700">•</span>
-          <button 
-            onClick={() => onOpenInfo('contact')}
-            className="hover:text-emerald-600 dark:hover:text-emerald-400 transition flex items-center gap-1 font-medium"
-          >
-            <Mail className="w-3.5 h-3.5" /> Contact Us
-          </button>
-        </div>
-      )}
 
     </div>
   );

@@ -1581,40 +1581,45 @@ export default function App() {
       {/* Footer */}
       <footer className="w-full max-w-4xl mt-auto pt-8 pb-10 sm:pb-12 text-center border-t border-slate-200 dark:border-slate-800/80 flex flex-col items-center justify-center gap-2.5 px-4">
         {/* Navigation Links */}
-        <div className="flex flex-wrap items-center justify-center gap-x-3 sm:gap-x-4 gap-y-1 text-xs text-slate-500 dark:text-slate-400">
+        <div className="flex flex-wrap items-center justify-center gap-x-3.5 sm:gap-x-4 gap-y-1.5 text-xs text-slate-500 dark:text-slate-400">
           <button 
             onClick={() => navigateToPage('about')} 
-            className="hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition"
+            className="hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition inline-flex items-center gap-1.5"
           >
-            About
+            <span>ℹ️</span>
+            <span>About</span>
           </button>
           <span className="text-slate-300 dark:text-slate-700">•</span>
           <button 
             onClick={() => navigateToPage('contact')} 
-            className="hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition"
+            className="hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition inline-flex items-center gap-1.5"
           >
-            Contact Us
+            <span>✉️</span>
+            <span>Contact Us</span>
           </button>
           <span className="text-slate-300 dark:text-slate-700">•</span>
           <button 
             onClick={() => navigateToPage('privacy')} 
-            className="hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition"
+            className="hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition inline-flex items-center gap-1.5"
           >
-            Privacy Policy
+            <span>🛡️</span>
+            <span>Privacy Policy</span>
           </button>
           <span className="text-slate-300 dark:text-slate-700">•</span>
           <button 
             onClick={() => navigateToPage('terms')} 
-            className="hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition"
+            className="hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition inline-flex items-center gap-1.5"
           >
-            Terms & Disclaimer
+            <span>⚖️</span>
+            <span>Terms & Disclaimer</span>
           </button>
           <span className="text-slate-300 dark:text-slate-700">•</span>
           <button 
             onClick={() => navigateToPage('references')} 
-            className="hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition"
+            className="hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition inline-flex items-center gap-1.5"
           >
-            References
+            <span>📚</span>
+            <span>References</span>
           </button>
         </div>
 
