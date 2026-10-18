@@ -25,6 +25,7 @@ import {
   loadUserProgress, 
   isFirebaseConfigured,
   submitDailyScore,
+  updateDailyScoreProfile,
   logAnalyticsEvent
 } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth';
@@ -608,7 +609,20 @@ export default function App() {
         profile: updatedProfile,
         displayName: updatedProfile.displayName
       });
+      await updateDailyScoreProfile(dateStr, user.uid, updatedProfile);
     }
+
+    // Also update local cached daily score for today
+    try {
+      const savedDaily = localStorage.getItem(`microbledle_daily_score_${dateStr}`);
+      if (savedDaily) {
+        const parsed = JSON.parse(savedDaily);
+        parsed.displayName = updatedProfile.displayName;
+        parsed.avatar = updatedProfile.avatar;
+        parsed.status = updatedProfile.status || '';
+        localStorage.setItem(`microbledle_daily_score_${dateStr}`, JSON.stringify(parsed));
+      }
+    } catch (e) {}
   };
 
   // Handle Demo Login

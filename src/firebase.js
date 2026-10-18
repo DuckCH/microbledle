@@ -19,7 +19,9 @@ import {
   query,
   orderBy,
   limit,
-  getDocs
+  getDocs,
+  where,
+  documentId
 } from 'firebase/firestore';
 import { getAnalytics, isSupported, logEvent as firebaseLogEvent } from 'firebase/analytics';
 
@@ -170,6 +172,24 @@ export async function submitDailyScore(dateStr, uid, scoreData, forceOverwrite =
   }
 }
 
+// Update profile across daily leaderboard score if exists
+export async function updateDailyScoreProfile(dateStr, uid, profileData) {
+  if (!isFirebaseConfigured || !db || !uid || !dateStr) return;
+  try {
+    const scoreDocRef = doc(db, 'daily_leaderboard', dateStr, 'scores', uid);
+    const snap = await getDoc(scoreDocRef);
+    if (snap.exists()) {
+      await setDoc(scoreDocRef, {
+        ...(profileData.displayName ? { displayName: profileData.displayName } : {}),
+        ...(profileData.avatar ? { avatar: profileData.avatar } : {}),
+        ...(profileData.status !== undefined ? { status: profileData.status } : {})
+      }, { merge: true });
+    }
+  } catch (err) {
+    console.warn("Could not update daily score profile:", err);
+  }
+}
+
 // Fetch global daily leaderboard for a given UTC date
 export async function getDailyLeaderboard(dateStr, maxResults = 50) {
   if (!isFirebaseConfigured || !db || !dateStr) return [];
@@ -182,6 +202,40 @@ export async function getDailyLeaderboard(dateStr, maxResults = 50) {
     snap.forEach((docSnap) => {
       results.push({ id: docSnap.id, ...docSnap.data() });
     });
+
+    // Enrich with latest user profiles from users collection so name/avatar/status updates stay in sync
+    const uids = results.map(r => r.uid).filter(uid => uid && !uid.startsWith('guest_'));
+    if (uids.length > 0) {
+      try {
+        const userMap = new Map();
+        for (let i = 0; i < uids.length; i += 30) {
+          const chunk = uids.slice(i, i + 30);
+          const uQuery = query(collection(db, 'users'), where(documentId(), 'in', chunk));
+          const uSnap = await getDocs(uQuery);
+          uSnap.forEach(uDoc => {
+            userMap.set(uDoc.id, uDoc.data());
+          });
+        }
+
+        results.forEach(r => {
+          if (r.uid && userMap.has(r.uid)) {
+            const uData = userMap.get(r.uid);
+            const prof = uData.profile || {};
+            if (prof.displayName || uData.displayName) {
+              r.displayName = prof.displayName || uData.displayName;
+            }
+            if (prof.avatar) {
+              r.avatar = prof.avatar;
+            }
+            if (prof.status !== undefined) {
+              r.status = prof.status;
+            }
+          }
+        });
+      } catch (enrichErr) {
+        console.warn("Could not enrich daily scores with latest profiles:", enrichErr);
+      }
+    }
 
     // Rank by: 1. Fewest guesses, 2. Earliest submission timestamp
     results.sort((a, b) => {

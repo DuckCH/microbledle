@@ -31,6 +31,11 @@ export default function LeaderboardModal({
       if (savedDaily) {
         try {
           const parsed = JSON.parse(savedDaily);
+          if (userProfile) {
+            if (userProfile.displayName) parsed.displayName = userProfile.displayName;
+            if (userProfile.avatar) parsed.avatar = userProfile.avatar;
+            if (userProfile.status !== undefined) parsed.status = userProfile.status;
+          }
           const currentId = user ? user.uid : localStorage.getItem('microbledle_guest_id');
           const exists = daily.some(d => (user && d.uid === user.uid) || (currentId && d.uid === currentId));
           if (!exists) {
@@ -200,12 +205,15 @@ export default function LeaderboardModal({
                 </div>
               ) : (
                 filteredDaily.map((entry, idx) => {
-                  const avatarObj = AVATAR_OPTIONS.find(a => a.id === entry.avatar) || AVATAR_OPTIONS[0];
                   const isCurrentUser = user && user.uid === entry.uid;
+                  const currentAvatar = isCurrentUser && userProfile?.avatar ? userProfile.avatar : entry.avatar;
+                  const avatarObj = AVATAR_OPTIONS.find(a => a.id === currentAvatar) || AVATAR_OPTIONS[0];
+                  const currentStatus = isCurrentUser && userProfile?.status !== undefined ? userProfile.status : entry.status;
+                  const currentName = isCurrentUser && userProfile?.displayName ? userProfile.displayName : (entry.displayName || 'Anonymous Player');
                   const entryTitle = entry.rankTitle || 'Pre-Med';
                   const entryLevel = entry.level || RANKS.find(r => r.title === entryTitle)?.level;
                   const entryBadge = entry.badge || RANKS.find(r => r.title === entryTitle)?.badge || '🩺';
-                  const hasNonDuplicateStatus = entry.status && entry.status.trim().toLowerCase() !== entryTitle.trim().toLowerCase();
+                  const hasNonDuplicateStatus = currentStatus && currentStatus.trim().toLowerCase() !== entryTitle.trim().toLowerCase();
 
                   return (
                     <div
@@ -229,7 +237,7 @@ export default function LeaderboardModal({
                         <div className="min-w-0">
                           <div className="flex items-center gap-2">
                             <span className="font-bold text-sm text-white truncate">
-                              {entry.displayName || 'Anonymous Player'}
+                              {currentName}
                             </span>
                             {isCurrentUser && (
                               <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-emerald-900 text-emerald-300 border border-emerald-700">
@@ -245,7 +253,7 @@ export default function LeaderboardModal({
                             )}
                             {hasNonDuplicateStatus && (
                               <span className="text-slate-400 dark:text-slate-500 font-normal truncate">
-                                • {entry.status}
+                                • {currentStatus}
                               </span>
                             )}
                           </div>
