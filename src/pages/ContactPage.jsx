@@ -256,11 +256,7 @@ export default function ContactPage() {
             </div>
 
             {/* Submit Button */}
-            <div className="flex items-center justify-between pt-1">
-              <span className="text-[11px] text-slate-500 dark:text-slate-400">
-                Delivered directly to contact@microbledle.com
-              </span>
-
+            <div className="flex items-center justify-end pt-1">
               <button
                 type="submit"
                 disabled={isSubmitting}
@@ -281,33 +277,6 @@ export default function ContactPage() {
             </div>
           </form>
         )}
-      </div>
-
-      {/* Frequently Asked Questions */}
-      <div className="p-6 rounded-3xl bg-slate-50 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700/60 space-y-4">
-        <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-          Frequently Asked Questions
-        </h2>
-
-        <div className="space-y-3 text-xs">
-          <div className="p-3.5 rounded-xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
-            <strong className="text-slate-900 dark:text-white block mb-1">
-              Can I use Microbledle for classes or study groups?
-            </strong>
-            <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-              Yes! Microbledle is completely free for medical schools, student clubs, study groups, and teaching rounds. If you need custom cases or features, feel free to drop us a message!
-            </p>
-          </div>
-
-          <div className="p-3.5 rounded-xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
-            <strong className="text-slate-900 dark:text-white block mb-1">
-              When does the new daily case come out?
-            </strong>
-            <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-              A new Daily Case drops every day at <strong>00:00 UTC</strong> worldwide. You can also play unlimited random cases anytime in Practice Mode.
-            </p>
-          </div>
-        </div>
       </div>
 
     </div>
