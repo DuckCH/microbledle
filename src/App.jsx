@@ -240,11 +240,11 @@ export default function App() {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [isStandalone, setIsStandalone] = useState(false);
 
-  // Theme Management (Light / Dark mode, default to dark or saved preference)
+  // Theme Management (Light / Dark mode, strictly defaults to dark theme on first visit)
   const [theme, setTheme] = useState(() => {
     const saved = localStorage.getItem('microbledle_theme');
     if (saved === 'light' || saved === 'dark') return saved;
-    return (typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: light)').matches) ? 'light' : 'dark';
+    return 'dark';
   });
 
   useEffect(() => {
