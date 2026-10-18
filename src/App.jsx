@@ -18,6 +18,7 @@ import LeaderboardModal from './components/LeaderboardModal';
 import RxChallenge from './components/RxChallenge';
 import MainMenu from './components/MainMenu';
 import DischargeCardModal from './components/DischargeCardModal';
+import InfoModal from './components/InfoModal';
 import { 
   auth, 
   logoutUser, 
@@ -236,6 +237,7 @@ export default function App() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showLeaderboardModal, setShowLeaderboardModal] = useState(false);
+  const [infoModalTab, setInfoModalTab] = useState(null); // 'about' | 'contact' | 'privacy' | 'terms' | 'sources' | null
   // Theme Management (Light / Dark mode, strictly defaults to dark theme on first visit)
   const [theme, setTheme] = useState(() => {
     const saved = localStorage.getItem('microbledle_theme');
@@ -986,6 +988,7 @@ export default function App() {
           onOpenProfile={() => setShowProfileModal(true)}
           onOpenHelp={() => setShowHelpModal(true)}
           onOpenAuth={() => setShowAuthModal(true)}
+          onOpenInfo={(tab) => setInfoModalTab(tab || 'about')}
           user={user}
           profile={profile}
           progression={progression}
@@ -1509,7 +1512,45 @@ export default function App() {
       )}
 
       {/* Footer */}
-      <footer className="w-full max-w-4xl mt-auto pt-8 pb-10 sm:pb-12 text-center border-t border-slate-200 dark:border-slate-800/80 flex flex-col items-center justify-center gap-1.5 px-4">
+      <footer className="w-full max-w-4xl mt-auto pt-8 pb-10 sm:pb-12 text-center border-t border-slate-200 dark:border-slate-800/80 flex flex-col items-center justify-center gap-2.5 px-4">
+        {/* Navigation Links */}
+        <div className="flex flex-wrap items-center justify-center gap-x-3 sm:gap-x-4 gap-y-1 text-xs text-slate-500 dark:text-slate-400">
+          <button 
+            onClick={() => setInfoModalTab('about')} 
+            className="hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition"
+          >
+            About
+          </button>
+          <span className="text-slate-300 dark:text-slate-700">•</span>
+          <button 
+            onClick={() => setInfoModalTab('contact')} 
+            className="hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition"
+          >
+            Contact Us
+          </button>
+          <span className="text-slate-300 dark:text-slate-700">•</span>
+          <button 
+            onClick={() => setInfoModalTab('privacy')} 
+            className="hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition"
+          >
+            Privacy Policy
+          </button>
+          <span className="text-slate-300 dark:text-slate-700">•</span>
+          <button 
+            onClick={() => setInfoModalTab('terms')} 
+            className="hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition"
+          >
+            Terms & Disclaimer
+          </button>
+          <span className="text-slate-300 dark:text-slate-700">•</span>
+          <button 
+            onClick={() => setInfoModalTab('sources')} 
+            className="hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition"
+          >
+            References
+          </button>
+        </div>
+
         <p className="text-xs font-semibold text-slate-600 dark:text-slate-400">
           &copy; {new Date().getFullYear()} Microbledle. All rights reserved.
         </p>
@@ -1911,6 +1952,13 @@ export default function App() {
         progression={progression}
         stats={stats}
         theme={theme}
+      />
+
+      {/* Information & Legal Modal (About, Contact, Privacy, Terms, References) */}
+      <InfoModal
+        isOpen={Boolean(infoModalTab)}
+        onClose={() => setInfoModalTab(null)}
+        initialTab={infoModalTab || 'about'}
       />
     </div>
   );
