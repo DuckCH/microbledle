@@ -131,7 +131,7 @@ export default function AuthModal({ isOpen, onClose, onDemoLogin }) {
             {isRegister ? 'Create Account' : 'Welcome Back'}
           </h2>
           <p className="text-xs text-slate-400 mt-1">
-            Sign in to sync your streaks, daily cases, and Bugdex across all devices
+            Sign in to sync your streaks, daily cases, and Microdex across all devices
           </p>
         </div>
 

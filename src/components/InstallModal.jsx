@@ -49,7 +49,7 @@ export default function InstallModal({
           </div>
           <div className="flex items-center gap-2.5">
             <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0" />
-            <span><strong>Offline Access:</strong> Practice and review Bugdex pathogens anytime.</span>
+            <span><strong>Offline Access:</strong> Practice and review Microdex pathogens anytime.</span>
           </div>
           <div className="flex items-center gap-2.5">
             <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0" />

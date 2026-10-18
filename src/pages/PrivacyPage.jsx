@@ -42,7 +42,7 @@ export default function PrivacyPage() {
               <strong>Authentication Information:</strong> If you sign in via Google OAuth or email, we receive your email address, unique authentication identifier (UID), and default display name. We use this strictly to link your statistics across devices.
             </li>
             <li>
-              <strong>Gameplay Progression Data:</strong> When you complete cases, we store your game stats (games played, win count, streak records, guess distribution, and unlocked Bugdex IDs) in Google Cloud Firestore.
+              <strong>Gameplay Progression Data:</strong> When you complete cases, we store your game stats (games played, win count, streak records, guess distribution, and unlocked Microdex IDs) in Google Cloud Firestore.
             </li>
             <li>
               <strong>Browser Local Storage:</strong> To provide instant offline responsiveness and zero-latency state recovery, your current day's progress, theme preference (light/dark mode), and audio mute settings are cached directly on your device.
@@ -63,7 +63,7 @@ export default function PrivacyPage() {
           </p>
           <ul className="list-disc pl-5 space-y-1 text-xs">
             <li>Displaying global daily case and all-time rankings on the Leaderboard.</li>
-            <li>Synchronizing your case outcomes, streaks, and Bugdex collection across multiple devices (e.g. phone, iPad, laptop).</li>
+            <li>Synchronizing your case outcomes, streaks, and Microdex collection across multiple devices (e.g. phone, iPad, laptop).</li>
             <li>Diagnosing server stability issues and refining game balance.</li>
           </ul>
         </section>

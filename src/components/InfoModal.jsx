@@ -146,7 +146,7 @@ export default function InfoModal({ isOpen, onClose, initialTab = 'about' }) {
                     Test empirical first-line antimicrobial chemotherapy decisions for each correctly diagnosed case.
                   </div>
                   <div className="p-3 rounded-xl bg-slate-800/50 border border-slate-700/60">
-                    <strong className="text-cyan-400 block mb-1">📖 USMLE Bugdex Compendium</strong>
+                    <strong className="text-cyan-400 block mb-1">📖 USMLE Microdex Compendium</strong>
                     Unlock 40+ high-yield medical microbiology profile cards packed with board-exam buzzwords and culture media.
                   </div>
                   <div className="p-3 rounded-xl bg-slate-800/50 border border-slate-700/60">
@@ -279,7 +279,7 @@ export default function InfoModal({ isOpen, onClose, initialTab = 'about' }) {
                     <strong>Authentication Data:</strong> When you sign in with Google or create an account, we receive basic profile info (your email address and Google display name) to link your gameplay statistics across devices.
                   </p>
                   <p>
-                    <strong>Game Progress & Stats:</strong> We store your solved cases, guess distribution, Bugdex unlock IDs, current streak, and XP in Firebase Firestore.
+                    <strong>Game Progress & Stats:</strong> We store your solved cases, guess distribution, Microdex unlock IDs, current streak, and XP in Firebase Firestore.
                   </p>
                   <p>
                     <strong>Local Storage:</strong> We use browser localStorage to keep your current day's active game board and theme preference (light/dark mode) intact without constant network requests.

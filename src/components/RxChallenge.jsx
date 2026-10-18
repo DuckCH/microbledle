@@ -4,7 +4,8 @@ import { playRxSuccessSound, playRxFailSound } from '../utils/audio';
 import confetti from 'canvas-confetti';
 import microbes from '../data/microbes.json';
 
-export default function RxChallenge({ target, isDaily, dateStr, isMuted, onAnswer, onOpenBugdex }) {
+export default function RxChallenge({ target, isDaily, dateStr, isMuted, onAnswer, onOpenMicrodex }) {
+  const handleOpenMicrodex = onOpenMicrodex;
   const [selectedChoice, setSelectedChoice] = useState(null);
   const [answered, setAnswered] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
@@ -232,7 +233,7 @@ export default function RxChallenge({ target, isDaily, dateStr, isMuted, onAnswe
             </div>
           )}
 
-          {/* Clinical Pearl Card (Concise + Bugdex link) */}
+          {/* Clinical Pearl Card (Concise + Microdex link) */}
           <div className="p-3 rounded-xl bg-slate-950/80 border border-indigo-500/20 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
             <div className="flex-1">
               <span className="font-bold text-indigo-300 text-[11px] uppercase tracking-wider block">
@@ -243,14 +244,14 @@ export default function RxChallenge({ target, isDaily, dateStr, isMuted, onAnswe
               </p>
             </div>
 
-            {onOpenBugdex && (
+            {handleOpenMicrodex && (
               <button
                 type="button"
-                onClick={onOpenBugdex}
+                onClick={handleOpenMicrodex}
                 className="px-3 py-1.5 rounded-xl bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 border border-indigo-500/40 text-xs font-bold flex items-center gap-1.5 transition shrink-0 self-start sm:self-center shadow-sm"
               >
                 <BookOpen className="w-3.5 h-3.5" />
-                <span>Bugdex</span>
+                <span>Microdex</span>
               </button>
             )}
           </div>

@@ -52,7 +52,7 @@ export const AVATAR_OPTIONS = [
 ];
 
 export function calculateUserProgression(wins = 0, unlockedCount = 0, bonusXp = 0) {
-  // 100 XP per solved case + 50 XP per unique Bugdex unlocked pathogen + bonus XP
+  // 100 XP per solved case + 50 XP per unique Microdex unlocked pathogen + bonus XP
   const totalXp = Math.max(0, (wins * 100) + (unlockedCount * 50) + Number(bonusXp || 0));
 
   let currentRank = RANKS[0];

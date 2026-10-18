@@ -9,7 +9,7 @@ import {
 export default function MainMenu({
   onStartDaily,
   onStartPractice,
-  onOpenBugdex,
+  onOpenMicrodex,
   onOpenLeaderboard,
   onOpenStats,
   onOpenProfile,
@@ -37,7 +37,8 @@ export default function MainMenu({
   const dailyGuessesCount = dailyGameState?.guesses?.length || 0;
 
   const winRate = stats.played > 0 ? Math.round((stats.wins / stats.played) * 100) : 0;
-  const bugdexPercentage = Math.round((unlockedBugIds.length / totalBugsCount) * 100);
+  const microdexPercentage = Math.round((unlockedBugIds.length / totalBugsCount) * 100);
+  const handleOpenMicrodex = onOpenMicrodex;
 
   return (
     <div className="w-full max-w-4xl mx-auto flex flex-col items-center gap-6 animate-fade pb-4">
@@ -279,12 +280,12 @@ export default function MainMenu({
 
       </div>
 
-      {/* Feature Hub (Bugdex, Leaderboard, Statistics, How to Play) */}
+      {/* Feature Hub (Microdex, Leaderboard, Statistics, How to Play) */}
       <div className="w-full grid grid-cols-2 sm:grid-cols-4 gap-3">
         
-        {/* BUGDEX */}
+        {/* MICRODEX */}
         <button
-          onClick={onOpenBugdex}
+          onClick={handleOpenMicrodex}
           className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 hover:border-emerald-500/50 hover:bg-slate-50 dark:hover:bg-slate-800/80 transition flex flex-col justify-between text-left group shadow-sm dark:shadow-lg"
         >
           <div className="flex items-center justify-between w-full mb-3">
@@ -297,10 +298,10 @@ export default function MainMenu({
           </div>
           <div>
             <div className="text-base sm:text-lg font-black text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-300 transition">
-              Bugdex
+              Microdex
             </div>
             <p className="text-xs sm:text-[13px] text-slate-500 dark:text-slate-400 mt-1 leading-snug">
-              Library ({bugdexPercentage}%)
+              Library ({microdexPercentage}%)
             </p>
           </div>
         </button>

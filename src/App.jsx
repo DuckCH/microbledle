@@ -12,7 +12,7 @@ import {
 import microbes from './data/microbes.json';
 import { playTileSound, playSelectSound, playWinSound, playDefeatSound } from './utils/audio';
 import { calculateUserProgression, AVATAR_OPTIONS } from './utils/leveling';
-import BugdexModal from './components/BugdexModal';
+import MicrodexModal from './components/MicrodexModal';
 import AuthModal from './components/AuthModal';
 import ProfileModal from './components/ProfileModal';
 import LeaderboardModal from './components/LeaderboardModal';
@@ -281,8 +281,8 @@ export default function App() {
   const [showCaseResultModal, setShowCaseResultModal] = useState(false);
   const [showDischargeModal, setShowDischargeModal] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
-  const [showBugdexModal, setShowBugdexModal] = useState(false);
-  const [bugdexInitialBug, setBugdexInitialBug] = useState(null);
+  const [showMicrodexModal, setShowMicrodexModal] = useState(false);
+  const [microdexInitialBug, setMicrodexInitialBug] = useState(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showLeaderboardModal, setShowLeaderboardModal] = useState(false);
@@ -341,7 +341,7 @@ export default function App() {
     }
   });
 
-  // Bugdex unlocked organisms
+  // Microdex unlocked organisms
   const [unlockedBugIds, setUnlockedBugIds] = useState(() => {
     try {
       const saved = localStorage.getItem('microbledle_unlocked_bugs');
@@ -515,7 +515,7 @@ export default function App() {
       setStats(mergedStats);
       localStorage.setItem('microbledle_stats_v1', JSON.stringify(mergedStats));
 
-      // 4. MERGE Bugdex collection (union of unique IDs)
+      // 4. MERGE Microdex collection (union of unique IDs)
       const mergedBugs = Array.from(new Set([...localBugs, ...(cloudData?.unlockedBugIds || [])]));
       setUnlockedBugIds(mergedBugs);
       localStorage.setItem('microbledle_unlocked_bugs', JSON.stringify(mergedBugs));
@@ -817,7 +817,7 @@ export default function App() {
             origin: { y: 0.6 }
           });
 
-          // Unlock pathogen in Bugdex & Save to BOTH Local and Cloud
+          // Unlock pathogen in Microdex & Save to BOTH Local and Cloud
           setUnlockedBugIds(prev => {
             if (!prev.includes(target.id)) {
               const updated = [...prev, target.id];
@@ -996,10 +996,10 @@ export default function App() {
     setCurrentScreen('game');
   };
 
-  const handleOpenBugdex = (bug = null) => {
-    setBugdexInitialBug(bug || target);
+  const handleOpenMicrodex = (bug = null) => {
+    setMicrodexInitialBug(bug || target);
     setShowCaseResultModal(false);
-    setShowBugdexModal(true);
+    setShowMicrodexModal(true);
   };
 
   const copyEmojiGrid = () => {
@@ -1057,7 +1057,7 @@ export default function App() {
         <MainMenu
           onStartDaily={handleStartDaily}
           onStartPractice={handleStartPractice}
-          onOpenBugdex={() => setShowBugdexModal(true)}
+          onOpenMicrodex={() => setShowMicrodexModal(true)}
           onOpenLeaderboard={() => setShowLeaderboardModal(true)}
           onOpenStats={() => setShowStatsModal(true)}
           onOpenProfile={() => setShowProfileModal(true)}
@@ -1189,14 +1189,14 @@ export default function App() {
             </div>
           )}
 
-          {/* Bugdex Compendium Button */}
+          {/* Microdex Compendium Button */}
           <button
-            onClick={() => setShowBugdexModal(true)}
+            onClick={() => setShowMicrodexModal(true)}
             className="px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-300 hover:text-emerald-400 transition flex items-center gap-1.5 text-xs font-semibold"
-            title="Bugdex USMLE Compendium"
+            title="Microdex USMLE Compendium"
           >
             <BookOpen className="w-4 h-4 text-emerald-400" />
-            <span>Bugdex</span>
+            <span>Microdex</span>
             <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800 font-mono">
               {unlockedBugIds.length}/{microbes.length}
             </span>
@@ -1363,10 +1363,10 @@ export default function App() {
                 <Trophy className="w-4 h-4" /> View Summary & Share
               </button>
               <button
-                onClick={() => setShowBugdexModal(true)}
+                onClick={() => setShowMicrodexModal(true)}
                 className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-emerald-600 dark:text-emerald-400 shadow transition inline-flex items-center gap-1.5"
               >
-                <BookOpen className="w-4 h-4" /> Open in Bugdex
+                <BookOpen className="w-4 h-4" /> Open in Microdex
               </button>
             </div>
           </div>
@@ -1685,12 +1685,12 @@ export default function App() {
               </div>
 
               <button
-                onClick={() => handleOpenBugdex(target)}
+                onClick={() => handleOpenMicrodex(target)}
                 className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-emerald-400 hover:text-emerald-300 border border-slate-700 hover:border-emerald-500/40 text-xs font-bold flex items-center gap-1.5 transition shrink-0 shadow-sm"
-                title="View full facts, images, and vignette in Bugdex"
+                title="View full facts, images, and vignette in Microdex"
               >
                 <BookOpen className="w-3.5 h-3.5" />
-                <span>View in Bugdex</span>
+                <span>View in Microdex</span>
               </button>
             </div>
 
@@ -1701,7 +1701,7 @@ export default function App() {
               dateStr={dateStr}
               isMuted={isMuted}
               onAnswer={handleRxAnswer}
-              onOpenBugdex={() => handleOpenBugdex(target)}
+              onOpenMicrodex={() => handleOpenMicrodex(target)}
             />
 
             {/* Countdown to next daily case (if daily mode) */}
@@ -1971,15 +1971,15 @@ export default function App() {
         </div>
       )}
 
-      {/* Bugdex USMLE Compendium Modal */}
-      <BugdexModal 
-        isOpen={showBugdexModal}
+      {/* Microdex USMLE Compendium Modal */}
+      <MicrodexModal 
+        isOpen={showMicrodexModal}
         onClose={() => {
-          setShowBugdexModal(false);
-          setBugdexInitialBug(null);
+          setShowMicrodexModal(false);
+          setMicrodexInitialBug(null);
         }}
         unlockedBugIds={unlockedBugIds}
-        initialBug={bugdexInitialBug}
+        initialBug={microdexInitialBug}
       />
 
       {/* Auth & Registration Modal */}

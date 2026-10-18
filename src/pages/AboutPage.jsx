@@ -87,10 +87,10 @@ export default function AboutPage({ onStartDaily, onStartPractice }) {
               4
             </div>
             <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-              <span>Your Bugdex Collection</span>
+              <span>Your Microdex Collection</span>
             </h3>
             <p className="text-slate-600 dark:text-slate-400 text-xs leading-relaxed">
-              Every pathogen you solve unlocks in your Bugdex library, complete with high-yield facts, key symptoms, and microscopy pictures for easy review.
+              Every pathogen you solve unlocks in your Microdex library, complete with high-yield facts, key symptoms, and microscopy pictures for easy review.
             </p>
           </div>
         </div>
