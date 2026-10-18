@@ -1,7 +1,7 @@
 import React from 'react';
 import { 
   Play, Shuffle, BookOpen, Trophy, Award, HelpCircle, 
-  User, Volume2, VolumeX, Smartphone, Calendar, Clock, 
+  User, Volume2, VolumeX, Calendar, Clock, 
   Flame, Sparkles, ChevronRight, CheckCircle2,
   AlertCircle, ShieldCheck, Pill, Sun, Moon
 } from 'lucide-react';
@@ -15,8 +15,6 @@ export default function MainMenu({
   onOpenProfile,
   onOpenHelp,
   onOpenAuth,
-  onOpenInstall,
-  isStandalone,
   user,
   profile,
   progression,
@@ -78,17 +76,7 @@ export default function MainMenu({
             {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5 text-emerald-500 dark:text-emerald-400" />}
           </button>
 
-          {/* Install App Button */}
-          {!isStandalone && onOpenInstall && (
-            <button
-              onClick={onOpenInstall}
-              className="px-3.5 py-2 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-500/50 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 text-xs sm:text-sm font-semibold flex items-center gap-1.5 transition shadow-sm"
-              title="Install App"
-            >
-              <Smartphone className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
-              <span className="hidden sm:inline">Install</span>
-            </button>
-          )}
+
 
           {/* User Account / Profile Button */}
           {!user ? (
@@ -158,8 +146,12 @@ export default function MainMenu({
               </div>
               <div className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1.5 mt-0.5">
                 <span>{progression.title}</span>
-                <span className="text-slate-400 dark:text-slate-500">•</span>
-                <span className="text-slate-500 dark:text-slate-400 font-normal">{profile.status || 'Medical Student'}</span>
+                {profile.status ? (
+                  <>
+                    <span className="text-slate-400 dark:text-slate-500">•</span>
+                    <span className="text-slate-500 dark:text-slate-400 font-normal">{profile.status}</span>
+                  </>
+                ) : null}
               </div>
             </div>
           </div>
@@ -203,12 +195,6 @@ export default function MainMenu({
           <span className="font-bold text-slate-700 dark:text-slate-300 text-xs sm:text-sm uppercase tracking-wide">
             New Case Available in
           </span>
-          {isDailyGameOver && (
-            <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 px-2 py-0.5 rounded-full">
-              <CheckCircle2 className="w-3 h-3" />
-              {isDailyWon ? `Solved in ${dailyGuessesCount}` : 'Completed'}
-            </span>
-          )}
         </div>
         <div className="font-mono text-emerald-600 dark:text-emerald-400 font-black text-2xl sm:text-3xl tracking-widest bg-emerald-50/80 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 px-5 py-1 rounded-2xl shadow-sm">
           {countdown || '--:--:--'}

@@ -5,7 +5,7 @@ import {
   Share2, CheckCircle2, X, Sparkles, ChevronRight, Info,
   Microscope, Stethoscope, Dna, FlaskConical, Award, Flame,
   Check, Calendar, Shuffle, Volume2, VolumeX, Clock, TestTube2,
-  BookOpen, User, LogOut, Cloud, ShieldCheck, Smartphone, Pill,
+  BookOpen, User, LogOut, Cloud, ShieldCheck, Pill,
   ArrowLeft, Home, Sun, Moon, FileText, BarChart2
 } from 'lucide-react';
 import microbes from './data/microbes.json';
@@ -15,7 +15,6 @@ import BugdexModal from './components/BugdexModal';
 import AuthModal from './components/AuthModal';
 import ProfileModal from './components/ProfileModal';
 import LeaderboardModal from './components/LeaderboardModal';
-import InstallModal from './components/InstallModal';
 import RxChallenge from './components/RxChallenge';
 import MainMenu from './components/MainMenu';
 import DischargeCardModal from './components/DischargeCardModal';
@@ -236,10 +235,6 @@ export default function App() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showLeaderboardModal, setShowLeaderboardModal] = useState(false);
-  const [showInstallModal, setShowInstallModal] = useState(false);
-  const [deferredPrompt, setDeferredPrompt] = useState(null);
-  const [isStandalone, setIsStandalone] = useState(false);
-
   // Theme Management (Light / Dark mode, strictly defaults to dark theme on first visit)
   const [theme, setTheme] = useState(() => {
     const saved = localStorage.getItem('microbledle_theme');
@@ -267,40 +262,6 @@ export default function App() {
     });
   };
 
-  const isIos = useMemo(() => {
-    return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-  }, []);
-
-  useEffect(() => {
-    const standaloneMode = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-    setIsStandalone(standaloneMode);
-
-    const handleBeforeInstall = (e) => {
-      e.preventDefault();
-      setDeferredPrompt(e);
-    };
-
-    window.addEventListener('beforeinstallprompt', handleBeforeInstall);
-    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
-  }, []);
-
-  const handleInstallClick = async () => {
-    logAnalyticsEvent('pwa_install_prompt', { action: deferredPrompt ? 'native_prompt' : 'manual_modal' });
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === 'accepted') {
-        logAnalyticsEvent('pwa_install_accepted');
-        setDeferredPrompt(null);
-        setShowInstallModal(false);
-      } else {
-        logAnalyticsEvent('pwa_install_dismissed');
-      }
-    } else {
-      setShowInstallModal(true);
-    }
-  };
-
   const [copied, setCopied] = useState(false);
   const [isMuted, setIsMuted] = useState(() => {
     return localStorage.getItem('microbledle_muted') === 'true';
@@ -316,13 +277,13 @@ export default function App() {
       const saved = localStorage.getItem('microbledle_profile');
       return saved ? JSON.parse(saved) : {
         displayName: 'Physician',
-        status: 'Medical Student Y1',
+        status: '',
         avatar: 'microscope'
       };
     } catch {
       return {
         displayName: 'Physician',
-        status: 'Medical Student Y1',
+        status: '',
         avatar: 'microscope'
       };
     }
@@ -544,7 +505,7 @@ export default function App() {
           uid: authUser.uid,
           displayName: mergedProfile.displayName || authUser.displayName || 'Physician',
           avatar: mergedProfile.avatar || 'microscope',
-          status: mergedProfile.status || 'Medical Student Y1',
+          status: mergedProfile.status || '',
           level: prog.level,
           rankTitle: prog.title,
           badge: prog.badge,
@@ -886,7 +847,7 @@ export default function App() {
             uid: activeUid,
             displayName: profile.displayName || (user?.email ? user.email.split('@')[0] : 'Physician'),
             avatar: profile.avatar || 'microscope',
-            status: profile.status || 'Medical Student Y1',
+            status: profile.status || '',
             level: currentProg.level,
             rankTitle: currentProg.title,
             badge: currentProg.badge,
@@ -1012,8 +973,6 @@ export default function App() {
           onOpenProfile={() => setShowProfileModal(true)}
           onOpenHelp={() => setShowHelpModal(true)}
           onOpenAuth={() => setShowAuthModal(true)}
-          onOpenInstall={() => setShowInstallModal(true)}
-          isStandalone={isStandalone}
           user={user}
           profile={profile}
           progression={progression}
@@ -1231,18 +1190,6 @@ export default function App() {
           >
             <Award className="w-5 h-5 text-cyan-400" />
           </button>
-
-          {/* PWA Install App Button */}
-          {!isStandalone && (
-            <button
-              onClick={() => setShowInstallModal(true)}
-              className="p-2 md:px-2.5 md:py-2 rounded-xl bg-emerald-950/60 border border-emerald-500/50 hover:border-emerald-400 hover:bg-emerald-900/60 text-emerald-300 transition flex items-center gap-1.5 text-xs font-semibold shadow-sm"
-              title="Install Microbledle as Web App (Offline & Full-Screen)"
-            >
-              <Smartphone className="w-4 h-4 text-emerald-400" />
-              <span className="hidden sm:inline">Install</span>
-            </button>
-          )}
         </div>
       </header>
 
@@ -1933,15 +1880,6 @@ export default function App() {
         userStats={stats}
         userProfile={profile}
         onOpenAuth={() => setShowAuthModal(true)}
-      />
-
-      {/* PWA Install Modal */}
-      <InstallModal
-        isOpen={showInstallModal}
-        onClose={() => setShowInstallModal(false)}
-        onInstallClick={handleInstallClick}
-        canInstallPrompt={Boolean(deferredPrompt)}
-        isIos={isIos}
       />
 
       {/* Visual Clinical Discharge Summary Report Modal (Canvas Graphic) */}

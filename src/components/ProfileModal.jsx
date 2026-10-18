@@ -5,7 +5,6 @@ import {
 } from 'lucide-react';
 import { 
   calculateUserProgression, 
-  STATUS_OPTIONS, 
   AVATAR_OPTIONS 
 } from '../utils/leveling';
 
@@ -21,7 +20,7 @@ export default function ProfileModal({
   onLogout 
 }) {
   const [displayName, setDisplayName] = useState(profile?.displayName || user?.displayName || 'Physician');
-  const [status, setStatus] = useState(profile?.status || 'Medical Student Y1');
+  const [status, setStatus] = useState(profile?.status || '');
   const [avatar, setAvatar] = useState(profile?.avatar || 'microscope');
   const [saveSuccess, setSaveSuccess] = useState(false);
 
@@ -29,7 +28,7 @@ export default function ProfileModal({
   useEffect(() => {
     if (profile) {
       setDisplayName(profile.displayName || user?.displayName || 'Physician');
-      setStatus(profile.status || 'Medical Student Y1');
+      setStatus(profile.status || '');
       setAvatar(profile.avatar || 'microscope');
     }
   }, [profile, user]);
@@ -43,7 +42,7 @@ export default function ProfileModal({
     e.preventDefault();
     const updated = {
       displayName: displayName.trim() || 'Physician',
-      status: status.trim() || 'Medical Student',
+      status: status.trim() || '',
       avatar: avatar,
       level: progression.level,
       title: progression.title,
@@ -171,7 +170,7 @@ export default function ProfileModal({
           {/* Display Name */}
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">
-              Display Name / Title
+              Display Name
             </label>
             <div className="relative">
               <User className="absolute left-3.5 top-3 w-4 h-4 text-slate-500" />
@@ -197,20 +196,11 @@ export default function ProfileModal({
                 type="text"
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
-                placeholder="Type your status (e.g. Intern 1, Path Enthusiast, Coffee Addict...)"
-                list="status-presets"
+                placeholder="Type your status"
                 maxLength={60}
                 className="w-full pl-10 pr-3 py-2.5 bg-slate-950 border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
               />
-              <datalist id="status-presets">
-                {STATUS_OPTIONS.map((opt) => (
-                  <option key={opt} value={opt} />
-                ))}
-              </datalist>
             </div>
-            <p className="text-[10px] text-slate-500 mt-1">
-              Customize with any status, title, or motto you'd like
-            </p>
           </div>
 
           {/* Action Buttons */}
