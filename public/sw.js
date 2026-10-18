@@ -1,4 +1,4 @@
-const CACHE_NAME = 'microbledle-v1';
+const CACHE_NAME = 'microbledle-v2';
 
 const PRECACHE_ASSETS = [
   './',

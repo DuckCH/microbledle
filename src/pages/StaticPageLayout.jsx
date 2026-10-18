@@ -41,7 +41,7 @@ export default function StaticPageLayout({
             className="flex items-center gap-3 cursor-pointer group"
             title="Return to Main Menu"
           >
-            <div className="w-10 h-10 md:w-12 md:h-12 rounded-2xl overflow-hidden border border-emerald-500/40 shadow-md shrink-0 bg-white dark:bg-slate-900 group-hover:scale-105 transition-all duration-300 flex items-center justify-center">
+            <div className="w-10 h-10 md:w-12 md:h-12 rounded-2xl overflow-hidden border border-emerald-500/40 shadow-md shrink-0 bg-slate-950 group-hover:scale-105 transition-all duration-300 flex items-center justify-center">
               <img 
                 src="./apple-touch-icon.png" 
                 alt="Microbledle Logo" 
