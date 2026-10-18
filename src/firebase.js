@@ -146,10 +146,20 @@ export async function loadUserProgress(uid) {
 }
 
 // Submit score for today's daily case to the global daily leaderboard
-export async function submitDailyScore(dateStr, uid, scoreData) {
+export async function submitDailyScore(dateStr, uid, scoreData, forceOverwrite = false) {
   if (!isFirebaseConfigured || !db || !uid || !dateStr) return;
   try {
     const scoreDocRef = doc(db, 'daily_leaderboard', dateStr, 'scores', uid);
+    if (!forceOverwrite) {
+      const snap = await getDoc(scoreDocRef);
+      if (snap.exists()) {
+        const existing = snap.data();
+        if (existing && existing.guessesCount) {
+          console.log("Daily score already recorded for today, preserving original score:", existing);
+          return;
+        }
+      }
+    }
     await setDoc(scoreDocRef, {
       ...scoreData,
       uid,

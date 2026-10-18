@@ -371,10 +371,15 @@ export default function App() {
   };
 
   // Handle post-game Empiric Rx Challenge answer
-  const handleRxAnswer = (isCorrect) => {
+  const handleRxAnswer = (isCorrect, rxPayload) => {
     setStats(prev => {
+      if (!isPractice && prev.lastDailyRxDate === dateStr) {
+        return prev;
+      }
+
       const updated = {
         ...prev,
+        ...(!isPractice ? { lastDailyRxDate: dateStr } : {}),
         rxAttempted: (prev.rxAttempted || 0) + 1,
         rxCorrect: (prev.rxCorrect || 0) + (isCorrect ? 1 : 0)
       };
@@ -384,6 +389,18 @@ export default function App() {
       }
       return updated;
     });
+
+    if (!isPractice && rxPayload) {
+      const rxSaveData = {
+        dateStr,
+        ...rxPayload,
+        updatedAt: new Date().toISOString()
+      };
+      localStorage.setItem(`microbledle_daily_rx_${dateStr}`, JSON.stringify(rxSaveData));
+      if (user && isFirebaseConfigured) {
+        saveUserProgress(user.uid, { lastDailyRx: rxSaveData });
+      }
+    }
   };
 
   // Load stats from localStorage on mount
@@ -404,7 +421,170 @@ export default function App() {
     }
   }, []);
 
-  // Listen to Firebase Auth state and execute Dual-Storage Sync (Cloud + Local)
+  // Centralized Bi-Directional Cloud Sync across devices
+  const syncWithCloud = async (authUser) => {
+    if (!authUser || !isFirebaseConfigured) return;
+    try {
+      const todayStr = dailyInfo.dateStr;
+      const cloudData = await loadUserProgress(authUser.uid);
+
+      // 1. Read local storage snapshots directly
+      const localStats = JSON.parse(localStorage.getItem('microbledle_stats_v1') || '{}');
+      const localBugs = JSON.parse(localStorage.getItem('microbledle_unlocked_bugs') || '[]');
+      const localProfile = JSON.parse(localStorage.getItem('microbledle_profile') || '{}');
+      const localDaily = JSON.parse(localStorage.getItem(`microbledle_game_${todayStr}`) || 'null');
+      const localRx = JSON.parse(localStorage.getItem(`microbledle_daily_rx_${todayStr}`) || 'null');
+
+      const cloudDaily = cloudData?.lastDailyGame;
+      const cloudRx = cloudData?.lastDailyRx;
+
+      const isCloudToday = cloudDaily?.dateStr === todayStr;
+      const isLocalToday = localDaily?.dateStr === todayStr;
+
+      // 2. Duplicate Replay & Overwrite Auto-Healing
+      // If local device has an authentic multi-guess solve (e.g. 4/6) for today,
+      // but cloud has an accidental single-guess replay (1/6) from another device:
+      const localHasMultiGuessSolve = isLocalToday && localDaily?.gameOver && localDaily?.won && (localDaily?.guesses?.length || 0) > 1;
+      const cloudHasSingleGuessSolve = isCloudToday && cloudDaily?.gameOver && cloudDaily?.won && (cloudDaily?.guesses?.length || 0) === 1;
+
+      let resolvedDailyGame = null;
+      let shouldFixLeaderboard = false;
+      let shouldDeductDuplicate = false;
+
+      if (localHasMultiGuessSolve && cloudHasSingleGuessSolve) {
+        resolvedDailyGame = localDaily;
+        shouldFixLeaderboard = true;
+        shouldDeductDuplicate = true;
+      } else if (isLocalToday && localDaily?.gameOver) {
+        resolvedDailyGame = localDaily;
+      } else if (isCloudToday && cloudDaily?.gameOver) {
+        resolvedDailyGame = cloudDaily;
+      } else if (isLocalToday && isCloudToday) {
+        resolvedDailyGame = (localDaily?.guesses?.length || 0) >= (cloudDaily?.guesses?.length || 0) ? localDaily : cloudDaily;
+      } else if (isCloudToday) {
+        resolvedDailyGame = cloudDaily;
+      } else if (isLocalToday) {
+        resolvedDailyGame = localDaily;
+      }
+
+      // 3. MERGE stats
+      let currentPlayed = Math.max(localStats.played || 0, cloudData?.stats?.played || 0);
+      let currentWins = Math.max(localStats.wins || 0, cloudData?.stats?.wins || 0);
+      let currentStreak = Math.max(localStats.streak || 0, cloudData?.stats?.streak || 0);
+      let currentMaxStreak = Math.max(localStats.maxStreak || 0, cloudData?.stats?.maxStreak || 0);
+      let currentRxAttempted = Math.max(localStats.rxAttempted || 0, cloudData?.stats?.rxAttempted || 0);
+      let currentRxCorrect = Math.max(localStats.rxCorrect || 0, cloudData?.stats?.rxCorrect || 0);
+
+      const baseDist = localStats.distribution || [0, 0, 0, 0, 0, 0];
+      const cloudDist = cloudData?.stats?.distribution || [0, 0, 0, 0, 0, 0];
+      let currentDist = baseDist.map((val, idx) => Math.max(val, cloudDist[idx] || 0));
+
+      if (shouldDeductDuplicate) {
+        if (currentDist[0] > 0) {
+          currentDist[0] = Math.max(0, currentDist[0] - 1);
+        }
+        currentPlayed = Math.max(0, currentPlayed - 1);
+        currentWins = Math.max(0, currentWins - 1);
+      }
+
+      const mergedStats = {
+        played: currentPlayed,
+        wins: currentWins,
+        streak: currentStreak,
+        maxStreak: currentMaxStreak,
+        distribution: currentDist,
+        rxAttempted: currentRxAttempted,
+        rxCorrect: currentRxCorrect,
+        lastDailyDate: cloudData?.stats?.lastDailyDate || localStats.lastDailyDate || (resolvedDailyGame?.gameOver ? todayStr : null),
+        lastDailyRxDate: cloudData?.stats?.lastDailyRxDate || localStats.lastDailyRxDate || null
+      };
+
+      setStats(mergedStats);
+      localStorage.setItem('microbledle_stats_v1', JSON.stringify(mergedStats));
+
+      // 4. MERGE Bugdex collection (union of unique IDs)
+      const mergedBugs = Array.from(new Set([...localBugs, ...(cloudData?.unlockedBugIds || [])]));
+      setUnlockedBugIds(mergedBugs);
+      localStorage.setItem('microbledle_unlocked_bugs', JSON.stringify(mergedBugs));
+
+      // 5. MERGE Profile information
+      const mergedProfile = {
+        ...localProfile,
+        ...(cloudData?.profile || {}),
+        displayName: cloudData?.profile?.displayName || authUser.displayName || localProfile.displayName || 'Physician'
+      };
+      setProfile(mergedProfile);
+      localStorage.setItem('microbledle_profile', JSON.stringify(mergedProfile));
+
+      // 6. SYNC Daily Game state across devices
+      if (resolvedDailyGame) {
+        localStorage.setItem(`microbledle_game_${todayStr}`, JSON.stringify(resolvedDailyGame));
+        if (!isPractice) {
+          setGuesses(resolvedDailyGame.guesses || []);
+          setGameOver(Boolean(resolvedDailyGame.gameOver));
+          setWon(Boolean(resolvedDailyGame.won));
+        }
+      }
+
+      // 7. SYNC Daily Rx Challenge state
+      let resolvedRx = null;
+      if (cloudRx?.dateStr === todayStr && cloudRx?.answered) {
+        resolvedRx = cloudRx;
+      } else if (localRx?.dateStr === todayStr && localRx?.answered) {
+        resolvedRx = localRx;
+      }
+      if (resolvedRx) {
+        localStorage.setItem(`microbledle_daily_rx_${todayStr}`, JSON.stringify(resolvedRx));
+      }
+
+      // 8. RESTORE authentic leaderboard score if previously overwritten
+      if (shouldFixLeaderboard && localDaily?.guesses?.length) {
+        const prog = calculateUserProgression(mergedStats.wins, mergedBugs.length, (mergedStats.rxCorrect || 0) * 50);
+        const restoredScore = {
+          uid: authUser.uid,
+          displayName: mergedProfile.displayName || authUser.displayName || 'Physician',
+          avatar: mergedProfile.avatar || 'microscope',
+          status: mergedProfile.status || 'Medical Student Y1',
+          level: prog.level,
+          rankTitle: prog.title,
+          badge: prog.badge,
+          guessesCount: localDaily.guesses.length,
+          submittedAt: new Date().toISOString()
+        };
+        localStorage.setItem(`microbledle_daily_score_${todayStr}`, JSON.stringify(restoredScore));
+        await submitDailyScore(todayStr, authUser.uid, restoredScore, true);
+      } else {
+        const savedDailyScore = localStorage.getItem(`microbledle_daily_score_${todayStr}`);
+        if (savedDailyScore) {
+          try {
+            const parsed = JSON.parse(savedDailyScore);
+            await submitDailyScore(todayStr, authUser.uid, {
+              ...parsed,
+              uid: authUser.uid,
+              displayName: mergedProfile.displayName || authUser.displayName || 'Physician'
+            });
+          } catch (e) {}
+        }
+      }
+
+      // 9. PUSH merged unified progress to Firestore
+      await saveUserProgress(authUser.uid, {
+        stats: mergedStats,
+        unlockedBugIds: mergedBugs,
+        profile: mergedProfile,
+        email: authUser.email,
+        displayName: mergedProfile.displayName,
+        ...(resolvedDailyGame ? { lastDailyGame: resolvedDailyGame } : {}),
+        ...(resolvedRx ? { lastDailyRx: resolvedRx } : {})
+      });
+
+      setCloudSynced(true);
+    } catch (err) {
+      console.warn("Error during cloud sync:", err);
+    }
+  };
+
+  // Listen to Firebase Auth state
   useEffect(() => {
     if (!isFirebaseConfigured) {
       const savedDemo = localStorage.getItem('microbledle_demo_user');
@@ -420,90 +600,7 @@ export default function App() {
     const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
       if (authUser) {
         setUser(authUser);
-        setCloudSynced(true);
-
-        // 1. PULL cloud progression from Firestore
-        const cloudData = await loadUserProgress(authUser.uid);
-
-        if (cloudData) {
-          // 2. MERGE stats (take maximums)
-          const mergedStats = {
-            played: Math.max(stats.played, cloudData.stats?.played || 0),
-            wins: Math.max(stats.wins, cloudData.stats?.wins || 0),
-            streak: Math.max(stats.streak, cloudData.stats?.streak || 0),
-            maxStreak: Math.max(stats.maxStreak, cloudData.stats?.maxStreak || 0),
-            rxAttempted: Math.max(stats.rxAttempted || 0, cloudData.stats?.rxAttempted || 0),
-            rxCorrect: Math.max(stats.rxCorrect || 0, cloudData.stats?.rxCorrect || 0),
-            distribution: stats.distribution.map((val, idx) => 
-              Math.max(val, cloudData.stats?.distribution?.[idx] || 0)
-            )
-          };
-          setStats(mergedStats);
-
-          // 3. MERGE Bugdex collection (union of unique IDs)
-          const localBugs = JSON.parse(localStorage.getItem('microbledle_unlocked_bugs') || '[]');
-          const cloudBugs = cloudData.unlockedBugIds || [];
-          const mergedBugs = Array.from(new Set([...localBugs, ...cloudBugs]));
-          setUnlockedBugIds(mergedBugs);
-
-          // 4. MERGE Profile information
-          const localProfile = JSON.parse(localStorage.getItem('microbledle_profile') || '{}');
-          const mergedProfile = {
-            ...localProfile,
-            ...(cloudData.profile || {}),
-            displayName: cloudData.profile?.displayName || authUser.displayName || localProfile.displayName || 'Physician'
-          };
-          setProfile(mergedProfile);
-
-          // 5. SAVE TO BOTH: Write merged snapshot locally and to Firestore
-          localStorage.setItem('microbledle_stats_v1', JSON.stringify(mergedStats));
-          localStorage.setItem('microbledle_unlocked_bugs', JSON.stringify(mergedBugs));
-          localStorage.setItem('microbledle_profile', JSON.stringify(mergedProfile));
-
-          await saveUserProgress(authUser.uid, {
-            stats: mergedStats,
-            unlockedBugIds: mergedBugs,
-            profile: mergedProfile,
-            email: authUser.email,
-            displayName: mergedProfile.displayName
-          });
-
-        } else {
-          // First time user login: Upload existing local progress to their cloud account
-          const currentLocalStats = JSON.parse(localStorage.getItem('microbledle_stats_v1') || '{}');
-          const currentBugs = JSON.parse(localStorage.getItem('microbledle_unlocked_bugs') || '[]');
-          const currentProfile = JSON.parse(localStorage.getItem('microbledle_profile') || '{}');
-          const initialProfile = {
-            ...currentProfile,
-            displayName: currentProfile.displayName || authUser.displayName || 'Physician'
-          };
-
-          setProfile(initialProfile);
-          localStorage.setItem('microbledle_profile', JSON.stringify(initialProfile));
-
-          await saveUserProgress(authUser.uid, {
-            stats: currentLocalStats,
-            unlockedBugIds: currentBugs,
-            profile: initialProfile,
-            email: authUser.email,
-            displayName: initialProfile.displayName
-          });
-
-          // Also sync today's daily solved score to global leaderboard if present
-          const savedDailyScore = localStorage.getItem(`microbledle_daily_score_${dailyInfo.dateStr}`);
-          if (savedDailyScore) {
-            try {
-              const parsed = JSON.parse(savedDailyScore);
-              await submitDailyScore(dailyInfo.dateStr, authUser.uid, {
-                ...parsed,
-                uid: authUser.uid,
-                displayName: initialProfile.displayName || authUser.displayName || 'Physician'
-              });
-            } catch (e) {
-              console.warn("Could not sync daily score to leaderboard", e);
-            }
-          }
-        }
+        await syncWithCloud(authUser);
       } else {
         setUser(null);
         setCloudSynced(false);
@@ -512,6 +609,33 @@ export default function App() {
 
     return () => unsubscribe();
   }, []);
+
+  // Real-time Cloud Sync on tab focus or visibility change
+  useEffect(() => {
+    if (!user || !isFirebaseConfigured) return;
+
+    let isSyncing = false;
+    const handleSync = async () => {
+      if (document.visibilityState === 'visible' && !isSyncing) {
+        isSyncing = true;
+        try {
+          await syncWithCloud(user);
+        } catch (err) {
+          console.warn("Auto-sync on focus failed:", err);
+        } finally {
+          isSyncing = false;
+        }
+      }
+    };
+
+    window.addEventListener('focus', handleSync);
+    document.addEventListener('visibilitychange', handleSync);
+
+    return () => {
+      window.removeEventListener('focus', handleSync);
+      document.removeEventListener('visibilitychange', handleSync);
+    };
+  }, [user]);
 
   // Save profile changes to BOTH Local Storage and Cloud Firestore
   const handleSaveProfile = async (updatedProfile) => {
@@ -687,15 +811,22 @@ export default function App() {
 
       if (!isPractice) {
         setStats(prev => {
+          if (prev.lastDailyDate === dateStr) {
+            console.log("Daily stats already recorded for date:", dateStr);
+            return prev;
+          }
+
           const newPlayed = prev.played + 1;
           const newWins = isVictory ? prev.wins + 1 : prev.wins;
           const newStreak = isVictory ? prev.streak + 1 : 0;
           const newMaxStreak = Math.max(prev.maxStreak, newStreak);
-          const newDist = [...prev.distribution];
+          const newDist = [...(prev.distribution || [0, 0, 0, 0, 0, 0])];
           if (isVictory && newGuesses.length <= 6) {
-            newDist[newGuesses.length - 1] += 1;
+            newDist[newGuesses.length - 1] = (newDist[newGuesses.length - 1] || 0) + 1;
           }
           const updated = {
+            ...prev,
+            lastDailyDate: dateStr,
             played: newPlayed,
             wins: newWins,
             streak: newStreak,
@@ -713,15 +844,23 @@ export default function App() {
           return updated;
         });
 
-        localStorage.setItem(`microbledle_game_${dateStr}`, JSON.stringify({
+        const dailyGameData = {
+          dateStr,
           guesses: newGuesses,
           gameOver: true,
-          won: isVictory
-        }));
+          won: isVictory,
+          updatedAt: new Date().toISOString()
+        };
+
+        localStorage.setItem(`microbledle_game_${dateStr}`, JSON.stringify(dailyGameData));
+
+        if (user && isFirebaseConfigured) {
+          saveUserProgress(user.uid, { lastDailyGame: dailyGameData });
+        }
 
         // Submit daily case score to Global Leaderboard
         if (isVictory) {
-          const newWins = stats.wins + 1;
+          const newWins = stats.wins + (stats.lastDailyDate === dateStr ? 0 : 1);
           const currentProg = calculateUserProgression(
             newWins,
             unlockedBugIds.length + (!unlockedBugIds.includes(target.id) ? 1 : 0),
@@ -763,11 +902,17 @@ export default function App() {
         }
       }
     } else if (!isPractice) {
-      localStorage.setItem(`microbledle_game_${dateStr}`, JSON.stringify({
+      const ongoingDaily = {
+        dateStr,
         guesses: newGuesses,
         gameOver: false,
-        won: false
-      }));
+        won: false,
+        updatedAt: new Date().toISOString()
+      };
+      localStorage.setItem(`microbledle_game_${dateStr}`, JSON.stringify(ongoingDaily));
+      if (user && isFirebaseConfigured) {
+        saveUserProgress(user.uid, { lastDailyGame: ongoingDaily });
+      }
     }
   };
 

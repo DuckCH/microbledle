@@ -95,14 +95,16 @@ export default function RxChallenge({ target, isDaily, dateStr, isMuted, onAnswe
     }
 
     // Save answer so reopening won't reset or allow double-solving
+    const rxPayload = {
+      answered: true,
+      isCorrect: correct,
+      choice,
+      options
+    };
+
     if (storageKey) {
       try {
-        const payload = JSON.stringify({
-          answered: true,
-          isCorrect: correct,
-          choice,
-          options
-        });
+        const payload = JSON.stringify(rxPayload);
         if (isDaily) {
           localStorage.setItem(storageKey, payload);
         } else {
@@ -113,7 +115,7 @@ export default function RxChallenge({ target, isDaily, dateStr, isMuted, onAnswe
 
     // Notify parent component to update user stats & grant XP
     if (onAnswer) {
-      onAnswer(correct);
+      onAnswer(correct, rxPayload);
     }
   };
 
