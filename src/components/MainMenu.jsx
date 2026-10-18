@@ -44,23 +44,23 @@ export default function MainMenu({
     <div className="w-full max-w-4xl mx-auto flex flex-col items-center gap-6 animate-fade pb-8">
       
       {/* Top Bar */}
-      <div className="w-full flex items-center justify-between py-2 border-b border-slate-200 dark:border-slate-800/80 px-1">
+      <div className="w-full flex items-center justify-between py-2.5 border-b border-slate-200 dark:border-slate-800/80 px-1">
         <div className="flex items-center gap-2">
           {/* Header left */}
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
           {/* Light / Dark Mode Toggle */}
           {onToggleTheme && (
             <button
               onClick={onToggleTheme}
-              className="p-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:text-amber-500 dark:hover:text-amber-400 hover:border-amber-400/50 transition flex items-center justify-center text-xs shadow-sm"
+              className="p-2.5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:text-amber-500 dark:hover:text-amber-400 hover:border-amber-400/50 transition flex items-center justify-center shadow-sm"
               title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
             >
               {theme === 'dark' ? (
-                <Sun className="w-4 h-4 text-amber-400" />
+                <Sun className="w-5 h-5 text-amber-400" />
               ) : (
-                <Moon className="w-4 h-4 text-indigo-500" />
+                <Moon className="w-5 h-5 text-indigo-500" />
               )}
             </button>
           )}
@@ -68,24 +68,24 @@ export default function MainMenu({
           {/* Sound Toggle */}
           <button
             onClick={onToggleMute}
-            className={`p-2 rounded-xl border text-xs transition flex items-center gap-1.5 ${
+            className={`p-2.5 rounded-2xl border transition flex items-center justify-center ${
               isMuted 
                 ? 'bg-slate-100 dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300' 
                 : 'bg-emerald-50 dark:bg-emerald-950/60 border-emerald-300 dark:border-emerald-500/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 shadow-sm'
             }`}
             title={isMuted ? 'Sound Muted' : 'Sound Active'}
           >
-            {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+            {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5 text-emerald-500 dark:text-emerald-400" />}
           </button>
 
           {/* Install App Button */}
           {!isStandalone && onOpenInstall && (
             <button
               onClick={onOpenInstall}
-              className="px-2.5 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-500/50 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 text-xs font-semibold flex items-center gap-1.5 transition shadow-sm"
+              className="px-3.5 py-2 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-500/50 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 text-xs sm:text-sm font-semibold flex items-center gap-1.5 transition shadow-sm"
               title="Install App"
             >
-              <Smartphone className="w-3.5 h-3.5" />
+              <Smartphone className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
               <span className="hidden sm:inline">Install</span>
             </button>
           )}
@@ -94,18 +94,18 @@ export default function MainMenu({
           {!user ? (
             <button
               onClick={onOpenAuth}
-              className="px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-750 hover:border-emerald-500/60 text-slate-700 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-xs font-semibold flex items-center gap-1.5 transition shadow-sm"
+              className="px-4 py-2 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-750 hover:border-emerald-500/60 text-slate-700 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-xs sm:text-sm font-semibold flex items-center gap-2 transition shadow-sm"
             >
-              <User className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" />
+              <User className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
               <span>Sign In</span>
             </button>
           ) : (
             <button
               onClick={onOpenProfile}
-              className="px-2.5 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 text-slate-700 dark:text-slate-300 text-xs font-medium flex items-center gap-1.5 transition shadow-sm"
+              className="px-3.5 py-2 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 text-slate-700 dark:text-slate-300 text-xs sm:text-sm font-medium flex items-center gap-2 transition shadow-sm"
             >
-              <span>{currentAvatarObj.emoji}</span>
-              <span className="max-w-[100px] truncate">{profile.displayName || 'Physician'}</span>
+              <span className="text-base sm:text-lg">{currentAvatarObj.emoji}</span>
+              <span className="max-w-[120px] truncate">{profile.displayName || 'Physician'}</span>
             </button>
           )}
         </div>
@@ -427,35 +427,8 @@ export default function MainMenu({
 
       </div>
 
-      {/* Summary Row */}
-      <div className="w-full p-4 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800/80 flex flex-wrap items-center justify-around gap-4 text-center text-xs shadow-sm">
-        <div>
-          <div className="text-lg font-black text-slate-900 dark:text-white">{stats.played}</div>
-          <div className="text-[10px] text-slate-500 dark:text-slate-400 font-semibold uppercase">Played</div>
-        </div>
-        <div className="w-px h-8 bg-slate-200 dark:bg-slate-800 hidden sm:block" />
-        <div>
-          <div className="text-lg font-black text-emerald-600 dark:text-emerald-400">{stats.wins}</div>
-          <div className="text-[10px] text-slate-500 dark:text-slate-400 font-semibold uppercase">Wins</div>
-        </div>
-        <div className="w-px h-8 bg-slate-200 dark:bg-slate-800 hidden sm:block" />
-        <div>
-          <div className="text-lg font-black text-amber-500 dark:text-amber-400 flex items-center justify-center gap-1">
-            <Flame className="w-4 h-4 fill-amber-500 dark:fill-amber-400" /> {stats.streak}
-          </div>
-          <div className="text-[10px] text-slate-500 dark:text-slate-400 font-semibold uppercase">Streak</div>
-        </div>
-        <div className="w-px h-8 bg-slate-200 dark:bg-slate-800 hidden sm:block" />
-        <div>
-          <div className="text-lg font-black text-indigo-600 dark:text-indigo-400 flex items-center justify-center gap-1">
-            <Pill className="w-4 h-4" /> {stats.rxCorrect || 0}
-          </div>
-          <div className="text-[10px] text-slate-500 dark:text-slate-400 font-semibold uppercase">Rx Solved</div>
-        </div>
-      </div>
-
       {/* Footer */}
-      <div className="text-center text-[11px] text-slate-500 pt-1">
+      <div className="text-center text-[11px] text-slate-500 pt-2">
         <p>Microbledle • 40 High-Yield Pathogens</p>
       </div>
 
