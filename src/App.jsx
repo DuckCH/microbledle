@@ -1938,17 +1938,17 @@ export default function App() {
             </p>
 
             <div className="space-y-2.5 text-xs mb-5">
-              <div className="flex items-start gap-2.5 bg-slate-800/40 p-2 rounded-xl">
+              <div className="flex items-start gap-2.5 bg-slate-800/40 p-2.5 rounded-xl">
                 <span className="w-4 h-4 rounded-md bg-emerald-600 shrink-0 mt-0.5"></span>
-                <span><strong>Emerald Green:</strong> Exact match for that property.</span>
+                <span className="text-slate-200">Exact match for that property.</span>
               </div>
-              <div className="flex items-start gap-2.5 bg-slate-800/40 p-2 rounded-xl">
+              <div className="flex items-start gap-2.5 bg-slate-800/40 p-2.5 rounded-xl">
                 <span className="w-4 h-4 rounded-md bg-amber-600 shrink-0 mt-0.5"></span>
-                <span><strong>Amber Yellow:</strong> Partial match (e.g. matching Gram stain, shared shape, overlapping infection site).</span>
+                <span className="text-slate-200">Partial match (e.g. matching Gram stain, shared shape, overlapping infection site).</span>
               </div>
-              <div className="flex items-start gap-2.5 bg-slate-800/40 p-2 rounded-xl">
+              <div className="flex items-start gap-2.5 bg-slate-800/40 p-2.5 rounded-xl">
                 <span className="w-4 h-4 rounded-md bg-slate-800 border border-slate-700 shrink-0 mt-0.5"></span>
-                <span><strong>Slate Gray:</strong> Incorrect category or no overlap.</span>
+                <span className="text-slate-200">Incorrect category or no overlap.</span>
               </div>
             </div>
 
