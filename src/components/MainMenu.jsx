@@ -39,7 +39,7 @@ export default function MainMenu({
   const bugdexPercentage = Math.round((unlockedBugIds.length / totalBugsCount) * 100);
 
   return (
-    <div className="w-full max-w-4xl mx-auto flex flex-col items-center gap-6 animate-fade pb-8">
+    <div className="w-full max-w-4xl mx-auto flex flex-col items-center gap-6 animate-fade pb-4">
       
       {/* Top Bar */}
       <div className="w-full flex items-center justify-between py-2.5 border-b border-slate-200 dark:border-slate-800/80 px-1">
@@ -373,11 +373,6 @@ export default function MainMenu({
           </div>
         </button>
 
-      </div>
-
-      {/* Footer */}
-      <div className="text-center text-[11px] text-slate-500 pt-2">
-        <p>Microbledle • 40 High-Yield Pathogens</p>
       </div>
 
     </div>

@@ -1502,6 +1502,16 @@ export default function App() {
       </>
       )}
 
+      {/* Footer */}
+      <footer className="w-full max-w-4xl mt-auto pt-8 pb-10 sm:pb-12 text-center border-t border-slate-200 dark:border-slate-800/80 flex flex-col items-center justify-center gap-1.5 px-4">
+        <p className="text-xs font-semibold text-slate-600 dark:text-slate-400">
+          &copy; {new Date().getFullYear()} Microbledle. All rights reserved.
+        </p>
+        <p className="text-[11px] text-slate-500 dark:text-slate-500 max-w-lg leading-relaxed">
+          For educational and entertainment purposes only. Not intended for clinical diagnostic or treatment decisions.
+        </p>
+      </footer>
+
       {/* Case Outcome / Results Modal */}
       {showCaseResultModal && target && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade">
