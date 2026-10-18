@@ -345,7 +345,7 @@ export default function DischargeCardModal({
 
     ctx.font = 'bold 18px monospace';
     ctx.fillStyle = '#38bdf8';
-    ctx.fillText('🔗 https://duckch.github.io/microbledle/', 70, brandY + 120);
+    ctx.fillText('🔗 https://microbledle.com/', 70, brandY + 120);
 
     // Watermark seal on right
     ctx.textAlign = 'right';
@@ -439,7 +439,7 @@ export default function DischargeCardModal({
 
     const header = isPractice ? 'Microbledle (Practice)' : `Microbledle ${dateStr}`;
     const score = won ? `${guesses.length}/6` : 'X/6';
-    const text = `${header} ${score}\n\n${gridRows}\n\nPlay at: https://duckch.github.io/microbledle/`;
+    const text = `${header} ${score}\n\n${gridRows}\n\nPlay at: https://microbledle.com/`;
 
     navigator.clipboard.writeText(text);
     setCopiedText(true);
