@@ -194,11 +194,34 @@ export default function MainMenu({
         </div>
       </div>
 
+      {/* New Case Available Countdown Bar */}
+      <div className="w-full py-2.5 px-4 rounded-2xl bg-white/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs shadow-sm">
+        <div className="flex items-center gap-2">
+          <div className="p-1.5 rounded-lg bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
+            <Clock className="w-4 h-4" />
+          </div>
+          <span className="font-bold text-slate-800 dark:text-slate-200 text-xs sm:text-sm">
+            New Case Available in:
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          {isDailyGameOver && (
+            <span className="hidden sm:inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 px-2 py-0.5 rounded-full">
+              <CheckCircle2 className="w-3 h-3" />
+              {isDailyWon ? `Solved in ${dailyGuessesCount}` : 'Completed'}
+            </span>
+          )}
+          <span className="font-mono text-emerald-600 dark:text-emerald-400 font-black text-xs sm:text-sm bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 px-3 py-1 rounded-full">
+            {countdown}
+          </span>
+        </div>
+      </div>
+
       {/* Main Game Mode Cards (Daily vs Practice) */}
       <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
         
         {/* CARD 1: DAILY CASE */}
-        <div className="rounded-3xl border-2 border-emerald-500/50 bg-gradient-to-br from-emerald-50/90 via-white to-slate-50 dark:from-emerald-950/40 dark:via-slate-900 dark:to-slate-950 p-5 shadow-md dark:shadow-2xl relative overflow-hidden flex flex-col justify-between group hover:border-emerald-400 transition-all duration-300">
+        <div className="rounded-3xl border-2 border-emerald-500/50 bg-gradient-to-br from-emerald-50/90 via-white to-slate-50 dark:from-emerald-950/40 dark:via-slate-900 dark:to-slate-950 p-5 sm:p-6 shadow-md dark:shadow-2xl relative overflow-hidden flex flex-col justify-between group hover:border-emerald-400 transition-all duration-300">
           <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
           
           <div>
@@ -218,56 +241,12 @@ export default function MainMenu({
             <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
               Diagnose today's mystery pathogen in 6 guesses.
             </p>
-
-            {/* Daily Status Indicator */}
-            <div className="mt-4 p-3 rounded-2xl bg-white/80 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs shadow-sm">
-              <div className="flex items-center gap-2">
-                {isDailyGameOver ? (
-                  isDailyWon ? (
-                    <div className="p-1.5 rounded-lg bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
-                      <CheckCircle2 className="w-4 h-4" />
-                    </div>
-                  ) : (
-                    <div className="p-1.5 rounded-lg bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30">
-                      <AlertCircle className="w-4 h-4" />
-                    </div>
-                  )
-                ) : dailyGuessesCount > 0 ? (
-                  <div className="p-1.5 rounded-lg bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30">
-                    <Sparkles className="w-4 h-4" />
-                  </div>
-                ) : (
-                  <div className="p-1.5 rounded-lg bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30">
-                    <Calendar className="w-4 h-4" />
-                  </div>
-                )}
-                <div>
-                  <span className="font-bold text-slate-800 dark:text-slate-200">
-                    {isDailyGameOver
-                      ? (isDailyWon ? `Solved in ${dailyGuessesCount} ${dailyGuessesCount === 1 ? 'guess' : 'guesses'}` : 'Not Solved')
-                      : dailyGuessesCount > 0
-                      ? `In Progress (${dailyGuessesCount}/6 guesses)`
-                      : "New Case Available"}
-                  </span>
-                  <div className="text-[10px] text-slate-500 dark:text-slate-400">
-                    {isDailyGameOver ? 'Completed for today' : 'Resets daily at 00:00 UTC'}
-                  </div>
-                </div>
-              </div>
-
-              <div className="text-right">
-                <div className="text-[10px] text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                  <Clock className="w-3 h-3 text-emerald-500 dark:text-emerald-400" /> Next Case
-                </div>
-                <div className="font-mono text-emerald-600 dark:text-emerald-300 font-bold text-xs">{countdown}</div>
-              </div>
-            </div>
           </div>
 
           {/* Action Button */}
           <button
             onClick={onStartDaily}
-            className="mt-5 w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 dark:shadow-emerald-950/60 active:scale-[0.99] transition"
+            className="mt-6 w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 dark:shadow-emerald-950/60 active:scale-[0.99] transition"
           >
             <Play className="w-4 h-4 fill-slate-950" />
             <span>
@@ -281,7 +260,7 @@ export default function MainMenu({
         </div>
 
         {/* CARD 2: PRACTICE MODE */}
-        <div className="rounded-3xl border border-cyan-400 dark:border-cyan-500/40 bg-gradient-to-br from-cyan-50/90 via-white to-slate-50 dark:from-cyan-950/30 dark:via-slate-900 dark:to-slate-950 p-5 shadow-md dark:shadow-2xl relative overflow-hidden flex flex-col justify-between group hover:border-cyan-500 transition-all duration-300">
+        <div className="rounded-3xl border border-cyan-400 dark:border-cyan-500/40 bg-gradient-to-br from-cyan-50/90 via-white to-slate-50 dark:from-cyan-950/30 dark:via-slate-900 dark:to-slate-950 p-5 sm:p-6 shadow-md dark:shadow-2xl relative overflow-hidden flex flex-col justify-between group hover:border-cyan-500 transition-all duration-300">
           <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 rounded-full blur-2xl pointer-events-none" />
 
           <div>
@@ -301,27 +280,12 @@ export default function MainMenu({
             <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
               Unlimited random cases to train anytime without affecting your streak.
             </p>
-
-            <div className="mt-4 p-3 rounded-2xl bg-white/80 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800 space-y-1.5 text-xs shadow-sm">
-              <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
-                <span className="w-1.5 h-1.5 rounded-full bg-cyan-500" />
-                <span>Smear, culture & patient story clues</span>
-              </div>
-              <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
-                <span className="w-1.5 h-1.5 rounded-full bg-cyan-500" />
-                <span>Bonus Antibiotic Quiz questions</span>
-              </div>
-              <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
-                <span className="w-1.5 h-1.5 rounded-full bg-cyan-500" />
-                <span>Unlocks Bugdex entries & earns rank XP</span>
-              </div>
-            </div>
           </div>
 
           {/* Action Button */}
           <button
             onClick={onStartPractice}
-            className="mt-5 w-full py-3.5 px-4 rounded-2xl bg-cyan-600 hover:bg-cyan-500 text-white font-black text-sm flex items-center justify-center gap-2 shadow-lg shadow-cyan-600/20 dark:shadow-cyan-950/60 active:scale-[0.99] transition"
+            className="mt-6 w-full py-3.5 px-4 rounded-2xl bg-cyan-600 hover:bg-cyan-500 text-white font-black text-sm flex items-center justify-center gap-2 shadow-lg shadow-cyan-600/20 dark:shadow-cyan-950/60 active:scale-[0.99] transition"
           >
             <Shuffle className="w-4 h-4" />
             <span>Start Practice</span>
