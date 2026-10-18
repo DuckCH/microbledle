@@ -10,14 +10,18 @@ export default function RxChallenge({ target, isDaily, dateStr, isMuted, onAnswe
   const [isCorrect, setIsCorrect] = useState(false);
   const [savedOptions, setSavedOptions] = useState(null);
 
-  // Storage key for daily mode persistence
-  const dailyStorageKey = `microbledle_daily_rx_${dateStr}`;
+  // Storage key for daily or practice session persistence
+  const storageKey = (isDaily && dateStr) 
+    ? `microbledle_daily_rx_${dateStr}` 
+    : (target?.id ? `microbledle_practice_rx_${target.id}` : null);
 
-  // Check if daily challenge was already answered today
+  // Check if challenge was already answered
   useEffect(() => {
-    if (isDaily && dateStr) {
+    if (storageKey) {
       try {
-        const saved = localStorage.getItem(dailyStorageKey);
+        const saved = isDaily 
+          ? localStorage.getItem(storageKey) 
+          : sessionStorage.getItem(storageKey);
         if (saved) {
           const parsed = JSON.parse(saved);
           if (parsed && parsed.answered) {
@@ -27,19 +31,20 @@ export default function RxChallenge({ target, isDaily, dateStr, isMuted, onAnswe
             if (Array.isArray(parsed.options) && parsed.options.length === 4) {
               setSavedOptions(parsed.options);
             }
+            return;
           }
         }
       } catch (e) {
-        console.warn("Could not load daily Rx challenge state", e);
+        console.warn("Could not load Rx challenge state", e);
       }
-    } else {
-      // In practice mode, reset state on new target
-      setSelectedChoice(null);
-      setAnswered(false);
-      setIsCorrect(false);
-      setSavedOptions(null);
     }
-  }, [isDaily, dateStr, target?.id]);
+
+    // Reset for fresh unanswered target
+    setSelectedChoice(null);
+    setAnswered(false);
+    setIsCorrect(false);
+    setSavedOptions(null);
+  }, [storageKey, target?.id, isDaily]);
 
   // Generate 4 randomized options (1 correct + 3 distractors)
   const options = useMemo(() => {
@@ -89,15 +94,20 @@ export default function RxChallenge({ target, isDaily, dateStr, isMuted, onAnswe
       playRxFailSound(isMuted);
     }
 
-    // Save in daily mode
-    if (isDaily && dateStr) {
+    // Save answer so reopening won't reset or allow double-solving
+    if (storageKey) {
       try {
-        localStorage.setItem(dailyStorageKey, JSON.stringify({
+        const payload = JSON.stringify({
           answered: true,
           isCorrect: correct,
           choice,
           options
-        }));
+        });
+        if (isDaily) {
+          localStorage.setItem(storageKey, payload);
+        } else {
+          sessionStorage.setItem(storageKey, payload);
+        }
       } catch (e) {}
     }
 

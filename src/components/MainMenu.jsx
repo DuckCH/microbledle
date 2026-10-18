@@ -46,12 +46,7 @@ export default function MainMenu({
       {/* Top Bar */}
       <div className="w-full flex items-center justify-between py-2 border-b border-slate-200 dark:border-slate-800/80 px-1">
         <div className="flex items-center gap-2">
-          {cloudSynced && (
-            <span className="flex items-center gap-1.5 text-[11px] text-emerald-600 dark:text-emerald-400 font-medium bg-emerald-50 dark:bg-slate-900 border border-emerald-200 dark:border-slate-800 px-2.5 py-0.5 rounded-full">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" />
-              <span>Cloud Synced</span>
-            </span>
-          )}
+          {/* Header left */}
         </div>
 
         <div className="flex items-center gap-2">

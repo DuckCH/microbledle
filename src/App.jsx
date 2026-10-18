@@ -6,7 +6,7 @@ import {
   Microscope, Stethoscope, Dna, FlaskConical, Award, Flame,
   Check, Calendar, Shuffle, Volume2, VolumeX, Clock, TestTube2,
   BookOpen, User, LogOut, Cloud, ShieldCheck, Smartphone, Pill,
-  ArrowLeft, Home, Sun, Moon, FileText
+  ArrowLeft, Home, Sun, Moon, FileText, BarChart2
 } from 'lucide-react';
 import microbes from './data/microbes.json';
 import { playTileSound, playSelectSound, playWinSound, playDefeatSound } from './utils/audio';
@@ -229,6 +229,7 @@ export default function App() {
   const [gameOver, setGameOver] = useState(false);
   const [won, setWon] = useState(false);
   const [showStatsModal, setShowStatsModal] = useState(false);
+  const [showCaseResultModal, setShowCaseResultModal] = useState(false);
   const [showDischargeModal, setShowDischargeModal] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
   const [showBugdexModal, setShowBugdexModal] = useState(false);
@@ -553,6 +554,7 @@ export default function App() {
       setGameOver(false);
       setWon(false);
       setShowStatsModal(false);
+      setShowCaseResultModal(false);
     } else {
       setTarget(dailyInfo.target);
       setDateStr(dailyInfo.dateStr);
@@ -564,7 +566,7 @@ export default function App() {
           setGameOver(parsed.gameOver || false);
           setWon(parsed.won || false);
           if (parsed.gameOver && currentScreen === 'game') {
-            setShowStatsModal(true);
+            setShowCaseResultModal(true);
           }
         } catch (e) {
           console.error('Failed to parse saved game', e);
@@ -656,7 +658,7 @@ export default function App() {
       setTimeout(() => {
         setGameOver(true);
         setWon(isVictory);
-        setShowStatsModal(true);
+        setShowCaseResultModal(true);
 
         if (isVictory) {
           playWinSound(isMuted);
@@ -776,6 +778,7 @@ export default function App() {
     setGameOver(false);
     setWon(false);
     setShowStatsModal(false);
+    setShowCaseResultModal(false);
     setSearchTerm('');
   };
 
@@ -805,7 +808,7 @@ export default function App() {
         setGameOver(parsed.gameOver || false);
         setWon(parsed.won || false);
         if (parsed.gameOver) {
-          setShowStatsModal(true);
+          setShowCaseResultModal(true);
         }
       } catch (e) {}
     } else {
@@ -959,7 +962,6 @@ export default function App() {
                 <div className="text-[10px] text-emerald-400 font-semibold leading-none flex items-center gap-1 mt-1">
                   <span>{progression.badge}</span>
                   <span className="truncate max-w-[120px]">{progression.title}</span>
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" title="Cloud Synced" />
                 </div>
               </div>
             </button>
@@ -1179,7 +1181,7 @@ export default function App() {
             </div>
             <div className="mt-3 flex items-center justify-center gap-2">
               <button
-                onClick={() => setShowStatsModal(true)}
+                onClick={() => setShowCaseResultModal(true)}
                 className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 rounded-xl text-xs font-semibold text-white shadow transition inline-flex items-center gap-1.5"
               >
                 <Trophy className="w-4 h-4" /> View Summary & Share
@@ -1408,96 +1410,194 @@ export default function App() {
       </>
       )}
 
-      {/* Outcome & Statistics Modal */}
-      {showStatsModal && (
+      {/* Case Outcome / Results Modal */}
+      {showCaseResultModal && target && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade">
           <div className="bg-slate-900 border border-slate-700/80 rounded-3xl p-6 max-w-lg w-full shadow-2xl relative max-h-[90vh] overflow-y-auto">
             <button 
-              onClick={() => setShowStatsModal(false)}
+              onClick={() => setShowCaseResultModal(false)}
               className="absolute right-4 top-4 text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition"
+              title="Close"
             >
               <X className="w-5 h-5" />
             </button>
 
             {/* Verdict */}
             <div className="text-center mb-6">
-              {gameOver ? (
-                won ? (
-                  <div className="space-y-1">
-                    <div className="inline-flex items-center justify-center p-3 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 mb-2">
-                      <Award className="w-8 h-8" />
-                    </div>
-                    <h2 className="text-2xl font-black text-emerald-400">Diagnosis Confirmed!</h2>
-                    <p className="text-xs text-slate-300">You identified the pathogen in {guesses.length} {guesses.length === 1 ? 'guess' : 'guesses'}!</p>
+              {won ? (
+                <div className="space-y-1">
+                  <div className="inline-flex items-center justify-center p-3 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 mb-2">
+                    <Award className="w-8 h-8" />
                   </div>
-                ) : (
-                  <div className="space-y-1">
-                    <div className="inline-flex items-center justify-center p-3 rounded-2xl bg-rose-500/20 text-rose-400 border border-rose-500/30 mb-2">
-                      <AlertCircle className="w-8 h-8" />
-                    </div>
-                    <h2 className="text-2xl font-black text-rose-400">Diagnostic Failure!</h2>
-                    <p className="text-xs text-slate-300">Patient needed immediate antimicrobial therapy.</p>
-                  </div>
-                )
+                  <h2 className="text-2xl font-black text-emerald-400">Diagnosis Confirmed!</h2>
+                  <p className="text-xs text-slate-300">You identified the pathogen in {guesses.length} {guesses.length === 1 ? 'guess' : 'guesses'}!</p>
+                </div>
               ) : (
-                <div>
-                  <h2 className="text-xl font-bold text-slate-200">Statistics</h2>
-                  <p className="text-xs text-slate-400">Career stats & win rate</p>
+                <div className="space-y-1">
+                  <div className="inline-flex items-center justify-center p-3 rounded-2xl bg-rose-500/20 text-rose-400 border border-rose-500/30 mb-2">
+                    <AlertCircle className="w-8 h-8" />
+                  </div>
+                  <h2 className="text-2xl font-black text-rose-400">Diagnostic Failure!</h2>
+                  <p className="text-xs text-slate-300">Patient needed immediate antimicrobial therapy.</p>
                 </div>
               )}
             </div>
 
             {/* Empiric Rx Challenge (Post-game Clinical Pharmacology Quiz) */}
-            {gameOver && target && (
-              <RxChallenge
-                target={target}
-                isDaily={!isPractice}
-                dateStr={dateStr}
-                isMuted={isMuted}
-                onAnswer={handleRxAnswer}
-              />
-            )}
+            <RxChallenge
+              target={target}
+              isDaily={!isPractice}
+              dateStr={dateStr}
+              isMuted={isMuted}
+              onAnswer={handleRxAnswer}
+            />
 
-            {/* Clinical Reveal Card (if Game Over) */}
-            {gameOver && (
-              <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 mb-6 text-left">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-[10px] uppercase font-bold tracking-wider text-emerald-400">
-                    Target Organism Identified
-                  </span>
-                  <button
-                    onClick={() => {
-                      setShowStatsModal(false);
-                      setShowBugdexModal(true);
-                    }}
-                    className="text-[10px] text-emerald-400 hover:underline font-semibold flex items-center gap-1"
-                  >
-                    <BookOpen className="w-3 h-3" /> View in Bugdex
-                  </button>
+            {/* Target Organism Identified */}
+            <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 mb-6 text-left">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-[10px] uppercase font-bold tracking-wider text-emerald-400">
+                  Target Organism Identified
+                </span>
+                <button
+                  onClick={() => {
+                    setShowCaseResultModal(false);
+                    setShowBugdexModal(true);
+                  }}
+                  className="text-[10px] text-emerald-400 hover:underline font-semibold flex items-center gap-1"
+                >
+                  <BookOpen className="w-3 h-3" /> View in Bugdex
+                </button>
+              </div>
+              <div className="text-xl font-black text-white italic">
+                {target.name}
+              </div>
+              <div className="text-xs text-slate-400 mb-3">{target.commonName} • {target.taxonomy}</div>
+              
+              <div className="space-y-2 text-xs border-t border-slate-800/80 pt-3">
+                <div className="bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
+                  <span className="font-semibold text-emerald-400">💊 First-Line Treatment:</span>
+                  <p className="text-slate-200 mt-0.5">{target.firstLineRx}</p>
                 </div>
-                <div className="text-xl font-black text-white italic">
-                  {target.name}
-                </div>
-                <div className="text-xs text-slate-400 mb-3">{target.commonName} • {target.taxonomy}</div>
-                
-                <div className="space-y-2 text-xs border-t border-slate-800/80 pt-3">
-                  <div className="bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
-                    <span className="font-semibold text-emerald-400">💊 First-Line Treatment:</span>
-                    <p className="text-slate-200 mt-0.5">{target.firstLineRx}</p>
-                  </div>
-                  <div className="bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
-                    <span className="font-semibold text-cyan-400">🧫 Key Lab Culture:</span>
-                    <p className="text-slate-200 mt-0.5">{target.culture}</p>
-                  </div>
+                <div className="bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
+                  <span className="font-semibold text-cyan-400">🧫 Key Lab Culture:</span>
+                  <p className="text-slate-200 mt-0.5">{target.culture}</p>
                 </div>
               </div>
+            </div>
+
+            {/* Countdown to next daily case (if daily mode) */}
+            {!isPractice && (
+              <div className="mb-4 p-3 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-between text-xs">
+                <span className="text-slate-400 flex items-center gap-1.5">
+                  <Clock className="w-4 h-4 text-emerald-400" /> Next Daily Case:
+                </span>
+                <span className="font-mono text-emerald-300 font-bold text-sm">{countdown}</span>
+              </div>
             )}
+
+            {/* Action buttons */}
+            <div className="space-y-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {/* Export Visual Graphic Discharge Card Button */}
+                <button
+                  onClick={() => setShowDischargeModal(true)}
+                  className="w-full py-3.5 px-4 bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 font-bold rounded-2xl flex items-center justify-center gap-2 text-white shadow-lg shadow-emerald-950/40 transition active:scale-[0.99] text-xs sm:text-sm"
+                >
+                  <FileText className="w-4 h-4" />
+                  <span>Export Summary Card</span>
+                </button>
+
+                {/* Copy Text Grid Button */}
+                <button
+                  onClick={copyEmojiGrid}
+                  className="w-full py-3.5 px-4 bg-slate-800 hover:bg-slate-750 border border-slate-700 font-bold rounded-2xl flex items-center justify-center gap-2 text-slate-100 transition active:scale-[0.99] text-xs sm:text-sm"
+                >
+                  {copied ? (
+                    <>
+                      <Check className="w-4 h-4 text-emerald-400" />
+                      <span>Copied Text Grid!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Share2 className="w-4 h-4" />
+                      <span>Share Emoji Grid</span>
+                    </>
+                  )}
+                </button>
+              </div>
+
+              {/* View Global Leaderboard Button */}
+              <button
+                onClick={() => {
+                  setShowCaseResultModal(false);
+                  setShowLeaderboardModal(true);
+                }}
+                className="w-full py-3 bg-slate-800/90 hover:bg-slate-750 border border-amber-500/40 hover:border-amber-400 text-amber-300 font-bold rounded-2xl flex items-center justify-center gap-2 transition text-xs sm:text-sm"
+              >
+                <Trophy className="w-4 h-4 text-amber-400" />
+                <span>View Global Leaderboard</span>
+              </button>
+
+              {/* View Career Stats Button */}
+              <button
+                onClick={() => {
+                  setShowCaseResultModal(false);
+                  setShowStatsModal(true);
+                }}
+                className="w-full py-2.5 bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 hover:border-cyan-500/40 text-cyan-300 font-semibold rounded-2xl flex items-center justify-center gap-2 transition text-xs"
+              >
+                <BarChart2 className="w-4 h-4 text-cyan-400" />
+                <span>View Career Statistics</span>
+              </button>
+
+              {isPractice && (
+                <button
+                  onClick={startNewPractice}
+                  className="w-full py-3 bg-slate-800 hover:bg-slate-700 font-semibold rounded-2xl flex items-center justify-center gap-2 text-slate-200 transition text-xs sm:text-sm"
+                >
+                  <RotateCcw className="w-4 h-4" /> Next Practice Organism
+                </button>
+              )}
+
+              {/* Return to Main Menu button */}
+              <button
+                onClick={() => {
+                  setShowCaseResultModal(false);
+                  setCurrentScreen('menu');
+                }}
+                className="w-full py-2.5 bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-slate-300 hover:text-white font-semibold rounded-2xl flex items-center justify-center gap-2 transition text-xs"
+              >
+                <ArrowLeft className="w-4 h-4 text-emerald-400" />
+                <span>Return to Main Menu</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Career Statistics Modal */}
+      {showStatsModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade">
+          <div className="bg-slate-900 border border-slate-700/80 rounded-3xl p-6 max-w-lg w-full shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <button 
+              onClick={() => setShowStatsModal(false)}
+              className="absolute right-4 top-4 text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition"
+              title="Close"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {/* Header */}
+            <div className="text-center mb-6">
+              <div className="inline-flex items-center justify-center p-3 rounded-2xl bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 mb-2">
+                <BarChart2 className="w-7 h-7" />
+              </div>
+              <h2 className="text-2xl font-black text-white">Career Statistics</h2>
+              <p className="text-xs text-slate-400">Clinical performance & diagnostic accuracy</p>
+            </div>
 
             {/* Overall Statistics */}
             <div className="mb-6">
-              <div className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2 text-center">
-                Career Statistics
-              </div>
               <div className="grid grid-cols-4 gap-2 text-center">
                 <div className="p-3 bg-slate-800/60 rounded-2xl border border-slate-800">
                   <div className="text-2xl font-black text-white">{stats.played}</div>
@@ -1522,14 +1622,14 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Antibiotic Quiz Stat Row */}
+              {/* Antibiotic Challenge Stat Row */}
               <div className="mt-2.5 p-2.5 bg-slate-800/40 rounded-xl border border-slate-800/80 flex items-center justify-between text-xs">
                 <div className="flex items-center gap-2">
                   <div className="p-1.5 rounded-lg bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
                     <Pill className="w-3.5 h-3.5" />
                   </div>
                   <div>
-                    <span className="font-semibold text-slate-200">Antibiotic Quiz</span>
+                    <span className="font-semibold text-slate-200">Antibiotic Challenge</span>
                     <p className="text-[10px] text-slate-400">
                       {stats.rxCorrect || 0} of {stats.rxAttempted || 0} solved ({stats.rxAttempted ? Math.round(((stats.rxCorrect || 0) / stats.rxAttempted) * 100) : 0}% accuracy)
                     </p>
@@ -1551,16 +1651,13 @@ export default function App() {
                 {stats.distribution.map((count, idx) => {
                   const maxCount = Math.max(1, ...stats.distribution);
                   const pct = Math.max(8, Math.round((count / maxCount) * 100));
-                  const isCurrentRow = gameOver && won && guesses.length === idx + 1;
                   return (
                     <div key={idx} className="flex items-center gap-2">
                       <span className="w-3 text-right text-slate-400 font-mono text-xs">{idx + 1}</span>
                       <div className="flex-1 bg-slate-800 rounded-md overflow-hidden h-5">
                         <div 
                           style={{ width: `${pct}%` }} 
-                          className={`h-full flex items-center justify-end pr-2 font-bold text-[10px] transition-all duration-500 ${
-                            isCurrentRow ? 'bg-emerald-500 text-slate-950' : 'bg-slate-700 text-slate-200'
-                          }`}
+                          className="h-full flex items-center justify-end pr-2 font-bold text-[10px] transition-all duration-500 bg-emerald-500/80 text-slate-950"
                         >
                           {count}
                         </div>
@@ -1572,79 +1669,33 @@ export default function App() {
             </div>
 
             {/* Countdown to next case */}
-            {!isPractice && (
-              <div className="mb-4 p-3 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-between text-xs">
-                <span className="text-slate-400 flex items-center gap-1.5">
-                  <Clock className="w-4 h-4 text-emerald-400" /> Next Daily Case:
-                </span>
-                <span className="font-mono text-emerald-300 font-bold text-sm">{countdown}</span>
-              </div>
-            )}
+            <div className="mb-4 p-3 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-between text-xs">
+              <span className="text-slate-400 flex items-center gap-1.5">
+                <Clock className="w-4 h-4 text-emerald-400" /> Next Daily Case:
+              </span>
+              <span className="font-mono text-emerald-300 font-bold text-sm">{countdown}</span>
+            </div>
 
             {/* Action buttons */}
             <div className="space-y-2">
-              {gameOver && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {/* Export Visual Graphic Discharge Card Button */}
-                  <button
-                    onClick={() => setShowDischargeModal(true)}
-                    className="w-full py-3.5 px-4 bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 font-bold rounded-2xl flex items-center justify-center gap-2 text-white shadow-lg shadow-emerald-950/40 transition active:scale-[0.99] text-xs sm:text-sm"
-                  >
-                    <FileText className="w-4 h-4" />
-                    <span>Export Discharge Card</span>
-                  </button>
-
-                  {/* Copy Text Grid Button */}
-                  <button
-                    onClick={copyEmojiGrid}
-                    className="w-full py-3.5 px-4 bg-slate-800 hover:bg-slate-750 border border-slate-700 font-bold rounded-2xl flex items-center justify-center gap-2 text-slate-100 transition active:scale-[0.99] text-xs sm:text-sm"
-                  >
-                    {copied ? (
-                      <>
-                        <Check className="w-4 h-4 text-emerald-400" />
-                        <span>Copied Text Grid!</span>
-                      </>
-                    ) : (
-                      <>
-                        <Share2 className="w-4 h-4" />
-                        <span>Share Emoji Grid</span>
-                      </>
-                    )}
-                  </button>
-                </div>
-              )}
-
               {/* View Global Leaderboard Button */}
               <button
                 onClick={() => {
                   setShowStatsModal(false);
                   setShowLeaderboardModal(true);
                 }}
-                className="w-full py-3 bg-slate-800/90 hover:bg-slate-750 border border-amber-500/40 hover:border-amber-400 text-amber-300 font-bold rounded-2xl flex items-center justify-center gap-2 transition"
+                className="w-full py-3 bg-slate-800/90 hover:bg-slate-750 border border-amber-500/40 hover:border-amber-400 text-amber-300 font-bold rounded-2xl flex items-center justify-center gap-2 transition text-xs sm:text-sm"
               >
                 <Trophy className="w-4 h-4 text-amber-400" />
-                View Global Leaderboard
+                <span>View Global Leaderboard</span>
               </button>
 
-              {isPractice && gameOver && (
-                <button
-                  onClick={startNewPractice}
-                  className="w-full py-3 bg-slate-800 hover:bg-slate-700 font-semibold rounded-2xl flex items-center justify-center gap-2 text-slate-200 transition"
-                >
-                  <RotateCcw className="w-4 h-4" /> Next Practice Organism
-                </button>
-              )}
-
-              {/* Return to Main Menu button */}
+              {/* Close Button */}
               <button
-                onClick={() => {
-                  setShowStatsModal(false);
-                  setCurrentScreen('menu');
-                }}
+                onClick={() => setShowStatsModal(false)}
                 className="w-full py-2.5 bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-slate-300 hover:text-white font-semibold rounded-2xl flex items-center justify-center gap-2 transition text-xs"
               >
-                <ArrowLeft className="w-4 h-4 text-emerald-400" />
-                <span>Return to Main Menu</span>
+                <span>Close</span>
               </button>
             </div>
           </div>
