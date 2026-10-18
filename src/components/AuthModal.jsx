@@ -188,7 +188,7 @@ export default function AuthModal({ isOpen, onClose, onDemoLogin }) {
               <User className="absolute left-3.5 top-3 w-4 h-4 text-slate-500" />
               <input
                 type="text"
-                placeholder="Full Name / Handle (e.g. Dr. Alex)"
+                placeholder="Username"
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
                 className="w-full pl-10 pr-3 py-2.5 bg-slate-950 border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
@@ -200,7 +200,7 @@ export default function AuthModal({ isOpen, onClose, onDemoLogin }) {
             <Mail className="absolute left-3.5 top-3 w-4 h-4 text-slate-500" />
             <input
               type="email"
-              placeholder="medical.student@university.edu"
+              placeholder="name@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required

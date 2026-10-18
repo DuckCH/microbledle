@@ -115,8 +115,9 @@ export default function DischargeCardModal({
     // Doctor Name & Level
     ctx.textAlign = 'left';
     ctx.font = 'bold 20px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-    ctx.fillStyle = '#f8fafc';
-    const docName = profile?.displayName ? `Dr. ${profile.displayName}` : 'Dr. Physician';
+    const docName = profile?.displayName 
+      ? (profile.displayName.startsWith('Dr.') ? profile.displayName : `Dr. ${profile.displayName}`) 
+      : 'Doctor';
     ctx.fillText(docName, contentLeft + 20, playerBarY + 33);
 
     ctx.font = '13px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';

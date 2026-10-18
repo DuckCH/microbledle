@@ -95,7 +95,7 @@ export default function MainMenu({
               className="px-3.5 py-2 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 text-slate-700 dark:text-slate-300 text-xs sm:text-sm font-medium flex items-center gap-2 transition shadow-sm"
             >
               <span className="text-base sm:text-lg">{currentAvatarObj.emoji}</span>
-              <span className="max-w-[120px] truncate">{profile.displayName || 'Physician'}</span>
+              <span className="max-w-[120px] truncate">{profile.displayName || 'Player'}</span>
             </button>
           )}
         </div>
@@ -140,7 +140,7 @@ export default function MainMenu({
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-base sm:text-lg font-black text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-300 transition">
-                  {profile.displayName || 'Physician'}
+                  {profile.displayName || 'Player'}
                 </span>
                 <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/40 flex items-center gap-1 shadow-sm">
                   {progression.badge} Level {progression.level}

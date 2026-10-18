@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import microbes from './data/microbes.json';
 import { playTileSound, playSelectSound, playWinSound, playDefeatSound } from './utils/audio';
-import { calculateUserProgression, AVATAR_OPTIONS } from './utils/leveling';
+import { calculateUserProgression, AVATAR_OPTIONS, generateRandomPlayerName } from './utils/leveling';
 import MicrodexModal from './components/MicrodexModal';
 import AuthModal from './components/AuthModal';
 import ProfileModal from './components/ProfileModal';
@@ -327,14 +327,29 @@ export default function App() {
   const [profile, setProfile] = useState(() => {
     try {
       const saved = localStorage.getItem('microbledle_profile');
-      return saved ? JSON.parse(saved) : {
-        displayName: 'Physician',
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed?.displayName && parsed.displayName !== 'Physician') {
+          return parsed;
+        }
+        const upgraded = {
+          displayName: generateRandomPlayerName(),
+          status: parsed?.status || '',
+          avatar: parsed?.avatar || 'microscope'
+        };
+        localStorage.setItem('microbledle_profile', JSON.stringify(upgraded));
+        return upgraded;
+      }
+      const initial = {
+        displayName: generateRandomPlayerName(),
         status: '',
         avatar: 'microscope'
       };
+      localStorage.setItem('microbledle_profile', JSON.stringify(initial));
+      return initial;
     } catch {
       return {
-        displayName: 'Physician',
+        displayName: generateRandomPlayerName(),
         status: '',
         avatar: 'microscope'
       };
@@ -524,7 +539,7 @@ export default function App() {
       const mergedProfile = {
         ...localProfile,
         ...(cloudData?.profile || {}),
-        displayName: cloudData?.profile?.displayName || authUser.displayName || localProfile.displayName || 'Physician'
+        displayName: cloudData?.profile?.displayName || authUser.displayName || localProfile.displayName || generateRandomPlayerName()
       };
       setProfile(mergedProfile);
       localStorage.setItem('microbledle_profile', JSON.stringify(mergedProfile));
@@ -555,7 +570,7 @@ export default function App() {
         const prog = calculateUserProgression(mergedStats.wins, mergedBugs.length, (mergedStats.rxCorrect || 0) * 50);
         const restoredScore = {
           uid: authUser.uid,
-          displayName: mergedProfile.displayName || authUser.displayName || 'Physician',
+          displayName: mergedProfile.displayName || authUser.displayName || generateRandomPlayerName(),
           avatar: mergedProfile.avatar || 'microscope',
           status: mergedProfile.status || '',
           level: prog.level,
@@ -574,7 +589,7 @@ export default function App() {
             await submitDailyScore(todayStr, authUser.uid, {
               ...parsed,
               uid: authUser.uid,
-              displayName: mergedProfile.displayName || authUser.displayName || 'Physician'
+              displayName: mergedProfile.displayName || authUser.displayName || generateRandomPlayerName()
             });
           } catch (e) {}
         }
@@ -909,7 +924,7 @@ export default function App() {
 
           const dailyScorePayload = {
             uid: activeUid,
-            displayName: profile.displayName || (user?.email ? user.email.split('@')[0] : 'Physician'),
+            displayName: profile.displayName || (user?.email ? user.email.split('@')[0] : generateRandomPlayerName()),
             avatar: profile.avatar || 'microscope',
             status: profile.status || '',
             level: currentProg.level,
@@ -1170,7 +1185,7 @@ export default function App() {
                 <span className="text-base">{currentAvatarObj.emoji}</span>
                 <div className="text-left">
                   <div className="text-slate-200 font-bold text-xs truncate max-w-[90px] group-hover:text-emerald-400 transition">
-                    {profile.displayName || 'Physician'}
+                    {profile.displayName || 'Player'}
                   </div>
                   <div className="text-[10px] text-amber-400 font-semibold leading-none flex items-center gap-1 mt-0.5">
                     <span>{progression.badge}</span>

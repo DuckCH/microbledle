@@ -5,7 +5,8 @@ import {
 } from 'lucide-react';
 import { 
   calculateUserProgression, 
-  AVATAR_OPTIONS 
+  AVATAR_OPTIONS,
+  generateRandomPlayerName
 } from '../utils/leveling';
 
 export default function ProfileModal({ 
@@ -19,7 +20,7 @@ export default function ProfileModal({
   onSaveProfile,
   onLogout 
 }) {
-  const [displayName, setDisplayName] = useState(profile?.displayName || user?.displayName || 'Physician');
+  const [displayName, setDisplayName] = useState(profile?.displayName || user?.displayName || generateRandomPlayerName());
   const [status, setStatus] = useState(profile?.status || '');
   const [avatar, setAvatar] = useState(profile?.avatar || 'microscope');
   const [saveSuccess, setSaveSuccess] = useState(false);
@@ -27,7 +28,7 @@ export default function ProfileModal({
   // Sync state when profile changes
   useEffect(() => {
     if (profile) {
-      setDisplayName(profile.displayName || user?.displayName || 'Physician');
+      setDisplayName(profile.displayName || user?.displayName || generateRandomPlayerName());
       setStatus(profile.status || '');
       setAvatar(profile.avatar || 'microscope');
     }
@@ -41,7 +42,7 @@ export default function ProfileModal({
   const handleSave = (e) => {
     e.preventDefault();
     const updated = {
-      displayName: displayName.trim() || 'Physician',
+      displayName: displayName.trim() || profile?.displayName || generateRandomPlayerName(),
       status: status.trim() || '',
       avatar: avatar,
       level: progression.level,
@@ -178,7 +179,7 @@ export default function ProfileModal({
                 type="text"
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
-                placeholder="Dr. Alex Rivera"
+                placeholder="Username"
                 required
                 className="w-full pl-10 pr-3 py-2.5 bg-slate-950 border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
               />

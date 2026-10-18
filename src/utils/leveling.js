@@ -79,3 +79,18 @@ export function calculateUserProgression(wins = 0, unlockedCount = 0, bonusXp = 
     isMaxLevel
   };
 }
+
+export const RANDOM_NAME_PREFIXES = [
+  'Octopus', 'Falcon', 'Dolphin', 'Tiger', 'Eagle', 'Badger',
+  'Penguin', 'Panther', 'Otter', 'Fox', 'Koala', 'Owl',
+  'Jaguar', 'Cheetah', 'Wolf', 'Hawk', 'Raven', 'Panda',
+  'Bear', 'Lynx', 'Bison', 'Seal', 'Beaver', 'Moose',
+  'Crane', 'Hedgehog', 'Viper', 'Chameleon', 'Gecko', 'Mantis'
+];
+
+export function generateRandomPlayerName() {
+  const prefix = RANDOM_NAME_PREFIXES[Math.floor(Math.random() * RANDOM_NAME_PREFIXES.length)];
+  const num = Math.floor(100 + Math.random() * 900); // 100 - 999
+  return `${prefix}_${num}`;
+}
+
