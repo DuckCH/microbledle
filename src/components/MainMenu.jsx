@@ -132,7 +132,10 @@ export default function MainMenu({
         <h1 className="text-4xl md:text-5xl font-black tracking-tight bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500 dark:from-emerald-400 dark:via-teal-300 dark:to-cyan-400 bg-clip-text text-transparent drop-shadow-sm">
           MICROBLEDLE
         </h1>
-        <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
+        <p className="text-xs sm:text-sm font-bold text-emerald-600 dark:text-emerald-400 mt-1 uppercase tracking-wider">
+          Daily Medical Microbiology Wordle
+        </p>
+        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
           Deduce the pathogen • Choose first-line treatment
         </p>
       </div>

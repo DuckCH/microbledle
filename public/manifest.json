@@ -1,7 +1,7 @@
 {
-  "name": "Microbledle - Daily Medical Microbiology",
+  "name": "Microbledle - Daily Medical Microbiology Wordle",
   "short_name": "Microbledle",
-  "description": "Daily clinical microbiology deduction game for medical students, doctors, and microbiologists.",
+  "description": "Daily medical microbiology Wordle for medical students, doctors, and microbiologists.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

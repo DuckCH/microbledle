@@ -338,7 +338,7 @@ export default function DischargeCardModal({
     ctx.textAlign = 'left';
     ctx.font = 'bold 20px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
     ctx.fillStyle = '#10b981';
-    ctx.fillText('TEST YOUR CLINICAL MICROBIOLOGY DEDUCTION DAILY', 70, brandY + 50);
+    ctx.fillText('DAILY MEDICAL MICROBIOLOGY WORDLE • TEST YOUR CLINICAL DEDUCTION', 70, brandY + 50);
 
     ctx.font = '15px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
     ctx.fillStyle = '#94a3b8';
