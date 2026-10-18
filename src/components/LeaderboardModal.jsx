@@ -4,7 +4,7 @@ import {
   Flame, Award, Search, User, Clock, ArrowRight, ShieldCheck
 } from 'lucide-react';
 import { getDailyLeaderboard, getAllTimeLeaderboard } from '../firebase';
-import { calculateUserProgression, AVATAR_OPTIONS } from '../utils/leveling';
+import { calculateUserProgression, AVATAR_OPTIONS, RANKS } from '../utils/leveling';
 
 export default function LeaderboardModal({ 
   isOpen, 
@@ -60,7 +60,7 @@ export default function LeaderboardModal({
           allTime.push({
             id: currentUid,
             profile: userProfile,
-            displayName: userProfile?.displayName || 'Physician',
+            displayName: userProfile?.displayName || 'Player',
             stats: userStats,
             unlockedBugIds: JSON.parse(localStorage.getItem('microbledle_unlocked_bugs') || '[]')
           });
@@ -116,7 +116,7 @@ export default function LeaderboardModal({
                 Global Leaderboard
               </h2>
               <p className="text-xs text-slate-400">
-                Top Medical Microbiologists Worldwide
+                Top Player Worldwide
               </p>
             </div>
           </div>
@@ -164,7 +164,7 @@ export default function LeaderboardModal({
                 }`}
               >
                 <Crown className="w-3.5 h-3.5" />
-                <span>All-Time Hall of Fame</span>
+                <span>All-Time Ranking</span>
               </button>
             </div>
 
@@ -172,7 +172,7 @@ export default function LeaderboardModal({
               <Search className="absolute left-3 top-2.5 w-3.5 h-3.5 text-slate-500" />
               <input
                 type="text"
-                placeholder="Find doctor..."
+                placeholder="Find Player..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-8 pr-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
@@ -196,12 +196,16 @@ export default function LeaderboardModal({
               {filteredDaily.length === 0 ? (
                 <div className="py-12 text-center text-slate-400 text-xs space-y-2">
                   <p className="text-sm font-semibold text-slate-300">No diagnoses recorded yet for today!</p>
-                  <p>Be the #1 physician in the world to solve today's case.</p>
+                  <p>Be the #1 player in the world to solve today's case.</p>
                 </div>
               ) : (
                 filteredDaily.map((entry, idx) => {
                   const avatarObj = AVATAR_OPTIONS.find(a => a.id === entry.avatar) || AVATAR_OPTIONS[0];
                   const isCurrentUser = user && user.uid === entry.uid;
+                  const entryTitle = entry.rankTitle || 'Pre-Med';
+                  const entryLevel = entry.level || RANKS.find(r => r.title === entryTitle)?.level;
+                  const entryBadge = entry.badge || RANKS.find(r => r.title === entryTitle)?.badge || '🩺';
+                  const hasNonDuplicateStatus = entry.status && entry.status.trim().toLowerCase() !== entryTitle.trim().toLowerCase();
 
                   return (
                     <div
@@ -225,7 +229,7 @@ export default function LeaderboardModal({
                         <div className="min-w-0">
                           <div className="flex items-center gap-2">
                             <span className="font-bold text-sm text-white truncate">
-                              {entry.displayName || 'Anonymous Doctor'}
+                              {entry.displayName || 'Anonymous Player'}
                             </span>
                             {isCurrentUser && (
                               <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-emerald-900 text-emerald-300 border border-emerald-700">
@@ -233,10 +237,17 @@ export default function LeaderboardModal({
                               </span>
                             )}
                           </div>
-                          <div className="text-[11px] text-emerald-400 font-medium truncate flex items-center gap-1">
-                            <span>{entry.badge || '🩺'}</span>
-                            <span>{entry.rankTitle || 'Pre-Med'}</span>
-                            {entry.status && <span className="text-slate-500">• {entry.status}</span>}
+                          <div className="text-[11px] text-emerald-400 font-medium truncate flex items-center gap-1.5">
+                            <span>{entryBadge}</span>
+                            <span>{entryTitle}</span>
+                            {entryLevel && (
+                              <span className="text-emerald-500/90 font-semibold">(Lvl {entryLevel})</span>
+                            )}
+                            {hasNonDuplicateStatus && (
+                              <span className="text-slate-400 dark:text-slate-500 font-normal truncate">
+                                • {entry.status}
+                              </span>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -262,7 +273,7 @@ export default function LeaderboardModal({
             </>
           )}
 
-          {/* TAB 2: All-Time Hall of Fame */}
+          {/* TAB 2: All-Time Ranking */}
           {tab === 'alltime' && !loading && (
             <>
               {filteredAllTime.length === 0 ? (
@@ -280,6 +291,7 @@ export default function LeaderboardModal({
                     (rowStats.rxCorrect || 0) * 50
                   );
                   const isCurrentUser = user && user.uid === entry.id;
+                  const hasNonDuplicateStatus = prof.status && prof.status.trim().toLowerCase() !== prog.title.trim().toLowerCase();
 
                   return (
                     <div
@@ -303,7 +315,7 @@ export default function LeaderboardModal({
                         <div className="min-w-0">
                           <div className="flex items-center gap-2">
                             <span className="font-bold text-sm text-white truncate">
-                              {prof.displayName || entry.displayName || 'Doctor'}
+                              {prof.displayName || entry.displayName || 'Player'}
                             </span>
                             {isCurrentUser && (
                               <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-amber-900 text-amber-300 border border-amber-700">
@@ -311,23 +323,29 @@ export default function LeaderboardModal({
                               </span>
                             )}
                           </div>
-                          <div className="text-[11px] text-amber-400 font-semibold truncate flex items-center gap-1">
+                          <div className="text-[11px] text-amber-400 font-medium truncate flex items-center gap-1.5">
                             <span>{prog.badge}</span>
-                            <span>{prog.title} (Lvl {prog.level})</span>
+                            <span>{prog.title}</span>
+                            <span className="text-amber-500/90 font-semibold">(Lvl {prog.level})</span>
+                            {hasNonDuplicateStatus && (
+                              <span className="text-slate-400 dark:text-slate-500 font-normal truncate">
+                                • {prof.status}
+                              </span>
+                            )}
                           </div>
                         </div>
                       </div>
 
                       {/* Right: Career Metrics */}
                       <div className="text-right shrink-0 space-y-0.5">
-                        <div className="text-xs font-black text-white">
-                          <span className="text-emerald-400">{rowStats.wins || 0}</span> Wins
+                        <div className="text-sm font-black text-white">
+                          <span className="text-emerald-400 text-sm sm:text-base font-mono">{rowStats.wins || 0}</span> Wins
                         </div>
-                        <div className="text-[10px] text-slate-400 flex items-center justify-end gap-2 font-mono">
+                        <div className="text-xs text-slate-300 dark:text-slate-400 flex items-center justify-end gap-2 font-mono font-semibold">
                           <span className="flex items-center gap-0.5 text-amber-400">
-                            <Flame className="w-3 h-3 fill-amber-400" /> {rowStats.streak || 0}
+                            <Flame className="w-3.5 h-3.5 fill-amber-400" /> {rowStats.streak || 0}
                           </span>
-                          <span>•</span>
+                          <span className="text-slate-500">•</span>
                           <span>{prog.totalXp} XP</span>
                         </div>
                       </div>
