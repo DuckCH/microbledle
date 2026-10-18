@@ -53,7 +53,7 @@ export default function ContactPage() {
       }
     } catch (err) {
       console.error('Contact form submission error:', err);
-      setSubmitError('Unable to send message directly right now. You can try again or send an email directly to contact@microbledle.com.');
+      setSubmitError(err.message || 'Unable to send message directly right now. You can try again or send an email directly to contact@microbledle.com.');
     } finally {
       setIsSubmitting(false);
     }
