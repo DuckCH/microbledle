@@ -6,7 +6,8 @@ import {
   Microscope, Stethoscope, Dna, FlaskConical, Award, Flame,
   Check, Calendar, Shuffle, Volume2, VolumeX, Clock, TestTube2,
   BookOpen, User, LogOut, Cloud, ShieldCheck, Pill,
-  ArrowLeft, Home, Sun, Moon, FileText, BarChart2
+  ArrowLeft, Home, Sun, Moon, FileText, BarChart2,
+  Mail, AlertTriangle
 } from 'lucide-react';
 import microbes from './data/microbes.json';
 import { playTileSound, playSelectSound, playWinSound, playDefeatSound } from './utils/audio';
@@ -1586,7 +1587,7 @@ export default function App() {
             onClick={() => navigateToPage('about')} 
             className="hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition inline-flex items-center gap-1.5"
           >
-            <span>ℹ️</span>
+            <Info className="w-3.5 h-3.5 shrink-0" />
             <span>About</span>
           </button>
           <span className="text-slate-300 dark:text-slate-700">•</span>
@@ -1594,7 +1595,7 @@ export default function App() {
             onClick={() => navigateToPage('contact')} 
             className="hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition inline-flex items-center gap-1.5"
           >
-            <span>✉️</span>
+            <Mail className="w-3.5 h-3.5 shrink-0" />
             <span>Contact Us</span>
           </button>
           <span className="text-slate-300 dark:text-slate-700">•</span>
@@ -1602,7 +1603,7 @@ export default function App() {
             onClick={() => navigateToPage('privacy')} 
             className="hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition inline-flex items-center gap-1.5"
           >
-            <span>🛡️</span>
+            <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
             <span>Privacy Policy</span>
           </button>
           <span className="text-slate-300 dark:text-slate-700">•</span>
@@ -1610,7 +1611,7 @@ export default function App() {
             onClick={() => navigateToPage('terms')} 
             className="hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition inline-flex items-center gap-1.5"
           >
-            <span>⚖️</span>
+            <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
             <span>Terms & Disclaimer</span>
           </button>
           <span className="text-slate-300 dark:text-slate-700">•</span>
@@ -1618,7 +1619,7 @@ export default function App() {
             onClick={() => navigateToPage('references')} 
             className="hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition inline-flex items-center gap-1.5"
           >
-            <span>📚</span>
+            <BookOpen className="w-3.5 h-3.5 shrink-0" />
             <span>References</span>
           </button>
         </div>
