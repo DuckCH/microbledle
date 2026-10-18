@@ -371,7 +371,7 @@ export default function LeaderboardModal({
           <div className="p-3 bg-slate-950 border-t border-slate-800/80 flex items-center justify-between gap-2 shrink-0">
             <span className="text-xs text-slate-400 flex items-center gap-1.5">
               <ShieldCheck className="w-4 h-4 text-emerald-400" />
-              Sign in with Google to submit your diagnoses to the global leaderboard!
+              Want to be in Global Leaderboard? Sign in to submit your rank and diagnoses!
             </span>
             <button
               onClick={() => {
