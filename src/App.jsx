@@ -19,6 +19,12 @@ import RxChallenge from './components/RxChallenge';
 import MainMenu from './components/MainMenu';
 import DischargeCardModal from './components/DischargeCardModal';
 import InfoModal from './components/InfoModal';
+import StaticPageLayout from './pages/StaticPageLayout';
+import AboutPage from './pages/AboutPage';
+import ContactPage from './pages/ContactPage';
+import PrivacyPage from './pages/PrivacyPage';
+import TermsPage from './pages/TermsPage';
+import ReferencesPage from './pages/ReferencesPage';
 import { 
   auth, 
   logoutUser, 
@@ -218,7 +224,48 @@ export default function App() {
   const dailyInfo = useMemo(() => getDailyTarget(), []);
   const countdown = useUtcCountdown();
 
-  const [currentScreen, setCurrentScreen] = useState('menu'); // 'menu' | 'game'
+  const [currentScreen, setCurrentScreen] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const hash = window.location.hash.replace('#', '').toLowerCase();
+      if (['about', 'contact', 'privacy', 'terms', 'references'].includes(hash)) {
+        return hash;
+      }
+    }
+    return 'menu';
+  });
+  const [returnScreen, setReturnScreen] = useState('menu');
+
+  useEffect(() => {
+    const handleHash = () => {
+      const hash = window.location.hash.replace('#', '').toLowerCase();
+      if (['about', 'contact', 'privacy', 'terms', 'references'].includes(hash)) {
+        setCurrentScreen(hash);
+      } else if (!hash && ['about', 'contact', 'privacy', 'terms', 'references'].includes(currentScreen)) {
+        setCurrentScreen('menu');
+      }
+    };
+    window.addEventListener('hashchange', handleHash);
+    return () => window.removeEventListener('hashchange', handleHash);
+  }, [currentScreen]);
+
+  const navigateToPage = (pageId) => {
+    if (['menu', 'game'].includes(currentScreen)) {
+      setReturnScreen(currentScreen);
+    }
+    if (typeof window !== 'undefined') {
+      window.location.hash = pageId;
+    }
+    setCurrentScreen(pageId);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleBackFromPage = () => {
+    if (typeof window !== 'undefined') {
+      window.location.hash = '';
+    }
+    setCurrentScreen(returnScreen || 'menu');
+  };
+
   const [isPractice, setIsPractice] = useState(false);
   const [target, setTarget] = useState(dailyInfo.target);
   const [dateStr, setDateStr] = useState(dailyInfo.dateStr);
@@ -978,7 +1025,27 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col items-center p-3 md:p-6 selection:bg-emerald-500 selection:text-white transition-colors duration-200">
-      {currentScreen === 'menu' ? (
+      {['about', 'contact', 'privacy', 'terms', 'references'].includes(currentScreen) ? (
+        <StaticPageLayout
+          currentPage={currentScreen}
+          onNavigate={navigateToPage}
+          onBack={handleBackFromPage}
+          backLabel={returnScreen === 'game' ? 'Back to Case' : 'Back to Menu'}
+          theme={theme}
+          onToggleTheme={toggleTheme}
+        >
+          {currentScreen === 'about' && (
+            <AboutPage 
+              onStartDaily={handleStartDaily} 
+              onStartPractice={handleStartPractice} 
+            />
+          )}
+          {currentScreen === 'contact' && <ContactPage />}
+          {currentScreen === 'privacy' && <PrivacyPage />}
+          {currentScreen === 'terms' && <TermsPage />}
+          {currentScreen === 'references' && <ReferencesPage />}
+        </StaticPageLayout>
+      ) : currentScreen === 'menu' ? (
         <MainMenu
           onStartDaily={handleStartDaily}
           onStartPractice={handleStartPractice}
@@ -988,7 +1055,7 @@ export default function App() {
           onOpenProfile={() => setShowProfileModal(true)}
           onOpenHelp={() => setShowHelpModal(true)}
           onOpenAuth={() => setShowAuthModal(true)}
-          onOpenInfo={(tab) => setInfoModalTab(tab || 'about')}
+          onOpenInfo={navigateToPage}
           user={user}
           profile={profile}
           progression={progression}
@@ -1516,35 +1583,35 @@ export default function App() {
         {/* Navigation Links */}
         <div className="flex flex-wrap items-center justify-center gap-x-3 sm:gap-x-4 gap-y-1 text-xs text-slate-500 dark:text-slate-400">
           <button 
-            onClick={() => setInfoModalTab('about')} 
+            onClick={() => navigateToPage('about')} 
             className="hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition"
           >
             About
           </button>
           <span className="text-slate-300 dark:text-slate-700">•</span>
           <button 
-            onClick={() => setInfoModalTab('contact')} 
+            onClick={() => navigateToPage('contact')} 
             className="hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition"
           >
             Contact Us
           </button>
           <span className="text-slate-300 dark:text-slate-700">•</span>
           <button 
-            onClick={() => setInfoModalTab('privacy')} 
+            onClick={() => navigateToPage('privacy')} 
             className="hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition"
           >
             Privacy Policy
           </button>
           <span className="text-slate-300 dark:text-slate-700">•</span>
           <button 
-            onClick={() => setInfoModalTab('terms')} 
+            onClick={() => navigateToPage('terms')} 
             className="hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition"
           >
             Terms & Disclaimer
           </button>
           <span className="text-slate-300 dark:text-slate-700">•</span>
           <button 
-            onClick={() => setInfoModalTab('sources')} 
+            onClick={() => navigateToPage('references')} 
             className="hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition"
           >
             References
