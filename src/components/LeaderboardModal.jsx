@@ -169,13 +169,13 @@ export default function LeaderboardModal({
             </div>
 
             <div className="relative flex-1 max-w-[200px] hidden sm:block">
-              <Search className="absolute left-3 top-2.5 w-3.5 h-3.5 text-slate-500" />
+              <Search className="absolute left-3 top-2.5 w-3.5 h-3.5 text-emerald-400" />
               <input
                 type="text"
                 placeholder="Find Player..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-8 pr-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                className="w-full pl-8 pr-3 py-1.5 bg-slate-900 border border-slate-600 rounded-xl text-xs text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500"
               />
             </div>
           </div>

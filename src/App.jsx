@@ -664,7 +664,7 @@ export default function App() {
     }
   }, [isPractice, dailyInfo]);
 
-  // Autocomplete suggestions
+  // Autocomplete suggestions (pathogen name, common name, taxonomy)
   const availableMicrobes = useMemo(() => {
     const guessedIds = new Set(guesses.map(g => g.guess.id));
     const term = searchTerm.trim().toLowerCase();
@@ -674,8 +674,7 @@ export default function App() {
       .filter(m => 
         m.name.toLowerCase().includes(term) || 
         m.commonName.toLowerCase().includes(term) ||
-        m.taxonomy.toLowerCase().includes(term) ||
-        (m.buzzwords && m.buzzwords.toLowerCase().includes(term))
+        m.taxonomy.toLowerCase().includes(term)
       )
       .slice(0, 6);
   }, [searchTerm, guesses]);
@@ -1200,11 +1199,11 @@ export default function App() {
         {!gameOver ? (
           <div className="relative w-full max-w-xl mx-auto">
             <div className="relative group">
-              <Search className="absolute left-4 top-3.5 h-5 w-5 text-slate-400 group-focus-within:text-emerald-400 transition" />
+              <Search className="absolute left-4 top-3.5 h-5 w-5 text-emerald-500 dark:text-emerald-400 group-focus-within:text-emerald-400 transition" />
               <input
                 ref={searchInputRef}
                 type="text"
-                placeholder="Search pathogen or sign (e.g., S. aureus, lockjaw, TB)..."
+                placeholder="Search pathogen (e.g., S. aureus, E. coli, TB)..."
                 value={searchTerm}
                 onChange={(e) => {
                   setSearchTerm(e.target.value);
@@ -1213,20 +1212,16 @@ export default function App() {
                 }}
                 onKeyDown={handleKeyDown}
                 onFocus={() => setIsSearchOpen(true)}
-                className="w-full pl-12 pr-4 py-3.5 bg-slate-900/90 border border-slate-700/80 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500/60 focus:border-emerald-500 text-white placeholder-slate-500 shadow-xl transition"
+                className="w-full pl-12 pr-4 py-3.5 bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-600 hover:border-slate-400 dark:hover:border-slate-500 focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-4 focus:ring-emerald-500/20 rounded-2xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-400 text-sm font-medium shadow-lg transition"
               />
             </div>
 
-            {/* Autocomplete Dropdown with Buzzword Matching & Keyboard Selection */}
+            {/* Autocomplete Dropdown with Keyboard Selection */}
             {isSearchOpen && availableMicrobes.length > 0 && (
-              <div className="absolute z-30 left-0 right-0 mt-2 bg-slate-900 border border-slate-700/90 rounded-2xl shadow-2xl overflow-hidden divide-y divide-slate-800 backdrop-blur-md">
+              <div className="absolute z-30 left-0 right-0 mt-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/90 rounded-2xl shadow-2xl overflow-hidden divide-y divide-slate-100 dark:divide-slate-800 backdrop-blur-md">
                 {availableMicrobes.map((bug, idx) => {
                   const isSelected = idx === searchSelectedIndex;
                   const gramInfo = getGramBadge(bug.morphology.gram);
-                  const termLower = searchTerm.trim().toLowerCase();
-                  const matchedBuzzword = bug.buzzwords && termLower.length >= 3 && bug.buzzwords.toLowerCase().includes(termLower)
-                    ? bug.buzzwords.split(',').find(b => b.toLowerCase().includes(termLower))
-                    : null;
 
                   return (
                     <button
@@ -1234,27 +1229,24 @@ export default function App() {
                       onClick={() => handleSelectMicrobe(bug)}
                       onMouseEnter={() => setSearchSelectedIndex(idx)}
                       className={`w-full text-left px-4 py-3 transition flex items-center justify-between group ${
-                        isSelected ? 'bg-slate-800/95 ring-1 ring-emerald-500/50' : 'hover:bg-slate-800/60'
+                        isSelected 
+                          ? 'bg-emerald-50 dark:bg-slate-800/95 ring-1 ring-emerald-500/50' 
+                          : 'hover:bg-slate-50 dark:hover:bg-slate-800/60'
                       }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className="font-semibold text-emerald-400 italic group-hover:text-emerald-300 flex items-center gap-2 flex-wrap">
+                        <div className="font-semibold text-emerald-600 dark:text-emerald-400 italic group-hover:text-emerald-500 dark:group-hover:text-emerald-300 flex items-center gap-2 flex-wrap">
                           <span>{bug.name}</span>
                           <span className={`not-italic text-[10px] font-bold px-2 py-0.5 rounded-full border flex items-center gap-1 ${gramInfo.bg}`}>
                             <span className={`w-1.5 h-1.5 rounded-full ${gramInfo.dot}`} />
                             {gramInfo.label}
                           </span>
-                          {matchedBuzzword && (
-                            <span className="not-italic text-[10px] text-amber-300 font-normal bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 rounded-full truncate max-w-[200px]">
-                              Key: {matchedBuzzword.trim()}
-                            </span>
-                          )}
                         </div>
-                        <div className="text-xs text-slate-400 mt-0.5 truncate">
-                          <span className="text-slate-300 font-medium">{bug.commonName}</span> • {bug.taxonomy}
+                        <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate">
+                          <span className="text-slate-700 dark:text-slate-300 font-medium">{bug.commonName}</span> • {bug.taxonomy}
                         </div>
                       </div>
-                      <ChevronRight className={`w-5 h-5 shrink-0 transform transition ${isSelected ? 'text-emerald-400 translate-x-1' : 'text-slate-500 group-hover:text-emerald-400 group-hover:translate-x-0.5'}`} />
+                      <ChevronRight className={`w-5 h-5 shrink-0 transform transition ${isSelected ? 'text-emerald-500 dark:text-emerald-400 translate-x-1' : 'text-slate-400 dark:text-slate-500 group-hover:text-emerald-500 dark:group-hover:text-emerald-400 group-hover:translate-x-0.5'}`} />
                     </button>
                   );
                 })}
@@ -1262,14 +1254,14 @@ export default function App() {
             )}
           </div>
         ) : (
-          <div className="max-w-xl mx-auto w-full p-4 rounded-2xl bg-slate-900/90 border border-slate-800 text-center shadow-lg">
-            <div className="text-xs text-slate-400 mb-1">Diagnosis finalized for this case</div>
-            <div className="font-bold text-lg text-emerald-400 italic">
+          <div className="max-w-xl mx-auto w-full p-4 rounded-2xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 text-center shadow-lg">
+            <div className="text-xs text-slate-500 dark:text-slate-400 mb-1">Diagnosis finalized for this case</div>
+            <div className="font-bold text-lg text-emerald-600 dark:text-emerald-400 italic">
               {target.name} ({target.commonName})
             </div>
-            <div className="mt-2 flex items-center justify-center gap-2 text-xs text-slate-400">
-              <Clock className="w-3.5 h-3.5 text-emerald-400" />
-              Next daily case in: <span className="font-mono text-emerald-300 font-bold">{countdown}</span>
+            <div className="mt-2 flex items-center justify-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+              <Clock className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" />
+              Next daily case in: <span className="font-mono text-emerald-600 dark:text-emerald-300 font-bold">{countdown}</span>
             </div>
             <div className="mt-3 flex items-center justify-center gap-2">
               <button
@@ -1280,7 +1272,7 @@ export default function App() {
               </button>
               <button
                 onClick={() => setShowBugdexModal(true)}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl text-xs font-semibold text-emerald-400 shadow transition inline-flex items-center gap-1.5"
+                className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-emerald-600 dark:text-emerald-400 shadow transition inline-flex items-center gap-1.5"
               >
                 <BookOpen className="w-4 h-4" /> Open in Bugdex
               </button>
