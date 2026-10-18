@@ -291,7 +291,7 @@ export default function MainMenu({
                 Endless Mode
               </span>
               <span className="text-[11px] font-semibold text-cyan-700 dark:text-cyan-400 bg-cyan-100 dark:bg-cyan-950/60 px-2 py-0.5 rounded-full border border-cyan-200 dark:border-cyan-800">
-                40 Bugs
+                40 Pathogens
               </span>
             </div>
 

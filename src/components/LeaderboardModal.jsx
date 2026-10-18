@@ -112,14 +112,9 @@ export default function LeaderboardModal({
               <Trophy className="w-6 h-6" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-xl md:text-2xl font-black text-white tracking-tight">
-                  Global Leaderboard
-                </h2>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-950 text-amber-400 border border-amber-800">
-                  Live Firestore
-                </span>
-              </div>
+              <h2 className="text-xl md:text-2xl font-black text-white tracking-tight">
+                Global Leaderboard
+              </h2>
               <p className="text-xs text-slate-400">
                 Top Medical Microbiologists Worldwide
               </p>

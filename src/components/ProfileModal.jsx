@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   X, User, ShieldCheck, Award, Flame, Trophy, Check, 
-  Sparkles, Stethoscope, ArrowRight, Save, LogOut, Pill
+  Sparkles, Stethoscope, ArrowRight, Save, LogOut, Pill, BarChart2
 } from 'lucide-react';
 import { 
   calculateUserProgression, 
@@ -12,6 +12,7 @@ import {
 export default function ProfileModal({ 
   isOpen, 
   onClose, 
+  onOpenStats,
   user, 
   stats, 
   unlockedCount, 
@@ -119,47 +120,26 @@ export default function ProfileModal({
           </div>
         </div>
 
-        {/* Career Stats Grid */}
-        <div className="grid grid-cols-4 gap-2 text-center mb-3">
-          <div className="p-2.5 bg-slate-800/60 rounded-xl border border-slate-800">
-            <div className="text-lg font-black text-white">{stats.played}</div>
-            <div className="text-[10px] text-slate-400 uppercase font-semibold">Played</div>
-          </div>
-          <div className="p-2.5 bg-slate-800/60 rounded-xl border border-slate-800">
-            <div className="text-lg font-black text-emerald-400">{stats.wins}</div>
-            <div className="text-[10px] text-slate-400 uppercase font-semibold">Wins</div>
-          </div>
-          <div className="p-2.5 bg-slate-800/60 rounded-xl border border-slate-800">
-            <div className="text-lg font-black text-amber-400 flex items-center justify-center gap-0.5">
-              <Flame className="w-3.5 h-3.5 fill-amber-400" /> {stats.streak}
+        {/* View Career Statistics Button */}
+        <button
+          type="button"
+          onClick={() => {
+            onClose();
+            if (onOpenStats) onOpenStats();
+          }}
+          className="w-full mb-6 p-3.5 rounded-2xl bg-slate-950/80 hover:bg-slate-800/80 border border-cyan-500/30 hover:border-cyan-400 text-cyan-300 font-semibold flex items-center justify-between transition text-xs group shadow-sm active:scale-[0.99]"
+        >
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-xl bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">
+              <BarChart2 className="w-4 h-4" />
             </div>
-            <div className="text-[10px] text-slate-400 uppercase font-semibold">Streak</div>
-          </div>
-          <div className="p-2.5 bg-slate-800/60 rounded-xl border border-slate-800">
-            <div className="text-lg font-black text-cyan-400">{unlockedCount}</div>
-            <div className="text-[10px] text-slate-400 uppercase font-semibold">Bugs</div>
-          </div>
-        </div>
-
-        {/* Empiric Rx Stewardship Stats Banner */}
-        <div className="p-3 bg-gradient-to-r from-indigo-950/40 to-slate-900/60 rounded-xl border border-indigo-500/20 mb-6 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-lg bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
-              <Pill className="w-4 h-4" />
-            </div>
-            <div>
-              <div className="text-xs font-bold text-white flex items-center gap-1.5">
-                Antibiotic Quiz
-                <span className="px-1.5 py-0.2 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                  +{(stats.rxCorrect || 0) * 50} XP
-                </span>
-              </div>
-              <div className="text-[11px] text-slate-400">
-                {stats.rxCorrect || 0} / {stats.rxAttempted || 0} Solved ({stats.rxAttempted ? Math.round(((stats.rxCorrect || 0) / stats.rxAttempted) * 100) : 0}% Accuracy)
-              </div>
+            <div className="text-left">
+              <div className="font-bold text-slate-100 text-sm">Career Statistics</div>
+              <div className="text-[11px] text-slate-400">View games, win %, streaks & antibiotic record</div>
             </div>
           </div>
-        </div>
+          <ArrowRight className="w-4 h-4 text-cyan-400 group-hover:translate-x-1 transition-transform" />
+        </button>
 
         {/* Edit Profile Form */}
         <form onSubmit={handleSave} className="space-y-4">
