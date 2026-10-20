@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import confetti from 'canvas-confetti';
 import { 
-  Search, AlertCircle, HelpCircle, Trophy, RotateCcw, 
+  Search, AlertCircle, HelpCircle, Trophy, 
   Share2, CheckCircle2, X, Sparkles, ChevronRight, Info,
   Microscope, Stethoscope, Dna, FlaskConical, Award, Flame,
   Check, Calendar, Shuffle, Volume2, VolumeX, Clock, TestTube2,
   BookOpen, User, LogOut, Cloud, ShieldCheck, Pill,
-  ArrowLeft, Home, Sun, Moon, FileText, BarChart2,
+  ArrowLeft, ArrowRight, Home, Sun, Moon, FileText, BarChart2,
   Mail, AlertTriangle, Menu
 } from 'lucide-react';
 import microbes from './data/microbes.json';
@@ -122,22 +122,33 @@ function evaluateGuess(guess, target) {
   } else if (
     (guessTax.includes('firmicutes') && targetTax.includes('firmicutes')) ||
     (guessTax.includes('pseudomonadota') && targetTax.includes('pseudomonadota')) ||
-    (guessTax.includes('gram-positive') && targetTax.includes('gram-positive')) ||
-    (guessTax.includes('gram-negative') && targetTax.includes('gram-negative')) ||
-    (guessTax.includes('virus') && targetTax.includes('virus')) ||
-    (guessTax.includes('fungi') && targetTax.includes('fungi')) ||
-    (guessTax.includes('parasite') && targetTax.includes('parasite')) ||
-    (guessTax.includes('protozoa') && targetTax.includes('protozoa')) ||
+    (guessTax.includes('actinomycetota') && targetTax.includes('actinomycetota')) ||
+    (guessTax.includes('campylobacterota') && targetTax.includes('campylobacterota')) ||
     (guessTax.includes('spirochaetota') && targetTax.includes('spirochaetota')) ||
     (guessTax.includes('spirochete') && targetTax.includes('spirochete')) ||
+    (guessTax.includes('chlamydiaceae') && targetTax.includes('chlamydiaceae')) ||
+    (guessTax.includes('mollicutes') && targetTax.includes('mollicutes')) ||
     (guessTax.includes('ascomycota') && targetTax.includes('ascomycota')) ||
+    (guessTax.includes('basidiomycota') && targetTax.includes('basidiomycota')) ||
     (guessTax.includes('apicomplexa') && targetTax.includes('apicomplexa')) ||
+    (guessTax.includes('amoebozoa') && targetTax.includes('amoebozoa')) ||
+    (guessTax.includes('metamonada') && targetTax.includes('metamonada')) ||
     (guessTax.includes('flaviviridae') && targetTax.includes('flaviviridae')) ||
     (guessTax.includes('retroviridae') && targetTax.includes('retroviridae')) ||
     (guessTax.includes('herpesviridae') && targetTax.includes('herpesviridae')) ||
     (guessTax.includes('orthomyxoviridae') && targetTax.includes('orthomyxoviridae')) ||
     (guessTax.includes('rhabdoviridae') && targetTax.includes('rhabdoviridae')) ||
-    (guessTax.includes('pneumoviridae') && targetTax.includes('pneumoviridae'))
+    (guessTax.includes('pneumoviridae') && targetTax.includes('pneumoviridae')) ||
+    (guessTax.includes('paramyxoviridae') && targetTax.includes('paramyxoviridae')) ||
+    (guessTax.includes('caliciviridae') && targetTax.includes('caliciviridae')) ||
+    (guessTax.includes('hepadnaviridae') && targetTax.includes('hepadnaviridae')) ||
+    (guessTax.includes('gram-positive') && targetTax.includes('gram-positive')) ||
+    (guessTax.includes('gram-negative') && targetTax.includes('gram-negative')) ||
+    (guessTax.includes('virus') && targetTax.includes('virus')) ||
+    ((guessTax.includes('fungi') || guessTax.includes('fungus')) && (targetTax.includes('fungi') || targetTax.includes('fungus'))) ||
+    (guessTax.includes('parasite') && targetTax.includes('parasite')) ||
+    (guessTax.includes('protozoa') && targetTax.includes('protozoa')) ||
+    (guessTax.includes('acid-fast') && targetTax.includes('acid-fast'))
   ) {
     taxStatus = 'partial';
   }
@@ -1183,9 +1194,9 @@ export default function App() {
                 <button
                   onClick={startNewPractice}
                   className="p-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:text-cyan-500 transition shadow-sm"
-                  title="Next Random Pathogen"
+                  title="Next Practice Organism"
                 >
-                  <RotateCcw className="w-4 h-4" />
+                  <ArrowRight className="w-4 h-4" />
                 </button>
               )}
 
@@ -1358,9 +1369,9 @@ export default function App() {
             <button
               onClick={startNewPractice}
               className="p-2 rounded-xl bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-300 transition"
-              title="Next Random Pathogen"
+              title="Next Practice Organism"
             >
-              <RotateCcw className="w-4 h-4" />
+              <ArrowRight className="w-4 h-4" />
             </button>
           )}
 
@@ -2058,7 +2069,7 @@ export default function App() {
                   onClick={startNewPractice}
                   className="w-full py-3 bg-slate-800 hover:bg-slate-700 font-semibold rounded-2xl flex items-center justify-center gap-2 text-slate-200 transition text-xs sm:text-sm"
                 >
-                  <RotateCcw className="w-4 h-4" /> Next Practice Organism
+                  <ArrowRight className="w-4 h-4" /> Next Practice Organism
                 </button>
               )}
 

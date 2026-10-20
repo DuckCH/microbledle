@@ -18,7 +18,7 @@
     "virulence": "Protein A binds IgG Fc region preventing opsonization; TSST-1 superantigen causes massive cytokine release (IL-1, IL-2, TNF-α); Exfoliatin A & B cause Scalded Skin Syndrome.",
     "transmission": "Direct contact, colonized anterior nares, IV catheter inoculation, surgical wounds.",
     "buzzwords": "Golden pigment, Janeway lesions & Osler nodes, Tricuspid endocarditis in IVDU, mecA gene encoding PBP2a.",
-    "chiefComplaint": "A 28-year-old person presents with persistent high fever and a new heart murmur."
+    "chiefComplaint": "A 28-year-old male presents with persistent high fever."
   },
   {
     "id": "spneumoniae",
@@ -39,7 +39,7 @@
     "virulence": "Polysaccharide capsule (major antigen & antiphagocytic); IgA protease cleaves secretory IgA; Pneumolysin damages ciliated epithelium.",
     "transmission": "Respiratory droplets; asplenic patients at high risk of fulminant encapsulated bacteremia.",
     "buzzwords": "Rusty sputum, Quellung reaction (+), Bile soluble, Lancet diplococci, #1 cause of community-acquired pneumonia and adult meningitis.",
-    "chiefComplaint": "A 65-year-old male presents with sudden shaking chills and severe pleuritic chest pain."
+    "chiefComplaint": "A 65-year-old male presents with sudden shaking chills."
   },
   {
     "id": "ecoli",
@@ -60,7 +60,7 @@
     "virulence": "P fimbriae mediate binding to uroepithelium (UTI); K1 capsular antigen resists phagocytosis (neonatal meningitis); Shiga-like toxin (EHEC O157:H7) causes HUS.",
     "transmission": "Ascending fecal flora, undercooked ground beef (EHEC), unpasteurized milk.",
     "buzzwords": "Green metallic sheen on EMB, P-fimbriae, K1 antigen, Hemolytic Uremic Syndrome (triad of hemolytic anemia, thrombocytopenia, acute renal failure).",
-    "chiefComplaint": "A 23-year-old woman experiences severe dysuria."
+    "chiefComplaint": "A 23-year-old woman presents with severe dysuria."
   },
   {
     "id": "paeruginosa",
@@ -81,7 +81,7 @@
     "virulence": "Exotoxin A inactivate elongation factor 2 (EF-2) halting protein synthesis; Pyocyanin generates reactive oxygen species; Alginate slime biofilm in CF lungs.",
     "transmission": "Moist environmental reservoirs (water sinks, respirators, hot tubs, burn wounds).",
     "buzzwords": "Grape-like odor, Blue-green pyocyanin pigment, Ecthyma gangrenosum, Hot tub folliculitis, Malignant otitis externa in diabetics.",
-    "chiefComplaint": "A 54-year-old burn patient develops high fever and foul-smelling blue-green wound discharge."
+    "chiefComplaint": "A 54-year-old burn patient develops foul-smelling wound discharge."
   },
   {
     "id": "nmeningitidis",
@@ -102,7 +102,7 @@
     "virulence": "Lipooligosaccharide (LOS) endotoxin triggers severe septic shock and DIC; IgA protease degrades mucosal immunity; Polysaccharide capsule (A, B, C, Y, W-135).",
     "transmission": "Respiratory droplets in crowded living conditions (military barracks, dormitories).",
     "buzzwords": "Petechial rash, Waterhouse-Friderichsen syndrome (adrenal hemorrhage), Ferments Maltose & Glucose (vs Gonococcus which ferments Glucose only).",
-    "chiefComplaint": "An 18-year-old college student develops sudden severe headache, high fever, and neck stiffness."
+    "chiefComplaint": "An 18-year-old college student develops sudden severe headache."
   },
   {
     "id": "cdifficile",
@@ -123,7 +123,7 @@
     "virulence": "Toxin A (enterotoxin) binds brush border causing mucosal inflammation; Toxin B (cytotoxin) disrupts actin cytoskeleton via UDP-glucose glucosylation causing pseudomembranes.",
     "transmission": "Fecal-oral ingestion of heat/acid-resistant spores in healthcare settings; soap and water required for hand hygiene.",
     "buzzwords": "Pseudomembranous colitis, Clindamycin / Fluoroquinolone exposure, Megacolon, Spores resistant to alcohol rubs.",
-    "chiefComplaint": "A 72-year-old hospitalized patient recently treated with antibiotics develops profuse watery diarrhea and abdominal cramping."
+    "chiefComplaint": "A 72-year-old hospitalized patient develops profuse watery diarrhea."
   },
   {
     "id": "mtuberculosis",
@@ -144,7 +144,7 @@
     "virulence": "Cord factor (trehalose 6,6'-dimycolate) inhibits macrophage maturation; Sulfatides prevent phagolysosome fusion; Catalase-peroxidase (KatG) activates isoniazid.",
     "transmission": "Inhalation of airborne droplet nuclei into pulmonary alveoli; survives inside unactivated macrophages.",
     "buzzwords": "Caseating granulomas, Langhans giant cells, Ghon complex, Apical cavitations, Pott disease (spine), Night sweats & hemoptysis.",
-    "chiefComplaint": "A 48-year-old man presents with chronic afternoon fevers, drenching night sweats, and coughing up blood."
+    "chiefComplaint": "A 48-year-old man presents with chronic afternoon fevers."
   },
   {
     "id": "ypestis",
@@ -165,7 +165,7 @@
     "virulence": "Yop proteins (Type III secretion system) disrupt host macrophage signaling; F1 capsular antigen prevents phagocytosis; Endotoxin induces gangrene and acral necrosis.",
     "transmission": "Bite of Xenopsylla cheopis flea from rodent reservoirs (prairie dogs, ground squirrels) or aerosol droplets in pneumonic plague.",
     "buzzwords": "Safety-pin bipolar staining, Suppurative buboes, Acral gangrene ('Black Death'), Four Corners region of US.",
-    "chiefComplaint": "A 34-year-old hiker in the Southwest develops sudden high fever and an exquisitely tender, swollen groin lymph node."
+    "chiefComplaint": "A 34-year-old hiker develops sudden high fever."
   },
   {
     "id": "lmonocytogenes",
@@ -186,7 +186,7 @@
     "virulence": "Listeriolysin O forms pores in phagosomal membrane allowing intracellular escape; ActA polymerizes host actin rocket tails for cell-to-cell spread.",
     "transmission": "Ingestion of unpasteurized milk/cheese, cold cuts, deli meats; can multiply at refrigeration temperatures (4°C cold enrichment).",
     "buzzwords": "Actin rockets, Tumbling motility, Cold enrichment (survives in fridge), Granulomatosis infantiseptica in neonates.",
-    "chiefComplaint": "A 29-year-old pregnant woman in her third trimester develops fever and flu-like gastroenteritis after eating unpasteurized dairy."
+    "chiefComplaint": "A 29-year-old pregnant woman develops mild flu-like illness."
   },
   {
     "id": "cneoformans",
@@ -207,7 +207,7 @@
     "virulence": "Glucuronoxylomannan (GXM) polysaccharide capsule (heavily antiphagocytic); Phenol oxidase produces melanin protecting yeast from free radicals.",
     "transmission": "Inhalation of soil enriched with pigeon droppings; opportunistic pathogen primarily in immunocompromised (CD4 < 100).",
     "buzzwords": "Soap bubble lesions in basal ganglia, Mucicarmine stain (red capsule), India ink halo, Pigeon droppings, Narrow-based budding.",
-    "chiefComplaint": "A 38-year-old immunocompromised patient presents with progressive subacute headache and low-grade fever."
+    "chiefComplaint": "A 38-year-old immunocompromised patient presents with progressive subacute headache."
   },
   {
     "id": "tpallidum",
@@ -228,7 +228,7 @@
     "virulence": "Hyaluronidase facilitates tissue penetration; Endoflagella enclosed within periplasmic space provide motility through dense mucus; Antigenic masking avoids immune surveillance.",
     "transmission": "Sexual contact (primary mucosal abrasion) or transplacental transmission (congenital syphilis).",
     "buzzwords": "Painless hard chancre, Tabes dorsalis (neurosyphilis), Argyll Robertson pupil (accommodates but doesn't react to light), VDRL/RPR false positives (lupus/antiphospholipid).",
-    "chiefComplaint": "A 26-year-old male presents with a single, completely painless genital ulcer and swollen groin lymph nodes."
+    "chiefComplaint": "A 26-year-old male presents with a single painless genital ulcer."
   },
   {
     "id": "vcholerae",
@@ -249,7 +249,7 @@
     "virulence": "Cholera toxin (AB5 toxin) constitutively ADP-ribosylates Gs alpha, permanently activating adenylate cyclase & raising cAMP, causing massive secretomotor Cl- and water efflux.",
     "transmission": "Fecal-oral ingestion of contaminated water or seafood; sensitive to stomach acid (high infectious dose required unless achlorhydric).",
     "buzzwords": "Rice-water stool, Permanent Gs activation via ADP-ribosylation, TCBS yellow colonies, Profuse painless secretory diarrhea.",
-    "chiefComplaint": "A 35-year-old disaster relief worker develops sudden explosive, painless watery diarrhea and severe dehydration."
+    "chiefComplaint": "A 35-year-old relief worker develops sudden explosive watery diarrhea."
   },
   {
     "id": "banthracis",
@@ -270,7 +270,7 @@
     "virulence": "Poly-D-glutamic acid capsule (polypeptide, not polysaccharide); Anthrax toxin composed of Protective Antigen (PA), Edema Factor (EF, adenylate cyclase), and Lethal Factor (LF, zinc metalloprotease).",
     "transmission": "Contact with infected animal hides/wool (Woolsorter's disease), spore inhalation, or bioterrorism.",
     "buzzwords": "Black necrotic eschar, Widened mediastinum on CXR (hemorrhagic mediastinitis), Poly-D-glutamate capsule, Medusa-head colonies.",
-    "chiefComplaint": "A 42-year-old leather tanner presents with a painless itchy skin papule that developed a central black eschar."
+    "chiefComplaint": "A 42-year-old leather tanner presents with a painless black skin ulcer."
   },
   {
     "id": "lpneumophila",
@@ -291,7 +291,7 @@
     "virulence": "Type IVB secretion system (Dot/Icm) manipulates host cell vacuolar transport, replicating inside alveolar macrophage phagosomes.",
     "transmission": "Aerosols from contaminated warm water systems (cooling towers, hotel air conditioning, cruise ships, whirlpool spas); no person-to-person spread.",
     "buzzwords": "Atypical pneumonia + Diarrhea + Hyponatremia + Confusion, BCYE charcoal agar (iron and cysteine), Urinary antigen test.",
-    "chiefComplaint": "A 56-year-old executive presents with high fever, watery diarrhea, mental confusion, and dry cough."
+    "chiefComplaint": "A 56-year-old executive presents with high remittent fever."
   },
   {
     "id": "spyogenes",
@@ -312,7 +312,7 @@
     "virulence": "M protein prevents complement activation and opsonization (molecular mimicry induces Rheumatic Fever); Streptolysin O/S lyses RBCs; Pyrogenic exotoxins (SpeA/C) cause Scarlet Fever / STSS.",
     "transmission": "Respiratory droplets, direct contact with skin lesions (impetigo, erysipelas).",
     "buzzwords": "M protein molecular mimicry, Bacitracin sensitive (A-disk), PYR positive, Scarlet fever strawberry tongue & sandpaper rash, Rheumatic fever (Jones criteria).",
-    "chiefComplaint": "A 7-year-old child presents with sudden severe throat pain, high fever, and painful neck swelling without cough."
+    "chiefComplaint": "A 7-year-old child presents with sudden severe throat pain."
   },
   {
     "id": "hinfluenzae",
@@ -333,7 +333,7 @@
     "virulence": "Polyribosylribitol phosphate (PRP) capsule (Type b) invasive antiphagocytic; IgA protease mucosal colonizer; endotoxin LOS causes inflammation.",
     "transmission": "Respiratory droplets; dramatically reduced incidence of Type b invasive disease with PRP conjugate vaccine.",
     "buzzwords": "Thumbprint sign on lateral neck X-ray, Cherry red epiglottitis, Satellite test with S. aureus, Chocolate agar with Factor X and V.",
-    "chiefComplaint": "An unimmunized 3-year-old child presents with high fever, inspiratory stridor, and drooling in a tripod position."
+    "chiefComplaint": "An unimmunized 3-year-old child presents with inspiratory stridor."
   },
   {
     "id": "senterica",
@@ -354,7 +354,7 @@
     "virulence": "Vi capsular antigen protects against antibody and complement; survives in macrophages of reticuloendothelial system; chronic colonizer in biliary gallbladder.",
     "transmission": "Fecal-oral route via contaminated food or water; asymptomatic chronic carriers (e.g. Typhoid Mary).",
     "buzzwords": "Rose spots on trunk, Relative bradycardia (Faget sign), Black colonies on Hektoen (H2S+), Chronic carrier state in gallbladder, Peyer patch necrosis.",
-    "chiefComplaint": "A 29-year-old traveler returning from abroad presents with prolonged remittent fever, faint abdominal rose spots, and constipation."
+    "chiefComplaint": "A 29-year-old traveler presents with prolonged step-ladder fever."
   },
   {
     "id": "cjejuni",
@@ -375,7 +375,7 @@
     "virulence": "Cytolethal distending toxin (CDT) causes DNA damage and cell cycle arrest; molecular mimicry between LOS and host gangliosides (GM1) triggers Guillain-Barré syndrome.",
     "transmission": "Undercooked poultry, unpasteurized milk, contaminated water, contact with infected domestic puppies.",
     "buzzwords": "Seagull-wing shaped, Grows at 42°C ('Campers like hot campfires'), Guillain-Barré syndrome (ascending paralysis), Reactive arthritis.",
-    "chiefComplaint": "A 21-year-old college student develops severe periumbilical abdominal cramping and bloody diarrhea."
+    "chiefComplaint": "A 21-year-old college student develops severe cramping bloody diarrhea."
   },
   {
     "id": "dengue",
@@ -396,7 +396,7 @@
     "virulence": "Antibody-dependent enhancement (ADE) by sub-neutralizing heterotypic antibodies from prior infection promotes severe Dengue Hemorrhagic Fever / Shock Syndrome; NS1 causes capillary leak.",
     "transmission": "Bite of diurnal Aedes aegypti / Aedes albopictus mosquitoes.",
     "buzzwords": "Breakbone fever, Retro-orbital pain, Tourniquet test (+), Aedes mosquito, Antibody-dependent enhancement (ADE), Plasma leak.",
-    "chiefComplaint": "A 24-year-old traveler presents with severe pain behind the eyes, high fever, and debilitating joint and bone aches."
+    "chiefComplaint": "A 24-year-old traveler presents with severe retro-orbital pain."
   },
   {
     "id": "rabies",
@@ -417,7 +417,7 @@
     "virulence": "Glycoprotein G binds nicotinic acetylcholine receptors (nAChR) at neuromuscular junction; travels by retrograde axonal transport along peripheral nerves (dynein motor) into dorsal root ganglia and CNS.",
     "transmission": "Bite or scratch from infected animals (bats #1 in USA, dogs #1 worldwide, raccoons, skunks, foxes).",
     "buzzwords": "Bullet-shaped virion, Negri bodies in Purkinje cells, Hydrophobia & aerophobia, Retrograde dynein axonal transport, 100% case fatality once symptoms appear.",
-    "chiefComplaint": "A 32-year-old spelunker presents with severe agitation, confusion, and excruciating throat spasms when trying to swallow water."
+    "chiefComplaint": "A 32-year-old caver presents with excruciating throat spasms when swallowing water."
   },
   {
     "id": "hiv",
@@ -438,7 +438,7 @@
     "virulence": "gp120 binds CD4 and chemokine co-receptors (CCR5 for macrophage-tropic, CXCR4 for T-cell-tropic); gp41 mediates viral membrane fusion; reverse transcriptase lacks proofreading leading to rapid mutational escape.",
     "transmission": "Sexual contact, parenteral inoculation (blood transfusion, shared IV needles), vertical transmission (transplacental, intrapartum, breastfeeding).",
     "buzzwords": "gp120 / gp41, p24 capsid antigen, CCR5 mutation (homozygous Δ32 confers resistance), Opportunistic infections when CD4 < 200, Retroviral diploid RNA.",
-    "chiefComplaint": "A 34-year-old male presents with chronic weight loss, persistent oral white plaques, and chronic diarrhea."
+    "chiefComplaint": "A 34-year-old male presents with chronic unexplained weight loss."
   },
   {
     "id": "influenza",
@@ -459,7 +459,7 @@
     "virulence": "Hemagglutinin (HA) binds sialic acid receptors promoting viral endocytosis; Neuraminidase (NA) cleaves sialic acid to release progeny virions; Antigenic drift (point mutations) causes seasonal epidemics; Antigenic shift (segment reassortment) causes global pandemics.",
     "transmission": "Respiratory droplets and contaminated fomites; secondary bacterial superinfection with S. aureus or S. pneumoniae can cause fatal pneumonia.",
     "buzzwords": "8 RNA segments, Hemagglutinin & Neuraminidase, Antigenic drift (mutations) vs Shift (reassortment), Secondary S. aureus pneumonia, Oseltamivir.",
-    "chiefComplaint": "A 42-year-old schoolteacher presents with abrupt onset of high fever, severe diffuse body myalgias, and dry cough."
+    "chiefComplaint": "A 42-year-old schoolteacher presents with abrupt onset of high fever."
   },
   {
     "id": "hsv1",
@@ -480,7 +480,7 @@
     "virulence": "Enters latency in sensory nerve ganglia (trigeminal ganglia for HSV-1); reactivated by physical or emotional stress, fever, UV light, or immunosuppression; downregulates MHC Class I expression.",
     "transmission": "Direct contact with infectious saliva or vesicular fluid (cold sores, gingivostomatitis, keratoconjunctivitis).",
     "buzzwords": "Temporal lobe encephalitis, Cowdry A inclusion bodies, Tzanck smear multinucleated giant cells, Trigeminal ganglion latency, Gingivostomatitis.",
-    "chiefComplaint": "A 50-year-old woman develops sudden acute fever, olfactory hallucinations, altered behavior, and seizures."
+    "chiefComplaint": "A 50-year-old woman develops acute temporal lobe seizures."
   },
   {
     "id": "rsv",
@@ -501,7 +501,7 @@
     "virulence": "Fusion (F) protein induces syncytium formation causing mucosal sloughing, epithelial necrosis, and micro-plugging of infant bronchioles with mucus and fibrin.",
     "transmission": "Respiratory droplets and fomites in daycare centers; #1 cause of fatal bronchiolitis and pneumonia in infants under 1 year of age.",
     "buzzwords": "F protein syncytia formation, #1 cause of bronchiolitis in infants, Palivizumab monoclonal antibody, Winter epidemics, Hyperinflation on chest radiograph.",
-    "chiefComplaint": "A 3-month-old infant presents in winter with runny nose, severe audible wheezing, and rapid labored breathing."
+    "chiefComplaint": "A 3-month-old infant presents with severe audible wheezing."
   },
   {
     "id": "pfalciparum",
@@ -522,7 +522,7 @@
     "virulence": "PfEMP1 (Plasmodium falciparum erythrocyte membrane protein 1) on erythrocyte surface knobs binds ICAM-1 and CD36 on microvascular endothelium causing cytoadherence and microvascular occlusion (cerebral malaria).",
     "transmission": "Bite of nocturnal female Anopheles mosquito; blood transfusion; congenital transmission.",
     "buzzwords": "Banana/crescent-shaped gametocytes, Multiple rings per RBC, Cerebral malaria, Blackwater fever, Sickle cell trait (HbAS) confers resistance.",
-    "chiefComplaint": "A 31-year-old traveler returning from West Africa develops cyclic high fevers, drenching sweats, and dark tea-colored urine."
+    "chiefComplaint": "A 31-year-old traveler develops cyclic shaking fevers."
   },
   {
     "id": "glamblia",
@@ -543,7 +543,7 @@
     "virulence": "Ventral concave adhesive suction disk attaches tightly to duodenal brush border enterocytes, producing mechanical villous blunting and malabsorption without tissue invasion.",
     "transmission": "Fecal-oral ingestion of chlorination-resistant cysts from contaminated stream water or daycares; common in campers and beaver habitats.",
     "buzzwords": "Falling leaf motility, Smiling face / spectacles binucleated trophozoite, Greasy foul-smelling steatorrhea, Beaver fever, IgA deficiency predisposes to chronic infection.",
-    "chiefComplaint": "A 27-year-old hiker develops persistent foul-smelling greasy diarrhea, sulfurous burps, and abdominal bloating."
+    "chiefComplaint": "A 27-year-old backpacker develops foul-smelling greasy diarrhea."
   },
   {
     "id": "ehistolytica",
@@ -564,7 +564,7 @@
     "virulence": "Gal/GalNAc lectin mediates adherence to colonic mucin and host enterocytes; Amoebapore peptides create holes in host membranes causing cell lysis; cysteine proteases degrade extracellular matrix producing flask-shaped ulcers.",
     "transmission": "Fecal-oral ingestion of infectious 4-nucleated mature cysts in fecally contaminated food or water.",
     "buzzwords": "Flask-shaped intestinal ulcers, Anchovy paste liver abscess, Erythrophagocytosis (RBCs inside amoeba), Luminal cysticide required (Paromomycin).",
-    "chiefComplaint": "A 39-year-old man presents with right upper quadrant abdominal pain, fever, and weight loss."
+    "chiefComplaint": "A 39-year-old man presents with right upper quadrant abdominal pain."
   },
   {
     "id": "tgondii",
@@ -585,7 +585,7 @@
     "virulence": "Invasive microneme and rhoptry proteins discharge to construct a protective parasitophorous vacuole avoiding phagolysosome degradation; latent bradyzoite tissue cysts reactivate during cellular immunosuppression.",
     "transmission": "Ingestion of oocysts from domestic cat feces (litter box) or tissue cysts in undercooked pork/lamb; transplacental transmission causes congenital toxoplasmosis.",
     "buzzwords": "Multiple ring-enhancing lesions on brain MRI, Cat feces / litter box, Congenital triad (chorioretinitis, hydrocephalus, intracranial calcifications), Pyrimethamine + Sulfadiazine.",
-    "chiefComplaint": "A 41-year-old immunocompromised patient presents with progressive unilateral limb weakness and new-onset seizures."
+    "chiefComplaint": "A 41-year-old immunocompromised patient develops progressive unilateral limb weakness."
   },
   {
     "id": "linterrogans",
@@ -606,7 +606,7 @@
     "virulence": "Outer membrane proteins (LipL32, OmpL1) facilitate rapid burrowing through abraded skin and intact mucous membranes; hemolysins cause capillary endothelial injury and hemorrhage.",
     "transmission": "Exposure of broken skin or mucosal membranes to freshwater, mud, or soil contaminated with urine of infected rodents or domestic livestock.",
     "buzzwords": "Conjunctival suffusion without exudate, Hooked ends like question mark / ice tongs, Severe calf tenderness, Weil disease (triad: jaundice, renal failure, hemorrhage), Freshwater kayaking / surfing in Hawaii.",
-    "chiefComplaint": "A 29-year-old triathlete presents with high fever, intense calf pain, yellowing of the eyes, and red non-purulent conjunctivae."
+    "chiefComplaint": "A 29-year-old triathlete presents with intense calf muscle tenderness."
   },
   {
     "id": "bburgdorferi",
@@ -627,7 +627,7 @@
     "virulence": "OspA and OspC surface lipoproteins mediate adherence within tick midgut and migration to salivary gland; antigenic variation of VlsE surface protein allows chronic immune evasion.",
     "transmission": "Bite of Ixodes scapularis / pacificus deer tick (must feed for >36–48 hours for spirochete transmission); white-footed mouse is primary reservoir, white-tailed deer is obligate mating host.",
     "buzzwords": "Erythema migrans (bull's-eye rash), Ixodes deer tick, Bilateral facial nerve palsy (Bell palsy), Third-degree AV heart block, Migratory asymmetric monoarthritis of the knee.",
-    "chiefComplaint": "A 35-year-old gardener presents in summer with an expanding, painless red circular rash with central clearing."
+    "chiefComplaint": "A 35-year-old gardener presents with an expanding annular red rash."
   },
   {
     "id": "mpneumoniae",
@@ -648,7 +648,7 @@
     "virulence": "P1 cytoadhesin binds sialic acid receptors at base of respiratory cilia, inhibiting ciliary clearance; Community-Acquired Respiratory Distress Syndrome (CARDS) toxin causes mucosal vacuolation.",
     "transmission": "Respiratory droplets in close contact settings (military barracks, boarding schools, college dormitories).",
     "buzzwords": "No cell wall (resistant to penicillins/cephalosporins), Cold agglutinins (IgM causes hemolytic anemia), Bullous myringitis, Eaton agar fried-egg colonies, CXR looks worse than patient.",
-    "chiefComplaint": "A 19-year-old military recruit develops an insidious, persistent dry hacking cough, low-grade fever, and sore throat."
+    "chiefComplaint": "A 19-year-old military recruit develops an insidious dry hacking cough."
   },
   {
     "id": "ctrachomatis",
@@ -669,7 +669,7 @@
     "virulence": "Unique biphasic life cycle: Elementary body (EB) is infectious and survives extracellularly; Reticulate body (RB) replicates intracellularly via binary fission; lacks typical peptidoglycan muramic acid.",
     "transmission": "Sexual contact; perinatal transmission during delivery (neonatal staccato cough pneumonia and inclusion conjunctivitis).",
     "buzzwords": "Elementary body (infectious) vs Reticulate body (replicates), NAAT first-catch urine, #1 bacterial STI worldwide, Reactive arthritis triad (can't see, can't pee, can't climb a tree), Lymphogranuloma venereum (LGV L1-L3).",
-    "chiefComplaint": "A 22-year-old sexually active woman presents with mild abnormal discharge, pelvic discomfort, and postcoital spotting."
+    "chiefComplaint": "A 22-year-old sexually active woman presents with abnormal cervical discharge."
   },
   {
     "id": "bpertussis",
@@ -690,7 +690,7 @@
     "virulence": "Pertussis toxin ADP-ribosylates Gi alpha, permanently turning off Gi and increasing cAMP; Tracheal cytotoxin destroys ciliated epithelial cells; Filamentous hemagglutinin (FHA) mediates epithelial tethering.",
     "transmission": "Airborne respiratory droplets; highly contagious in catarrhal phase.",
     "buzzwords": "100-day cough, Inspiratory whoop & post-tussive vomiting, Bordet-Gengou mercury droplet colonies, Marked lymphocytosis with leukemoid reaction, Gi protein inhibition via ADP-ribosylation.",
-    "chiefComplaint": "An unvaccinated 4-year-old child experiences severe bouts of repetitive coughing ending in a high-pitched whoop and vomiting."
+    "chiefComplaint": "An unvaccinated 4-year-old child experiences paroxysms of severe repetitive coughing."
   },
   {
     "id": "ftularensis",
@@ -711,7 +711,7 @@
     "virulence": "Facultative intracellular bacterium that escapes macrophage phagosome into host cytoplasm; lipid-rich capsule inhibits complement-mediated lysis; extremely low infectious dose.",
     "transmission": "Direct contact with infected animal tissues (rabbits, rodents), bites from Dermacentor dog ticks or deer flies (Chrysops), ingestion of undercooked game meat, or aerosol inhalation.",
     "buzzwords": "Punched-out skin ulcer + tender regional bubo, Rabbit hunter / skinning, Requires cysteine for growth, Dermacentor tick / deer fly vector, Potential aerosol bioterror agent.",
-    "chiefComplaint": "A 46-year-old hunter presents with an ulcerated finger lesion accompanied by painful, swollen armpit lymph nodes and fever."
+    "chiefComplaint": "A 46-year-old hunter presents with an ulcerated finger lesion."
   },
   {
     "id": "calbicans",
@@ -732,7 +732,7 @@
     "virulence": "Phenotypic switching between yeast (commensal) and filamentous hyphae (invasive tissue form); secreted aspartyl proteinases (Saps) and candidalysin toxin degrade host mucosal barriers.",
     "transmission": "Normal commensal flora of GI tract, skin, and female reproductive tract; opportunistically overgrows during antibiotic therapy, corticosteroid use, diabetes mellitus, or neutropenia.",
     "buzzwords": "Germ tube positive at 37°C, Scrapeable white plaques with erythema, Pseudohyphae and budding yeast, Inhaled steroid thrush, Diaper dermatitis with satellite lesions.",
-    "chiefComplaint": "A 28-year-old asthmatic using an inhaler develops white curd-like patches in the mouth that bleed upon scraping."
+    "chiefComplaint": "A 28-year-old inhaler user develops white oral mucosal plaques."
   },
   {
     "id": "afumigatus",
@@ -753,7 +753,7 @@
     "virulence": "Angioinvasive properties allow hyphae to penetrate vascular endothelium causing thrombosis, infarction, and tissue necrosis; produces gliotoxin and aflatoxin (A. flavus).",
     "transmission": "Inhalation of ubiquitous airborne environmental conidia/spores from decaying compost or hospital construction sites.",
     "buzzwords": "Acute 45° angle branching septate hyphae, Aspergilloma fungus ball in pre-existing TB cavity, Air-crescent sign on CT, Allergic Bronchopulmonary Aspergillosis (ABPA) in CF/asthma, Voriconazole.",
-    "chiefComplaint": "A 62-year-old man with prior lung disease presents with recurrent episodes of coughing up significant amounts of blood."
+    "chiefComplaint": "A 62-year-old man presents with recurrent episodes of coughing up blood."
   },
   {
     "id": "hcapsulatum",
@@ -774,7 +774,7 @@
     "virulence": "Survives and replicates inside macrophage phagolysosomes by alkalinizing luminal pH with urease and capture of essential iron and calcium.",
     "transmission": "Inhalation of microconidia aerosolized from soil enriched with bird (starling) or bat guano along Ohio and Mississippi River valleys.",
     "buzzwords": "'Bird or bat droppings', Ohio and Mississippi river valleys, Spelunking in caves, Yeast hiding inside macrophages (smaller than RBC), Coin lesions & calcified granulomas mimicking TB.",
-    "chiefComplaint": "A 45-year-old cave explorer develops persistent fever, dry cough, fatigue, and enlarged abdominal organs."
+    "chiefComplaint": "A 45-year-old cave explorer presents with persistent low-grade fever."
   },
   {
     "id": "ngonorrhoeae",
@@ -795,7 +795,7 @@
     "virulence": "Pili exhibit high-frequency antigenic and phase variation (no protective immunity / recurrent infections possible); IgA protease cleaves mucosal IgA; Lipooligosaccharide (LOS) lacks O-antigen.",
     "transmission": "Sexual contact; vertical transmission during vaginal delivery causes ophthalmia neonatorum (prevented with erythromycin eye ointment).",
     "buzzwords": "Intracellular Gram-negative diplococci, Ferments Glucose only, Asymmetric migratory polyarthralgias with pustular skin lesions (DGI), Thayer-Martin chocolate agar.",
-    "chiefComplaint": "A 24-year-old male presents with acute profuse yellow-green penile discharge and burning upon urination."
+    "chiefComplaint": "A 24-year-old male presents with profuse purulent urethral discharge."
   },
   {
     "id": "cbotulinum",
@@ -816,7 +816,7 @@
     "virulence": "Botulinum neurotoxin (AB toxin) light chain is a zinc endopeptidase that cleaves SNARE proteins (SNAP-25, synaptobrevin), irreversibly blocking acetylcholine exocytosis from motor nerve terminals.",
     "transmission": "Ingestion of preformed heat-labile toxin in improperly canned alkaline vegetables/smoked fish (adult foodborne botulism) or ingestion of honey spores that germinate in infant intestine (infant botulism).",
     "buzzwords": "Floppy baby syndrome, Ingestion of raw honey, Cleaves SNARE proteins blocking ACh release, Descending symmetric flaccid paralysis with cranial nerve palsies, Diplopia & ptosis.",
-    "chiefComplaint": "A 5-month-old infant develops severe constipation, weak cry, droopy eyelids, and progressive floppy muscle weakness."
+    "chiefComplaint": "A 5-month-old infant presents with severe constipation and weak cry."
   },
   {
     "id": "ctetani",
@@ -837,6 +837,636 @@
     "virulence": "Tetanospasmin neurotoxin travels retrogradely along motor axons to spinal cord inhibitory interneurons (Renshaw cells), cleaving synaptobrevin to block release of inhibitory neurotransmitters GABA and glycine.",
     "transmission": "Deep puncture wounds, contaminated trauma, or unsterile umbilical cord cutting (neonatal tetanus) introducing spores from soil or animal feces.",
     "buzzwords": "Drumstick terminal spores, Risus sardonicus (sardonic smile), Trismus (lockjaw), Opisthotonos (arched back), Cleaves synaptobrevin blocking GABA and glycine release.",
-    "chiefComplaint": "An unimmunized 60-year-old farmer develops stiffness of the jaw, involuntary facial grimacing, and painful muscle spasms after a puncture wound."
+    "chiefComplaint": "An unimmunized 60-year-old farmer develops painful jaw muscle stiffness."
+  },
+  {
+    "id": "bpseudomallei",
+    "name": "Burkholderia pseudomallei",
+    "commonName": "Melioidosis Bacillus / Whitmore's Bacillus",
+    "taxonomy": "Pseudomonadota (Gram-Negative)",
+    "morphology": {
+      "gram": "Gram-Negative",
+      "shape": "Bipolar safety-pin rod"
+    },
+    "respiration": "Obligate Aerobe",
+    "keyTest": "Oxidase (+), Ashdown agar (wrinkled purple colonies), Earthy odor",
+    "tropism": "Lungs, Liver & Spleen, Skin",
+    "firstLineRx": "Ceftazidime or Meropenem (Intensive) followed by TMP-SMX (Eradication)",
+    "smear": "Gram-negative straight or slightly curved bacilli with characteristic bipolar staining resembling safety pins.",
+    "culture": "Wrinkled, corrugate, dry purple colonies on selective Ashdown agar with prominent earthy odor; resistant to colistin and aminoglycosides.",
+    "vignette": "A 52-year-old rice farmer with poorly controlled type 2 diabetes in Thailand presents with high remittent fevers, pleuritic chest pain, and multiple microabscesses in the liver and spleen ('swiss cheese' spleen on CT).",
+    "virulence": "Type III and VI secretion systems, Burkholderia lethal factor 1, cytotoxic polysaccharide capsule preventing phagocytosis.",
+    "transmission": "Percutaneous inoculation through wet tropical soil or surface water during monsoon rains, inhalation of agricultural dust.",
+    "buzzwords": "Southeast Asia / Northern Australia rice paddy worker, Safety-pin bipolar Gram-negative rod, Ashdown agar wrinkled colonies, Swiss cheese spleen microabscesses.",
+    "chiefComplaint": "A 52-year-old diabetic farmer presents with persistent high-spiking fevers."
+  },
+  {
+    "id": "tmarneffei",
+    "name": "Talaromyces marneffei",
+    "commonName": "Penicillium marneffei / Bamboo Rat Fungus",
+    "taxonomy": "Ascomycota (Thermal Dimorphic Fungus)",
+    "morphology": {
+      "gram": "Thermal Dimorphic Fungus",
+      "shape": "Yeast with central cross-wall (fission)"
+    },
+    "respiration": "Obligate Aerobe",
+    "keyTest": "Thermal dimorphism (25°C mold with soluble red pigment; 37°C intracellular fission yeast)",
+    "tropism": "Skin & Soft Tissue, Reticuloendothelial System, Lungs",
+    "firstLineRx": "Amphotericin B (Induction) followed by Itraconazole (Maintenance)",
+    "smear": "Wright-Giemsa or GMS stain shows small oval intracellular yeast cells (2-4 µm) dividing by binary fission with a clear transverse cross-wall (septum), unlike budding yeasts.",
+    "culture": "On Sabouraud dextrose agar at 25°C, grows as bluish-green mold that diffuses a characteristic deep brick-red soluble pigment into the reverse of the agar; converts to yeast phase at 37°C.",
+    "vignette": "A 36-year-old HIV patient with CD4 count of 28 cells/µL returning from Chiang Mai, Thailand presents with high fever, generalized lymphadenopathy, hepatosplenomegaly, and dozens of molluscum-like umbilicated skin papules on the face and neck.",
+    "virulence": "Intracellular survival within macrophages, heat-shock proteins, cell-wall melanin conferring resistance to oxidative burst.",
+    "transmission": "Inhalation of fungal conidia from endemic soil or aerosolized from bamboo rat burrows in Southeast Asia.",
+    "buzzwords": "Southeast Asia / Thailand AIDS indicator, Diffuse red pigment on agar at 25°C, Intracellular yeast dividing by fission (cross-wall), Umbilicated facial papules.",
+    "chiefComplaint": "A 36-year-old immunocompromised traveler presents with multiple umbilicated facial skin papules."
+  },
+  {
+    "id": "sagalactiae",
+    "name": "Streptococcus agalactiae",
+    "commonName": "Group B Strep (GBS)",
+    "taxonomy": "Firmicutes (Gram-Positive)",
+    "morphology": {
+      "gram": "Gram-Positive",
+      "shape": "Cocci in chains"
+    },
+    "respiration": "Facultative Anaerobe",
+    "keyTest": "Catalase (-), CAMP test (+), Hippurate hydrolysis (+), Bacitracin resistant",
+    "tropism": "Meninges, Bloodstream, Lungs (Neonates)",
+    "firstLineRx": "Intrapartum IV Penicillin G or Ampicillin (or Cefazolin / Clindamycin if allergic)",
+    "smear": "Gram-positive spherical to ovoid cocci arranged in short to medium chains.",
+    "culture": "Narrow zone of beta-hemolysis on sheep blood agar; forms arrow-shaped arrowhead zone of synergistic hemolysis when streaked perpendicular to S. aureus (CAMP test); hydrolyzes sodium hippurate.",
+    "vignette": "A 2-day-old infant born to an unscreened mother presents with lethargy, hypothermia, tachypnea, grunting, and bulging fontanelle; CSF reveals elevated neutrophils and Gram-positive diplococci in chains.",
+    "virulence": "Polysaccharide capsule (sialic acid rich) inhibits complement deposition; Beta-hemolysin/cytolysin.",
+    "transmission": "Vertical transmission during passage through colonized maternal vaginal canal; universal prenatal screening performed at 36-37 weeks gestation.",
+    "buzzwords": "CAMP test arrowhead hemolysis, Hippurate hydrolysis (+), #1 cause of neonatal meningitis and sepsis, Universal screening at 36-37 weeks.",
+    "chiefComplaint": "A 2-day-old newborn infant develops marked respiratory distress."
+  },
+  {
+    "id": "sviridans",
+    "name": "Streptococcus mutans / mitis (Viridans group)",
+    "commonName": "Viridans Streptococci",
+    "taxonomy": "Firmicutes (Gram-Positive)",
+    "morphology": {
+      "gram": "Gram-Positive",
+      "shape": "Cocci in chains"
+    },
+    "respiration": "Facultative Anaerobe",
+    "keyTest": "Catalase (-), Optochin resistant (no zone of inhibition), Bile insoluble, α-hemolytic",
+    "tropism": "Heart Valves, Oral Cavity, Bloodstream",
+    "firstLineRx": "IV Penicillin G or Ceftriaxone (often combined with Gentamicin)",
+    "smear": "Gram-positive cocci in chains and pairs; normal oral flora.",
+    "culture": "Greenish alpha-hemolysis on blood agar; insoluble in 10% bile salts and resistant to ethylhydrocupreine (optochin P-disk).",
+    "vignette": "A 45-year-old woman with a history of rheumatic mitral valve prolapse presents with low-grade afternoon fevers, night sweats, splinter hemorrhages beneath her fingernails, and a worsening holosystolic murmur 3 weeks after dental cleaning.",
+    "virulence": "Produces extracellular dextrans from dietary sucrose, allowing tenacious adherence to fibrin-platelet aggregates on damaged heart valves.",
+    "transmission": "Transient bacteremia following dental manipulation, vigorous flossing, or oral trauma.",
+    "buzzwords": "Subacute bacterial endocarditis (SBE) on previously damaged heart valve post-dental work, Dextran synthesis from sucrose, Optochin resistant, Bile insoluble.",
+    "chiefComplaint": "A 45-year-old female presents with low-grade daily afternoon fevers."
+  },
+  {
+    "id": "efaecalis",
+    "name": "Enterococcus faecalis",
+    "commonName": "Enterococcus / VRE",
+    "taxonomy": "Firmicutes (Gram-Positive)",
+    "morphology": {
+      "gram": "Gram-Positive",
+      "shape": "Cocci in short chains / pairs"
+    },
+    "respiration": "Facultative Anaerobe",
+    "keyTest": "Catalase (-), Bile esculin (+ black slant), Grows in 6.5% NaCl, PYR (+)",
+    "tropism": "Urinary Tract, Heart Valves, Biliary Tract",
+    "firstLineRx": "Ampicillin + Ceftriaxone (or Daptomycin / Linezolid for VRE)",
+    "smear": "Gram-positive oval cocci in pairs and short chains, often morphologically indistinguishable from S. pneumoniae on smear.",
+    "culture": "Hydrolyzes esculin in the presence of 40% bile to produce dark black ferric precipitate; thrives in harsh 6.5% NaCl broth; PYR (pyrrolidonyl arylamidase) positive.",
+    "vignette": "A 68-year-old man who underwent transurethral resection of the prostate (TURP) develops dysuria, persistent bacteremia, and a new aortic diastolic murmur; blood cultures grow bile-esculin positive Gram-positive cocci.",
+    "virulence": "Inherent resistance to many cephalosporins and aminoglycosides; vanA/vanB gene operon alters D-Ala-D-Ala to D-Ala-D-Lac preventing vancomycin binding.",
+    "transmission": "Normal bowel flora; hospital-acquired instrumentation (urinary Foley catheters, cystoscopy, central lines).",
+    "buzzwords": "Bile esculin black agar, 6.5% NaCl tolerance, Post-GU/GI procedure endocarditis, VanA gene D-Ala-D-Lac alteration (VRE).",
+    "chiefComplaint": "A 68-year-old hospitalized man develops burning pain during urination."
+  },
+  {
+    "id": "sepidermidis",
+    "name": "Staphylococcus epidermidis",
+    "commonName": "Staph epidermidis / CoNS",
+    "taxonomy": "Firmicutes (Gram-Positive)",
+    "morphology": {
+      "gram": "Gram-Positive",
+      "shape": "Cocci in clusters"
+    },
+    "respiration": "Facultative Anaerobe",
+    "keyTest": "Catalase (+), Coagulase (-), Novobiocin sensitive, Urease (+)",
+    "tropism": "Prosthetic Implants, Catheters, Artificial Heart Valves",
+    "firstLineRx": "Vancomycin + Rifampin (for biofilm penetration)",
+    "smear": "Gram-positive round cocci arranged in clusters; predominant normal skin commensal.",
+    "culture": "White porcelain non-pigmented colonies without hemolysis on sheep blood agar; growth inhibited by novobiocin disk (>16 mm zone).",
+    "vignette": "A 60-year-old man who received a prosthetic knee replacement 6 months ago presents with insidious, progressive knee pain, localized swelling, and joint effusion without systemic septic shock.",
+    "virulence": "Extracellular polysaccharide slime (glycocalyx) synthesis enabling multilayered biofilm formation on artificial biomaterials.",
+    "transmission": "Normal skin flora; contamination of indwelling intravascular catheters, prosthetic joint hardware, or ventriculoperitoneal shunts.",
+    "buzzwords": "Prosthetic valve/joint biofilm, Novobiocin sensitive, Coagulase negative, Glycocalyx slime.",
+    "chiefComplaint": "A 60-year-old prosthetic knee recipient develops persistent localized joint pain."
+  },
+  {
+    "id": "ssaprophyticus",
+    "name": "Staphylococcus saprophyticus",
+    "commonName": "Honeymoon Cystitis Staph",
+    "taxonomy": "Firmicutes (Gram-Positive)",
+    "morphology": {
+      "gram": "Gram-Positive",
+      "shape": "Cocci in clusters"
+    },
+    "respiration": "Facultative Anaerobe",
+    "keyTest": "Catalase (+), Coagulase (-), Novobiocin resistant, Urease (+)",
+    "tropism": "Bladder & Urethra",
+    "firstLineRx": "TMP-SMX (Trimethoprim-Sulfamethoxazole) or Nitrofurantoin",
+    "smear": "Gram-positive spherical cocci in small irregular clusters.",
+    "culture": "White or yellow non-hemolytic colonies; grows right up to the novobiocin disk with no significant zone of inhibition (<16 mm, novobiocin resistant).",
+    "vignette": "A 20-year-old college student presents with a 2-day history of intense burning on urination, urinary frequency, and suprapubic tenderness 3 days after returning from a weekend trip with her new partner.",
+    "virulence": "Urease enzyme production and surface uro-adhesins specifically targeting uroepithelial cell glycolipids.",
+    "transmission": "Normal flora of the female genital tract and perineum; mechanical inoculation into urethra during sexual intercourse.",
+    "buzzwords": "#2 cause of uncomplicated UTI in young sexually active females (honeymoon cystitis), Novobiocin resistant, Coagulase negative.",
+    "chiefComplaint": "A 20-year-old sexually active female presents with intense painful urination."
+  },
+  {
+    "id": "cperfringens",
+    "name": "Clostridium perfringens",
+    "commonName": "Gas Gangrene Clostridium",
+    "taxonomy": "Firmicutes (Gram-Positive)",
+    "morphology": {
+      "gram": "Gram-Positive",
+      "shape": "Large blunt-ended spore-forming rod"
+    },
+    "respiration": "Obligate Anaerobe",
+    "keyTest": "Nagler reaction (+), Double zone of hemolysis on blood agar, Catalase (-)",
+    "tropism": "Skeletal Muscle, Subcutaneous Soft Tissue, Gastrointestinal Tract",
+    "firstLineRx": "IV High-dose Penicillin G + Clindamycin (for toxin suppression) + Emergent surgical debridement",
+    "smear": "Large, boxcar-shaped Gram-positive bacilli with blunt square ends; notably lacks polymorphonuclear neutrophils due to leukocidin lysis.",
+    "culture": "Rapid anaerobic growth displaying a distinctive double zone of hemolysis on blood agar (inner complete theta-hemolysis, outer partial alpha-hemolysis); Nagler egg yolk agar confirms lecithinase inhibition.",
+    "vignette": "A 38-year-old motorcycle accident victim with an open compound tibia fracture develops sudden, agonizing leg pain out of proportion to exam, bronze discoloration of the skin, and crackling crepitus upon palpation.",
+    "virulence": "Alpha toxin (phospholipase C / lecithinase) cleaves cell membrane phospholipids causing massive myonecrosis, hemolysis, and vascular collapse; Enterotoxin causes late-onset food poisoning.",
+    "transmission": "Contamination of deep traumatic puncture wounds with soil spores; consumption of reheated meat dishes.",
+    "buzzwords": "Gas gangrene / Clostridial myonecrosis, Alpha toxin lecithinase, Double zone of hemolysis, Boxcar rod, Tissue crepitus.",
+    "chiefComplaint": "A 38-year-old trauma patient develops severe excruciating leg pain."
+  },
+  {
+    "id": "cdiphtheriae",
+    "name": "Corynebacterium diphtheriae",
+    "commonName": "Diphtheria Bacillus / Klebs-Löffler Bacillus",
+    "taxonomy": "Actinomycetota (Gram-Positive)",
+    "morphology": {
+      "gram": "Gram-Positive",
+      "shape": "Club-shaped rod in Chinese letter / palisade arrangements"
+    },
+    "respiration": "Facultative Anaerobe",
+    "keyTest": "Cystine-tellurite agar (black colonies), Loeffler's serum (metachromatic granules), Elek test (+)",
+    "tropism": "Pharynx, Heart (Myocardium), Peripheral Nerves",
+    "firstLineRx": "Diphtheria Antitoxin (Equine DAT) + Erythromycin or Penicillin G",
+    "smear": "Pleomorphic Gram-positive club-shaped non-spore-forming bacilli arranged in V- or L-shapes resembling Chinese calligraphy characters; Albert or Neisser stain demonstrates reddish-purple volutin (polyphosphate) metachromatic granules.",
+    "culture": "Forms gunmetal black/gray colonies on cystine-tellurite blood agar; grows rapidly on Loeffler's coagulated serum medium; Elek in vitro immunodiffusion test confirms toxigenicity.",
+    "vignette": "A 6-year-old immigrant child whose parents declined vaccination presents with low-grade fever, sore throat, cervical lymphadenopathy producing a 'bull neck' appearance, and a tough, gray pseudomembrane over the posterior tonsils that bleeds profusely upon attempted dislodgement.",
+    "virulence": "Diphtheria A-B exotoxin (encoded by beta-prophage); the A subunit catalyzes ADP-ribosylation of elongation factor 2 (EF-2), completely terminating host cell protein synthesis.",
+    "transmission": "Airborne respiratory droplets from actively infected individuals or asymptomatic nasopharyngeal carriers.",
+    "buzzwords": "Pseudomembranous pharyngitis that bleeds on scraping, Bull neck lymphadenopathy, ADP-ribosylation of EF-2, Tellurite black colonies, Metachromatic granules.",
+    "chiefComplaint": "A 6-year-old unimmunized child presents with severe sore throat."
+  },
+  {
+    "id": "nasteroides",
+    "name": "Nocardia asteroides",
+    "commonName": "Nocardia",
+    "taxonomy": "Actinomycetota (Weakly Acid-Fast)",
+    "morphology": {
+      "gram": "Weakly Acid-Fast",
+      "shape": "Branching beaded filamentous rod"
+    },
+    "respiration": "Obligate Aerobe",
+    "keyTest": "Modified Kinyoun acid-fast (+), Catalase (+), Urease (+), Aerobic growth",
+    "tropism": "Lungs, Central Nervous System (Brain Abscess), Skin",
+    "firstLineRx": "Trimethoprim-Sulfamethoxazole (TMP-SMX) (high dose, prolonged) ± Carbapenem / Amikacin",
+    "smear": "Gram-positive, thin, beaded, delicate branching filaments that stain positively with modified acid-fast (Fite-Faraco / weak sulfuric acid decolorizer) staining.",
+    "culture": "Strict aerobe with dry, chalky-white to orange wrinkled colonies on non-selective media, emitting an earthy soil odor; takes 3 to 7 days to grow.",
+    "vignette": "A 55-year-old man on chronic high-dose prednisone for a kidney transplant presents with subacute fever, cough with purulent sputum, and weight loss; chest CT reveals multiple cavitary nodular infiltrates, and brain MRI shows multiple ring-enhancing lesions.",
+    "virulence": "Mycolic acids in cell wall resist phagosomal digestion; produces superoxide dismutase and catalase to inactivate neutrophil oxidative burst.",
+    "transmission": "Inhalation of soil saprophytes (pulmonary); direct cutaneous inoculation (mycetoma).",
+    "buzzwords": "Branching beaded filaments, Weakly/partially acid-fast, Cavitary pulmonary nodules + Brain abscess in immunocompromised host, TMP-SMX treatment.",
+    "chiefComplaint": "A 55-year-old renal transplant patient presents with a persistent productive cough."
+  },
+  {
+    "id": "aisraelii",
+    "name": "Actinomyces israelii",
+    "commonName": "Actinomyces / Lumpy Jaw",
+    "taxonomy": "Actinomycetota (Gram-Positive)",
+    "morphology": {
+      "gram": "Gram-Positive",
+      "shape": "Branching filamentous non-acid-fast rod"
+    },
+    "respiration": "Obligate Anaerobe",
+    "keyTest": "Acid-fast negative, Sulfur granules in pus, Molar tooth colonies on agar",
+    "tropism": "Cervicofacial Soft Tissue, Mandible, Abdomen & Pelvis",
+    "firstLineRx": "High-dose IV Penicillin G (2-6 weeks) followed by Oral Penicillin V (6-12 months)",
+    "smear": "Gram-positive branching filamentous bacteria embedded in amorphous proteinaceous debris forming macroscopic hard yellow 'sulfur granules'; NOT acid-fast.",
+    "culture": "Slow-growing obligate anaerobe requiring 7 to 14 days; produces white, rough, wrinkled 'molar tooth' colonies on brain-heart infusion agar.",
+    "vignette": "A 42-year-old male presents with a slowly enlarging, hard, non-tender lump along the angle of his lower jaw 2 months after an uncomplicated dental tooth extraction; the lesion breaks through the skin via multiple draining sinus tracts discharging gritty yellow granules.",
+    "virulence": "Low intrinsic virulence; forms chronic destructive granulomatous lesions with dense fibrotic scar tissue across tissue planes ignoring normal fascial boundaries.",
+    "transmission": "Endogenous normal commensal of the oral cavity, gingival crevices, and tonsillar crypts; invasive disease requires mucosal barrier disruption (dental surgery, IUD placement).",
+    "buzzwords": "Cervicofacial lumpy jaw, Draining sinus tracts across fascial planes, Yellow sulfur granules, Molar tooth colonies, High-dose prolonged Penicillin.",
+    "chiefComplaint": "A 42-year-old male presents with a slowly growing non-tender jaw mass."
+  },
+  {
+    "id": "kpneumoniae",
+    "name": "Klebsiella pneumoniae",
+    "commonName": "Friedländer's Bacillus / Klebsiella",
+    "taxonomy": "Pseudomonadota (Gram-Negative)",
+    "morphology": {
+      "gram": "Gram-Negative",
+      "shape": "Encapsulated plump rod"
+    },
+    "respiration": "Facultative Anaerobe",
+    "keyTest": "MacConkey agar (pink mucoid colonies), Urease (+), Indole (-), Non-motile",
+    "tropism": "Lungs (Upper Lobes), Urinary Tract, Biliary Tree",
+    "firstLineRx": "3rd/4th Gen Cephalosporin (Ceftriaxone / Cefepime) or Carbapenem (if ESBL producer)",
+    "smear": "Short, plump Gram-negative bacilli surrounded by a prominent unstained gelatinous capsule halo.",
+    "culture": "Ferments lactose vigorously on MacConkey agar yielding large, hyper-mucoid, glistening pink colonies with a string-test positive viscosity; non-motile.",
+    "vignette": "A 58-year-old chronic alcoholic male presents with sudden high fever, shaking chills, and a cough productive of gelatinous, dark-red 'currant jelly' sputum; chest radiograph demonstrates right upper lobe consolidation with a prominent bulging interlobar fissure.",
+    "virulence": "Abundant polysaccharide capsule (K antigen) prevents phagocytosis; lipopolysaccharide endotoxin causes septic shock; frequent plasmid carriage of extended-spectrum beta-lactamases (ESBL) and carbapenemases (KPC).",
+    "transmission": "Aspiration of colonized oropharyngeal secretions in alcoholics, diabetics, or nursing home residents; contaminated hospital ventilators.",
+    "buzzwords": "Currant jelly sputum, Bulging interlobar fissure on CXR, Alcoholics and diabetics, Mucoid lactose fermenter, Non-motile Gram-negative rod.",
+    "chiefComplaint": "A 58-year-old alcoholic male presents with a productive cough of thick sputum."
+  },
+  {
+    "id": "pmirabilis",
+    "name": "Proteus mirabilis",
+    "commonName": "Proteus",
+    "taxonomy": "Pseudomonadota (Gram-Negative)",
+    "morphology": {
+      "gram": "Gram-Negative",
+      "shape": "Pleomorphic flagellated rod"
+    },
+    "respiration": "Facultative Anaerobe",
+    "keyTest": "Urease strongly (+), Swarming motility on sheep blood agar, MacConkey (colorless, non-lactose fermenter), H2S (+)",
+    "tropism": "Urinary Tract (Kidneys & Bladder)",
+    "firstLineRx": "Ceftriaxone, Ciprofloxacin, or TMP-SMX",
+    "smear": "Gram-negative pleomorphic bacilli with extensive peritrichous flagella.",
+    "culture": "Exhibits dramatic periodic waves of 'swarming motility' forming concentric rings over non-inhibitory blood agar; non-lactose fermenter on MacConkey agar; rapidly hydrolyzes urea producing deep pink slant within minutes.",
+    "vignette": "A 64-year-old woman with recurrent urinary tract infections presents with severe right flank pain and hematuria; urinalysis reveals an alkaline pH of 8.5, and non-contrast CT abdomen shows a large, radio-opaque staghorn calculus occupying the entire renal pelvis.",
+    "virulence": "Potent urease enzyme hydrolyzes urea into carbon dioxide and ammonia, markedly raising urine pH (>8.0) and precipitating magnesium ammonium phosphate (struvite) stones.",
+    "transmission": "Ascending infection from colonized perineum or long-term indwelling Foley catheters.",
+    "buzzwords": "Swarming motility on blood agar, Alkaline urine (pH > 8.0), Struvite staghorn renal calculi (magnesium ammonium phosphate), Highly urease-positive.",
+    "chiefComplaint": "A 64-year-old woman presents with severe unilateral flank pain."
+  },
+  {
+    "id": "sdysenteriae",
+    "name": "Shigella dysenteriae",
+    "commonName": "Shiga's Bacillus / Shigella",
+    "taxonomy": "Pseudomonadota (Gram-Negative)",
+    "morphology": {
+      "gram": "Gram-Negative",
+      "shape": "Non-motile rod"
+    },
+    "respiration": "Facultative Anaerobe",
+    "keyTest": "MacConkey (colorless, non-lactose fermenter), Hektoen enteric agar (green colonies, no H2S), Non-motile",
+    "tropism": "Colonic Epithelium (Large Intestine)",
+    "firstLineRx": "Azithromycin, Ciprofloxacin, or Ceftriaxone (hydration is critical)",
+    "smear": "Gram-negative slender rods; microscopic fecal exam demonstrates abundant polymorphonuclear leukocytes and red blood cells.",
+    "culture": "Non-lactose fermenting colorless colonies on MacConkey agar; produces green colonies on Hektoen enteric agar without black centers (unlike Salmonella, does NOT produce hydrogen sulfide); strictly non-motile.",
+    "vignette": "An 8-year-old boy in daycare develops high fever, lower abdominal cramping, and 15 episodes of bloody mucoid diarrhea with painful rectal straining (tenesmus); two days later he develops pallor, oliguria, and petechiae (hemolytic uremic syndrome).",
+    "virulence": "Shiga toxin (A-B toxin) cleaves 28S rRNA of the 60S eukaryotic ribosomal subunit, halting host protein synthesis and destroying microvascular endothelium; actin polymerization allows cell-to-cell spread without extracellular exposure.",
+    "transmission": "Fecal-oral transmission via the four Fs (Fingers, Flies, Food, Feces); extremely low infectious dose (as few as 10 organisms survive gastric acid).",
+    "buzzwords": "Low infectious dose (10-100 organisms), Shiga toxin inactivating 60S ribosome, Hemolytic Uremic Syndrome (HUS), Tenesmus with bloody mucoid stool, Non-motile no H2S.",
+    "chiefComplaint": "An 8-year-old schoolchild presents with frequent painful bloody diarrhea."
+  },
+  {
+    "id": "hpylori",
+    "name": "Helicobacter pylori",
+    "commonName": "H. pylori",
+    "taxonomy": "Campylobacterota (Gram-Negative)",
+    "morphology": {
+      "gram": "Gram-Negative",
+      "shape": "Curved helical flagellated rod"
+    },
+    "respiration": "Microaerophilic",
+    "keyTest": "Urease strongly (+), Oxidase (+), Catalase (+), Rapid urease breath test (+)",
+    "tropism": "Gastric Antrum & Duodenum",
+    "firstLineRx": "Quadruple Therapy: Bismuth subsalicylate + Metronidazole + Tetracycline + Proton Pump Inhibitor (PPI)",
+    "smear": "Gram-negative, curved, spiral or seagull-shaped rod with multiple unipolar lophotrichous flagella; visualized in gastric antral biopsies with Warthin-Starry or Giemsa silver stains.",
+    "culture": "Fastidious microaerophilic organism requiring blood-supplemented media at 37°C for 3 to 5 days; diagnosed clinically via 13C-urea breath test, stool antigen, or mucosal biopsy rapid urease (CLO) test.",
+    "vignette": "A 47-year-old male executive presents with months of gnawing, burning epigastric abdominal pain that improves temporarily after eating meals and worsens 2 hours postprandially; endoscopy reveals a solitary 1.5-cm duodenal bulb peptic ulcer.",
+    "virulence": "Urease produces alkaline ammonia cloud neutralizing gastric acid; CagA (cytotoxin-associated gene A) and VacA (vacuolating cytotoxin) induce mucosal inflammation and chronic atrophic gastritis.",
+    "transmission": "Human-to-human transmission via fecal-oral or oral-oral routes during childhood.",
+    "buzzwords": "Urea breath test, Urease-producing curved rod, Duodenal and gastric peptic ulcers, Gastric adenocarcinoma, MALT lymphoma.",
+    "chiefComplaint": "A 47-year-old male presents with gnawing epigastric abdominal pain."
+  },
+  {
+    "id": "bhenselae",
+    "name": "Bartonella henselae",
+    "commonName": "Cat Scratch Bartonella",
+    "taxonomy": "Pseudomonadota (Gram-Negative)",
+    "morphology": {
+      "gram": "Gram-Negative",
+      "shape": "Pleomorphic coccobacillus"
+    },
+    "respiration": "Fastidious Aerobe",
+    "keyTest": "Warthin-Starry silver stain (+), Serology (IFA), Difficult to culture (>21 days)",
+    "tropism": "Lymph Nodes, Vascular Endothelium (AIDS), Liver & Spleen",
+    "firstLineRx": "Azithromycin (Cat Scratch Disease) or Doxycycline (Bacillary Angiomatosis / Peliosis)",
+    "smear": "Small, pleomorphic, fastidious Gram-negative bacilli that stain poorly on standard Gram stain; readily visualized using Warthin-Starry silver impregnation stain in infected lymph node tissue.",
+    "culture": "Extremely slow growing; requires enriched chocolate or rabbit blood agar incubated in 5% CO2 for up to 3 to 4 weeks.",
+    "vignette": "A 9-year-old boy presents with a single, firm, non-tender red papule on his right forearm followed 3 weeks later by painful, suppurative axillary lymphadenopathy; his family adopted a stray kitten 1 month earlier.",
+    "virulence": "BadA adhesin promotes binding to endothelial cells and fibronectin, triggering vascular endothelial growth factor (VEGF) secretion and robust vascular proliferation (angiomatosis).",
+    "transmission": "Scratches, bites, or saliva contamination from domestic kittens infested with the cat flea (Ctenocephalides felis).",
+    "buzzwords": "Cat scratch disease with regional axillary lymphadenopathy, Bacillary angiomatosis in HIV/AIDS, Warthin-Starry silver stain, Kitten exposure.",
+    "chiefComplaint": "A 9-year-old child presents with a swollen tender armpit lymph node."
+  },
+  {
+    "id": "bmelitensis",
+    "name": "Brucella melitensis",
+    "commonName": "Brucella / Malta Fever Bacillus",
+    "taxonomy": "Pseudomonadota (Gram-Negative)",
+    "morphology": {
+      "gram": "Gram-Negative",
+      "shape": "Tiny coccobacillus"
+    },
+    "respiration": "Obligate Aerobe",
+    "keyTest": "Oxidase (+), Catalase (+), Urease (+ in minutes), Prolonged blood culture hold (Castaneda bottle)",
+    "tropism": "Reticuloendothelial System (Spleen, Liver, Bone Marrow)",
+    "firstLineRx": "Doxycycline + Rifampin (or Gentamicin) for 6 weeks minimum",
+    "smear": "Very small, poorly staining Gram-negative coccobacilli; facultative intracellular pathogens inside host macrophages.",
+    "culture": "Requires prolonged incubation in specialized biphasic Castaneda blood culture bottles for up to 4 weeks; small, translucent colonies that hydrolyze urea rapidly within 15 minutes.",
+    "vignette": "A 33-year-old goatherd returning from the Mediterranean region presents with fluctuating daily remittent fevers with drenching night sweats emitting a peculiar moldy odor, profound fatigue, and sacroiliitis after consuming artisanal unpasteurized goat cheese.",
+    "virulence": "Smooth lipopolysaccharide (O-polysaccharide) prevents phagolysosomal fusion inside macrophages; forms non-caseating granulomas throughout the reticuloendothelial system.",
+    "transmission": "Ingestion of unpasteurized goat, sheep, or cow dairy products; direct contact with aborted animal placentas through broken skin; laboratory aerosol exposure.",
+    "buzzwords": "Undulant fever (Malta fever), Unpasteurized goat cheese/dairy, Sacroiliitis, Facultative intracellular inside reticuloendothelial system, Doxycycline + Rifampin.",
+    "chiefComplaint": "A 33-year-old dairy worker presents with fluctuating undulating fevers."
+  },
+  {
+    "id": "pmultocida",
+    "name": "Pasteurella multocida",
+    "commonName": "Pasteurella",
+    "taxonomy": "Pseudomonadota (Gram-Negative)",
+    "morphology": {
+      "gram": "Gram-Negative",
+      "shape": "Coccobacillus with bipolar safety-pin staining"
+    },
+    "respiration": "Facultative Anaerobe",
+    "keyTest": "Oxidase (+), Catalase (+), Indole (+), Mouse-like odor, No growth on MacConkey agar",
+    "tropism": "Skin & Soft Tissue, Periosteum & Joint Space",
+    "firstLineRx": "Amoxicillin-Clavulanate (Augmentin) (or Doxycycline if penicillin-allergic)",
+    "smear": "Small, oval Gram-negative coccobacillus demonstrating distinctive bipolar staining ('safety-pin' appearance with darker stained poles on Giemsa or methylene blue stain).",
+    "culture": "Grows well on sheep blood and chocolate agar producing grayish, smooth, non-hemolytic colonies with a characteristic musty, mouse-like odor; does NOT grow on MacConkey agar (differentiates from Enterobacteriaceae).",
+    "vignette": "A 30-year-old veterinarian presents with severe, throbbing pain, erythema, and purulent drainage from a puncture wound on her right index finger only 8 hours after being bitten by a domestic cat.",
+    "virulence": "Pasteurella multocida toxin (PMT) activates intracellular G-proteins, stimulating cell proliferation and bone resorption; antiphagocytic hyaluronic acid capsule.",
+    "transmission": "Animal bites, scratches, or licking of broken skin by domestic cats (70-90% carriage) or dogs (50% carriage).",
+    "buzzwords": "Cat and dog bites, Rapid onset cellulitis within 24 hours, Bipolar safety-pin staining, Mouse-like odor, Amoxicillin-clavulanate first line.",
+    "chiefComplaint": "A 30-year-old woman develops rapidly spreading redness and swelling on her hand."
+  },
+  {
+    "id": "rrickettsii",
+    "name": "Rickettsia rickettsii",
+    "commonName": "Rocky Mountain Spotted Fever (RMSF)",
+    "taxonomy": "Pseudomonadota (Obligate Intracellular)",
+    "morphology": {
+      "gram": "Gram-Negative",
+      "shape": "Obligate intracellular coccobacillus"
+    },
+    "respiration": "Obligate Intracellular",
+    "keyTest": "Weil-Felix reaction (+ cross-reaction with Proteus vulgaris), Serology (IFA), Biopsy with direct immunofluorescence",
+    "tropism": "Vascular Endothelial Cells",
+    "firstLineRx": "Doxycycline (immediate empiric therapy, even in children)",
+    "smear": "Extremely small, obligate intracellular Gram-negative bacterium; does not stain well with Gram stain; visualized inside host vascular endothelial cells using Giemsa stain.",
+    "culture": "Cannot grow on cell-free artificial agar; requires living tissue cell cultures or embryonated eggs.",
+    "vignette": "A 16-year-old boy returning from a summer camping trip in North Carolina develops sudden onset of 40°C fever, severe frontal headache, and myalgias, followed on day 4 by a blanching macular rash that began on his wrists and ankles and spread inward to his trunk, palms, and soles.",
+    "virulence": "Invades and replicates within vascular endothelial cells, causing widespread necrotizing vasculitis, microvascular leakage, non-cardiogenic pulmonary edema, and multi-organ failure.",
+    "transmission": "Bite of the American dog tick (Dermacentor variabilis) or Rocky Mountain wood tick (Dermacentor andersoni); endemic in the southeastern US.",
+    "buzzwords": "Rocky Mountain Spotted Fever, Dermacentor dog tick, Rash starts on wrists/ankles and spreads centripetally to palms and soles, Vasculitis, Doxycycline.",
+    "chiefComplaint": "A 16-year-old camper presents with high fever and sudden severe headache."
+  },
+  {
+    "id": "cburnetii",
+    "name": "Coxiella burnetii",
+    "commonName": "Q Fever Bacillus",
+    "taxonomy": "Pseudomonadota (Obligate Intracellular)",
+    "morphology": {
+      "gram": "Gram-Negative",
+      "shape": "Small intracellular rod / spore-like form"
+    },
+    "respiration": "Obligate Intracellular",
+    "keyTest": "Phase I and Phase II antibody serology (IFA), Negative blood cultures (culture-negative endocarditis)",
+    "tropism": "Reticuloendothelial System, Lungs, Heart Valves",
+    "firstLineRx": "Doxycycline (Acute Q fever) or Doxycycline + Hydroxychloroquine (Chronic endocarditis)",
+    "smear": "Small pleomorphic rod living inside host phagolysosomes; forms a specialized spore-like small cell variant that resists heat and desiccation in the environment.",
+    "culture": "Obligate intracellular pathogen; highly infectious (BSL-3 agent); routine blood cultures are negative; diagnosis confirmed by Phase I and Phase II IgG/IgM titers.",
+    "vignette": "A 39-year-old livestock veterinarian who recently assisted with sheep birthing presents with sudden high fever, drenching sweats, severe retro-orbital headache, and dry cough; chest X-ray shows patchy consolidation, and cardiac exam reveals a new murmur in a prosthetic valve with negative routine blood cultures.",
+    "virulence": "Spore-like small cell variant survives months in soil; lipopolysaccharide antigenic phase variation (Phase II in acute disease, Phase I in chronic disease).",
+    "transmission": "Inhalation of desiccated aerosols from amniotic fluid, placenta, or milk of infected sheep, goats, or cattle; no arthropod vector required.",
+    "buzzwords": "Q fever, Inhalation of sheep/cattle placental aerosols, Culture-negative endocarditis, No rash, Phase I and Phase II antibodies, Spore-like resistance.",
+    "chiefComplaint": "A 39-year-old livestock veterinarian presents with sudden onset of high fever and chills."
+  },
+  {
+    "id": "ebv",
+    "name": "Human gammaherpesvirus 4 (Epstein-Barr virus)",
+    "commonName": "Epstein-Barr Virus (EBV) / HHV-4",
+    "taxonomy": "Herpesviridae (Enveloped dsDNA)",
+    "morphology": {
+      "gram": "Enveloped dsDNA Virus",
+      "shape": "Icosahedral capsid with envelope"
+    },
+    "respiration": "Non-applicable (Virus)",
+    "keyTest": "Heterophile antibody Monospot (+), Atypical Downey lymphocytes (>10% on peripheral smear), Viral capsid antigen (VCA) IgM (+)",
+    "tropism": "B Lymphocytes (CD21 receptor), Oropharyngeal Epithelium",
+    "firstLineRx": "Supportive care (avoid contact sports to prevent splenic rupture; avoid ampicillin/amoxicillin which triggers maculopapular rash)",
+    "smear": "Peripheral blood smear demonstrates reactive atypical CD8+ cytotoxic T lymphocytes ('Downey cells') with abundant vacuolated basophilic cytoplasm that molds around neighboring red blood cells.",
+    "culture": "Viral cell culture rarely performed; diagnosed via Paul-Bunnell heterophile agglutination (Monospot test) or anti-EBV serology (anti-VCA, anti-EBNA).",
+    "vignette": "A 19-year-old college student presents with profound fatigue, 39°C fever, severe exudative pharyngitis, posterior cervical lymphadenopathy, and mild splenomegaly; administration of amoxicillin by an urgent care clinic resulted in a diffuse pruritic maculopapular rash.",
+    "virulence": "Envelope glycoprotein gp350 binds complement receptor 2 (CR2 / CD21) on human B lymphocytes; latent membrane proteins (LMP-1) mimic CD40 signaling driving B cell proliferation.",
+    "transmission": "Salivary transmission via close oral contact ('kissing disease') among adolescents and young adults.",
+    "buzzwords": "Infectious mononucleosis, Heterophile antibodies (Monospot), Atypical reactive CD8+ T cells (Downey cells), CD21 B-cell receptor, Ampicillin-induced rash, Burkitt lymphoma.",
+    "chiefComplaint": "A 19-year-old college student presents with profound fatigue and painful sore throat."
+  },
+  {
+    "id": "cmv",
+    "name": "Human betaherpesvirus 5 (Cytomegalovirus)",
+    "commonName": "Cytomegalovirus (CMV) / HHV-5",
+    "taxonomy": "Herpesviridae (Enveloped dsDNA)",
+    "morphology": {
+      "gram": "Enveloped dsDNA Virus",
+      "shape": "Icosahedral capsid with envelope"
+    },
+    "respiration": "Non-applicable (Virus)",
+    "keyTest": "Owl-eye basophilic intranuclear inclusion bodies on biopsy, Heterophile antibody negative (Monospot -), PCR viral load",
+    "tropism": "Monocytes, Endothelial Cells, Retina, Gastrointestinal Tract",
+    "firstLineRx": "Ganciclovir / Valganciclovir (or Foscarnet / Cidofovir for resistant strains)",
+    "smear": "Histopathology shows massive cytomegaly with prominent basophilic intranuclear inclusion bodies surrounded by a clear halo ('owl's-eye inclusions').",
+    "culture": "Human fibroblast shell-vial culture demonstrates rapid viral antigen detection; quantitative plasma PCR is primary diagnostic modality.",
+    "vignette": "A 35-year-old AIDS patient with a CD4 count of 35 cells/µL presents with progressive painless blurring of vision, visual floaters, and photopsia; funduscopic examination reveals extensive full-thickness retinal hemorrhages with yellow-white granular exudates along retinal vessels ('pizza pie retinopathy').",
+    "virulence": "Latency in monocytes and bone marrow myeloid progenitors; downregulation of MHC Class I molecules allowing evasion of CD8+ cytotoxic T lymphocytes.",
+    "transmission": "Saliva, breast milk, sexual contact, blood transfusion, organ transplantation, and transplacental mother-to-fetus transmission.",
+    "buzzwords": "Owl-eye intranuclear inclusion bodies, Monospot-negative mononucleosis, Pizza-pie retinitis in AIDS (CD4 < 50), #1 congenital viral infection with sensorineural hearing loss.",
+    "chiefComplaint": "A 35-year-old immunocompromised male presents with painless blurred vision and floaters."
+  },
+  {
+    "id": "vzv",
+    "name": "Human alphaherpesvirus 3 (Varicella-zoster virus)",
+    "commonName": "Varicella-Zoster Virus (VZV) / HHV-3",
+    "taxonomy": "Herpesviridae (Enveloped dsDNA)",
+    "morphology": {
+      "gram": "Enveloped dsDNA Virus",
+      "shape": "Icosahedral capsid with envelope"
+    },
+    "respiration": "Non-applicable (Virus)",
+    "keyTest": "Tzanck smear (multinucleated giant cells), PCR of vesicle fluid, Direct fluorescent antibody (DFA)",
+    "tropism": "Dorsal Root & Trigeminal Ganglia, Skin Epidermis",
+    "firstLineRx": "Valacyclovir, Famciclovir, or IV Acyclovir (supportive for healthy children)",
+    "smear": "Tzanck smear scraping of the vesicle base reveals multinucleated giant cells and Cowdry A eosinophilic intranuclear inclusions.",
+    "culture": "Viral culture or PCR of vesicular fluid demonstrates VZV DNA; serology confirms acute varicella or reactivation.",
+    "vignette": "A 62-year-old woman presents with severe, burning, stabbing pain across the right side of her chest, followed 3 days later by an eruption of clustered erythematous vesicles strictly restricted to the right T5 dermatome that does not cross the midline.",
+    "virulence": "Establishes lifelong latent infection in the sensory dorsal root ganglia and cranial nerve ganglia (trigeminal / geniculate ganglia); reactivates during periods of waning cellular immunity.",
+    "transmission": "Respiratory droplets or direct contact with fluid from active vesicular skin lesions.",
+    "buzzwords": "Dermatomal shingles (herpes zoster), Dewdrops on a rose petal vesicles in all stages of development, Dorsal root ganglion latency, Postherpetic neuralgia, Tzanck smear.",
+    "chiefComplaint": "A 62-year-old woman presents with severe burning pain along her left chest wall."
+  },
+  {
+    "id": "hbv",
+    "name": "Hepatitis B virus",
+    "commonName": "Hepatitis B Virus (HBV)",
+    "taxonomy": "Hepadnaviridae (Enveloped dsDNA-RT)",
+    "morphology": {
+      "gram": "Enveloped DNA-RT Virus",
+      "shape": "Spherical Dane particle (partially dsDNA)"
+    },
+    "respiration": "Non-applicable (Virus)",
+    "keyTest": "HBsAg (+ active infection), HBeAg (+ high viral infectivity), Anti-HBc IgM (+ window period / acute)",
+    "tropism": "Hepatocytes (Liver)",
+    "firstLineRx": "Entecavir or Tenofovir (oral reverse-transcriptase inhibitors) or PEG-Interferon alpha",
+    "smear": "Liver biopsy reveals 'ground-glass hepatocytes' caused by cytoplasm densely packed with Hepatitis B surface antigen (HBsAg).",
+    "culture": "Cannot be cultured in routine microbiological media; diagnosed by serologic panel (HBsAg, anti-HBs, anti-HBc, HBeAg) and serum HBV DNA PCR.",
+    "vignette": "A 27-year-old male presents with fatigue, nausea, dark tea-colored urine, and right upper quadrant discomfort preceded by 2 weeks of fever, hives (urticaria), and polyarthritis (serum sickness-like prodrome); physical exam reveals scleral icterus and tender hepatomegaly.",
+    "virulence": "Partially double-stranded circular DNA genome that replicates via an RNA intermediate using viral reverse transcriptase; Integration into host genome increases risk of hepatocellular carcinoma even without cirrhosis.",
+    "transmission": "Parenteral (IV drug use, needle sticks), sexual intercourse, and vertical mother-to-child transmission during delivery.",
+    "buzzwords": "Ground-glass hepatocytes, Serum sickness prodrome (fever, urticaria, arthritis), Dane particle, HBsAg and anti-HBc IgM in acute window period, Polyarteritis nodosa association.",
+    "chiefComplaint": "A 27-year-old male presents with progressive yellowing of his eyes and skin."
+  },
+  {
+    "id": "hcv",
+    "name": "Hepacivirus C (Hepatitis C virus)",
+    "commonName": "Hepatitis C Virus (HCV)",
+    "taxonomy": "Flaviviridae (Enveloped (+)ssRNA)",
+    "morphology": {
+      "gram": "Enveloped (+)ssRNA Virus",
+      "shape": "Spherical icosahedral capsid"
+    },
+    "respiration": "Non-applicable (Virus)",
+    "keyTest": "Anti-HCV antibody (screening), Quantitative HCV RNA PCR (active infection / cure)",
+    "tropism": "Hepatocytes, Lymphoid Cells",
+    "firstLineRx": "Direct-Acting Antivirals (DAAs): Sofosbuvir-Velpatasvir or Glecaprevir-Pibrentasvir (curative >95%)",
+    "smear": "Liver biopsy shows lymphoid aggregates in portal tracts, focal macrovesicular steatosis, and progressive bridging fibrosis leading to cirrhosis.",
+    "culture": "Cannot be propagated in conventional cell culture; diagnosed via serologic screening for anti-HCV followed by confirmatory plasma HCV RNA RT-PCR.",
+    "vignette": "A 49-year-old man who injected drugs in his twenties presents for routine evaluation; routine blood work reveals asymptomatic elevated ALT/AST, positive anti-HCV antibodies, and detectable serum HCV RNA; physical exam demonstrates mild palmar erythema and spider angiomas.",
+    "virulence": "Lacks 3'-to-5' proofreading exonuclease in its RNA-dependent RNA polymerase, causing hypervariable envelope glycoprotein (E2) mutations (quasispecies) that completely evade neutralizing antibodies.",
+    "transmission": "Blood-borne transmission, predominantly via intravenous drug use, contaminated blood transfusions prior to 1992, or unsterilized tattoo needles.",
+    "buzzwords": "High rate of chronic carrier state (>80%), Lack of 3'-to-5' proofreading exonuclease generating antigenic quasispecies, Mixed cryoglobulinemia, Curative Direct-Acting Antivirals.",
+    "chiefComplaint": "A 49-year-old male presents with persistent generalized fatigue."
+  },
+  {
+    "id": "measles",
+    "name": "Measles morbillivirus",
+    "commonName": "Rubeola / Measles Virus",
+    "taxonomy": "Paramyxoviridae (Enveloped (-)ssRNA)",
+    "morphology": {
+      "gram": "Enveloped (-)ssRNA Virus",
+      "shape": "Pleomorphic helical capsid"
+    },
+    "respiration": "Non-applicable (Virus)",
+    "keyTest": "Koplik spots on physical exam, Measles IgM serology, RT-PCR, Warthin-Finkeldey giant cells",
+    "tropism": "Respiratory Epithelium, Lymphoid Tissue, Endothelial Cells",
+    "firstLineRx": "Supportive care + Vitamin A supplementation (significantly reduces pediatric mortality)",
+    "smear": "Histopathology of lymphoid tissue demonstrates Warthin-Finkeldey multinucleated giant cells containing eosinophilic cytoplasmic and intranuclear inclusion bodies.",
+    "culture": "Diagnosed by viral RT-PCR or measles-specific serum IgM antibodies.",
+    "vignette": "An unvaccinated 4-year-old child presents with a high fever (40°C), cough, coryza, and prominent photophobia with red conjunctivae; examination reveals tiny irregular red lesions with blue-white central specks on the buccal mucosa opposite the molars, followed 2 days later by a confluent maculopapular rash starting at the hairline and spreading downward.",
+    "virulence": "Hemagglutinin (H protein) mediates attachment to host CD46 / CD150; Fusion (F protein) mediates cell membrane fusion and giant cell formation; induces profound prolonged immune suppression.",
+    "transmission": "Extremely contagious airborne respiratory droplet nuclei that remain suspended in room air for up to 2 hours after an infected person leaves (R0 = 12-18).",
+    "buzzwords": "Three C's (Cough, Coryza, Conjunctivitis), Koplik spots on buccal mucosa, Descending maculopapular rash, Subacute Sclerosing Panencephalitis (SSPE), Vitamin A treatment.",
+    "chiefComplaint": "A 4-year-old unvaccinated child presents with high fever, cough, and red eyes."
+  },
+  {
+    "id": "norovirus",
+    "name": "Norwalk virus",
+    "commonName": "Norovirus / Winter Vomiting Bug",
+    "taxonomy": "Caliciviridae (Non-enveloped (+)ssRNA)",
+    "morphology": {
+      "gram": "Non-enveloped (+)ssRNA Virus",
+      "shape": "Small round icosahedral capsid"
+    },
+    "respiration": "Non-applicable (Virus)",
+    "keyTest": "RT-PCR of stool or vomitus, Extreme resistance to alcohol-based hand sanitizers, Low infectious dose",
+    "tropism": "Small Intestinal Enterocytes",
+    "firstLineRx": "Oral / IV rehydration therapy (self-limiting in 24-48 hours)",
+    "smear": "Small, round, non-enveloped viral particles (27-35 nm) with cup-shaped surface indentations visible on transmission electron microscopy.",
+    "culture": "Cannot be routinely propagated in diagnostic cell lines; diagnosed via multiplex gastrointestinal PCR panels or viral enzyme immunoassays.",
+    "vignette": "A 28-year-old cruise ship passenger develops sudden, explosive projectile vomiting, watery non-bloody diarrhea, and low-grade fever 24 hours after eating at a communal seafood buffet; over 150 other passengers and crew members develop identical symptoms within 48 hours.",
+    "virulence": "Extreme environmental stability resisting freezing, heat up to 60°C, and alcohol hand sanitizers; blunts jejunal villi causing transient malabsorption.",
+    "transmission": "Fecal-oral route via contaminated food (especially raw oysters), water, fomites, and aerosolized vomitus droplets; low infectious dose (<20 particles).",
+    "buzzwords": "Explosive projectile vomiting on cruise ships and school dorms, Non-enveloped resistant to alcohol hand sanitizers, Watery non-bloody diarrhea, Extremely low infectious dose.",
+    "chiefComplaint": "A 28-year-old cruise ship passenger develops sudden explosive vomiting."
+  },
+  {
+    "id": "cimmitis",
+    "name": "Coccidioides immitis",
+    "commonName": "Valley Fever / San Joaquin Valley Fungus",
+    "taxonomy": "Ascomycota (Thermal Dimorphic Fungus)",
+    "morphology": {
+      "gram": "Thermal Dimorphic Fungus",
+      "shape": "Spherule containing endospores"
+    },
+    "respiration": "Obligate Aerobe",
+    "keyTest": "KOH / Silver stain shows thick-walled spherules filled with endospores, Barrel-shaped arthroconidia on Sabouraud agar, Complement fixation serology",
+    "tropism": "Lungs, Bones & Joints, Meninges (Disseminated)",
+    "firstLineRx": "Fluconazole or Itraconazole (Mild/Moderate) or IV Amphotericin B (Severe / Meningeal)",
+    "smear": "Tissue biopsy or sputum KOH preparation reveals large (20-100 µm), thick, doubly-refractile walled spherules packed with dozens of small round endospores (2-5 µm); MUCH larger than red blood cells.",
+    "culture": "At 25°C on fungal media, grows as white fluffy mold consisting of septate hyphae that fragment into highly infectious, barrel-shaped alternating arthroconidia (extreme biohazard to laboratory personnel).",
+    "vignette": "A 44-year-old construction worker in Bakersfield, California presents with fever, non-productive cough, chest pain, and painful erythematous pretibial nodules on both shins (erythema nodosum) accompanied by bilateral knee arthralgias after a severe desert dust storm.",
+    "virulence": "Arthroconidia enter alveoli, evade neutrophil phagocytosis, and swell into spherules that rupture to release hundreds of endospores; alkaline microenvironment production.",
+    "transmission": "Inhalation of airborne arthroconidia aerosolized from alkaline desert soil in the Southwestern United States (San Joaquin Valley, Arizona, Texas).",
+    "buzzwords": "Thick-walled spherules filled with endospores, Desert Southwest US / San Joaquin Valley, Erythema nodosum (desert bumps) and arthralgias (desert rheumatism), Barrel arthroconidia.",
+    "chiefComplaint": "A 44-year-old construction worker in Arizona presents with persistent chest pain and cough."
+  },
+  {
+    "id": "pjirovecii",
+    "name": "Pneumocystis jirovecii",
+    "commonName": "Pneumocystis / PCP",
+    "taxonomy": "Ascomycota (Atypical Yeast-like Fungus)",
+    "morphology": {
+      "gram": "Atypical Yeast Fungus",
+      "shape": "Disc / cup-shaped cysts with central dark spot"
+    },
+    "respiration": "Microaerophilic",
+    "keyTest": "Grocott's methenamine silver (GMS) stain showing crushed ping-pong ball cysts, Elevated serum 1,3-beta-D-glucan, Elevated LDH",
+    "tropism": "Alveolar Spaces (Lungs)",
+    "firstLineRx": "Trimethoprim-Sulfamethoxazole (TMP-SMX) ± Prednisone (if PaO2 < 70 mmHg or A-a gradient > 35)",
+    "smear": "Grocott's methenamine silver (GMS) or Giemsa stain of bronchoalveolar lavage (BAL) fluid demonstrates cup-shaped, boat-shaped, or collapsed 'crushed ping-pong ball' cysts (5-8 µm) with central dark dot-like thickening.",
+    "culture": "Cannot be cultured in vitro on artificial agar media; confirmed via silver staining, direct immunofluorescent antibody (DFA), or PCR of sputum/BAL.",
+    "vignette": "A 37-year-old male with untreated HIV presents with 3 weeks of insidious, progressive exertional dyspnea, dry non-productive cough, and low-grade fever; laboratory workup reveals CD4 count of 85 cells/µL, markedly elevated LDH, and chest X-ray shows diffuse bilateral symmetrical 'batwing' ground-glass perihilar infiltrates.",
+    "virulence": "Major surface glycoprotein (Msg) undergoes antigenic variation; attaches to Type I pneumocytes filling alveoli with foamy, eosinophilic honeycombed exudate.",
+    "transmission": "Inhalation of airborne cysts; asymptomatic carriage is ubiquitous, but clinical disease occurs almost exclusively when CD4+ T cell counts drop below 200 cells/µL.",
+    "buzzwords": "Crushed ping-pong ball / cup-shaped silver-stained cysts on BAL, CD4 < 200 in AIDS, Diffuse bilateral interstitial ground-glass batwing infiltrates, High LDH, TMP-SMX prophylaxis and treatment.",
+    "chiefComplaint": "A 37-year-old HIV-positive male presents with progressive shortness of breath on exertion."
+  },
+  {
+    "id": "tvaginalis",
+    "name": "Trichomonas vaginalis",
+    "commonName": "Trichomonas",
+    "taxonomy": "Metamonada (Flagellated Protozoan)",
+    "morphology": {
+      "gram": "Flagellated Protozoan",
+      "shape": "Pear-shaped motile flagellated trophozoite"
+    },
+    "respiration": "Aerotolerant Anaerobe",
+    "keyTest": "Wet mount (motile trophozoites with jerky corkscrew motility), Vaginal pH > 4.5, NAAT (+)",
+    "tropism": "Squamous Epithelium of Urogenital Tract",
+    "firstLineRx": "Oral Metronidazole or Tinidazole (treat BOTH patient and sexual partners)",
+    "smear": "Direct saline wet mount microscopy reveals motile, pear-shaped flagellated trophozoites (10-20 µm) with four anterior flagella and an undulating membrane displaying active, jerky, corkscrew motility; NO cyst form exists.",
+    "culture": "Diamond's medium can be used for culture, but nucleic acid amplification testing (NAAT) is the current gold standard diagnostic test.",
+    "vignette": "A 25-year-old sexually active woman presents with profuse, foul-smelling, yellow-green frothy vaginal discharge accompanied by vulvar itching and burning; speculum examination reveals diffuse vaginal erythema with punctate hemorrhages on the cervix ('strawberry cervix'), and vaginal pH is 6.0.",
+    "virulence": "Adheres to vaginal squamous epithelium via surface lipophosphoglycan and cysteine proteases; causes contact-dependent epithelial cell lysis and localized inflammatory sloughing.",
+    "transmission": "Strictly sexually transmitted infection (STI); cannot survive on environmental surfaces because it exists solely as a trophozoite without a protective cyst form.",
+    "buzzwords": "Strawberry cervix (colpitis macularis), Frothy yellow-green malodorous discharge with pH > 4.5, Motile flagellated trophozoites on wet mount with jerky motility, Trophozoite only (no cyst form), Metronidazole for both partners.",
+    "chiefComplaint": "A 25-year-old female presents with profuse foul-smelling vaginal discharge."
   }
 ]
