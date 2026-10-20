@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { getDailyLeaderboard, getAllTimeLeaderboard } from '../firebase';
 import { calculateUserProgression, calculateRxXp, AVATAR_OPTIONS, RANKS } from '../utils/leveling';
+import RankInfoModal from './RankInfoModal';
 
 export default function LeaderboardModal({ 
   isOpen, 
@@ -21,6 +22,7 @@ export default function LeaderboardModal({
   const [allTimeScores, setAllTimeScores] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [showRankInfoModal, setShowRankInfoModal] = useState(false);
 
   const fetchLeaderboards = async () => {
     setLoading(true);
@@ -112,6 +114,9 @@ export default function LeaderboardModal({
       };
     });
   }, [allTimeScores, user, userProfile, userStats, currentUid, practiceRxBugIds]);
+
+  const currentUserEntry = processedAllTime.find(e => (user && e.id === user.uid) || (currentUid && e.id === currentUid));
+  const currentUserLevel = currentUserEntry?.prog?.level;
 
   // Highest Rank List (Sorted by Total XP desc, then level desc, then wins desc)
   const allTimeExpList = useMemo(() => {
@@ -205,6 +210,15 @@ export default function LeaderboardModal({
           </div>
 
           <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowRankInfoModal(true)}
+              className="px-2.5 sm:px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-750 border border-slate-700 text-slate-300 hover:text-amber-400 text-xs font-bold flex items-center gap-1.5 transition shadow-sm"
+              title="View Medical Rank Information Table"
+            >
+              <Award className="w-4 h-4 text-amber-400" />
+              <span className="hidden sm:inline">Rank Info</span>
+            </button>
+
             <button
               onClick={fetchLeaderboards}
               disabled={loading}
@@ -642,6 +656,13 @@ export default function LeaderboardModal({
         )}
 
       </div>
+
+      {/* Medical Rank Information Scale Modal */}
+      <RankInfoModal
+        isOpen={showRankInfoModal}
+        onClose={() => setShowRankInfoModal(false)}
+        currentLevel={currentUserLevel}
+      />
     </div>
   );
 }

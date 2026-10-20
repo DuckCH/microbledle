@@ -9,6 +9,7 @@ import {
   AVATAR_OPTIONS,
   generateRandomPlayerName
 } from '../utils/leveling';
+import RankInfoModal from './RankInfoModal';
 
 export default function ProfileModal({ 
   isOpen, 
@@ -27,6 +28,7 @@ export default function ProfileModal({
   const [status, setStatus] = useState(profile?.status || '');
   const [avatar, setAvatar] = useState(profile?.avatar || 'microscope');
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [showRankInfoModal, setShowRankInfoModal] = useState(false);
 
   // Sync state when profile changes
   useEffect(() => {
@@ -126,6 +128,24 @@ export default function ProfileModal({
             )}
           </div>
         </div>
+
+        {/* View Rank Information Button */}
+        <button
+          type="button"
+          onClick={() => setShowRankInfoModal(true)}
+          className="w-full mb-3 p-3.5 rounded-2xl bg-slate-950/80 hover:bg-slate-800/80 border border-amber-500/30 hover:border-amber-400 text-amber-300 font-semibold flex items-center justify-between transition text-xs group shadow-sm active:scale-[0.99]"
+        >
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30">
+              <Award className="w-4 h-4" />
+            </div>
+            <div className="text-left">
+              <div className="font-bold text-slate-100 text-sm">Rank Information</div>
+              <div className="text-[11px] text-slate-400">17-level medical scale, badges & EXP requirements</div>
+            </div>
+          </div>
+          <ArrowRight className="w-4 h-4 text-amber-400 group-hover:translate-x-1 transition-transform" />
+        </button>
 
         {/* View Personal Statistics Button */}
         <button
@@ -245,6 +265,13 @@ export default function ProfileModal({
         </form>
 
       </div>
+
+      {/* Rank Information Scale Modal */}
+      <RankInfoModal
+        isOpen={showRankInfoModal}
+        onClose={() => setShowRankInfoModal(false)}
+        currentLevel={progression.level}
+      />
     </div>
   );
 }
