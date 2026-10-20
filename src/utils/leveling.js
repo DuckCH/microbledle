@@ -7,16 +7,17 @@ export const RANKS = [
   { level: 4,  title: 'Y3 Medical Student',            minXp: 1100,  maxXp: 1800,     badge: '🧬' },
   { level: 5,  title: 'Y4 Medical Student',            minXp: 1800,  maxXp: 2700,     badge: '🩺' },
   { level: 6,  title: 'Y5 Medical Student',            minXp: 2700,  maxXp: 3800,     badge: '🥼' },
-  { level: 7,  title: 'Y6 Medical Student (Extern)',   minXp: 3800,  maxXp: 5100,     badge: '⭐' },
+  { level: 7,  title: 'Extern',                        minXp: 3800,  maxXp: 5100,     badge: '⭐' },
   { level: 8,  title: 'Intern 1',                      minXp: 5100,  maxXp: 6700,     badge: '🧫' },
   { level: 9,  title: 'Intern 2',                      minXp: 6700,  maxXp: 8600,     badge: '🏥' },
   { level: 10, title: 'Intern 3',                      minXp: 8600,  maxXp: 10800,    badge: '💉' },
-  { level: 11, title: 'Resident 1 (R1)',               minXp: 10800, maxXp: 13400,    badge: '💊' },
-  { level: 12, title: 'Resident 2 (R2)',               minXp: 13400, maxXp: 16500,    badge: '📋' },
-  { level: 13, title: 'Resident 3 (R3 / Chief)',       minXp: 16500, maxXp: 20200,    badge: '🏅' },
-  { level: 14, title: 'Fellow 1 (F1)',                 minXp: 20200, maxXp: 24600,    badge: '🎯' },
-  { level: 15, title: 'Fellow 2 (F2)',                 minXp: 24600, maxXp: 30000,    badge: '🌟' },
-  { level: 16, title: 'Attending (อาจารย์แพทย์)',       minXp: 30000, maxXp: Infinity, badge: '👑' },
+  { level: 11, title: 'Resident 1',                    minXp: 10800, maxXp: 13400,    badge: '💊' },
+  { level: 12, title: 'Resident 2',                    minXp: 13400, maxXp: 16500,    badge: '📋' },
+  { level: 13, title: 'Chief Resident',                minXp: 16500, maxXp: 20200,    badge: '🏅' },
+  { level: 14, title: 'Fellow 1',                      minXp: 20200, maxXp: 24600,    badge: '🎯' },
+  { level: 15, title: 'Fellow 2',                      minXp: 24600, maxXp: 30000,    badge: '🌟' },
+  { level: 16, title: 'Young staff',                   minXp: 30000, maxXp: 38000,    badge: '👔' },
+  { level: 17, title: 'Senior staff',                  minXp: 38000, maxXp: Infinity, badge: '👑' },
 ];
 
 export const STATUS_OPTIONS = [
@@ -26,16 +27,17 @@ export const STATUS_OPTIONS = [
   'Medical Student Y3',
   'Medical Student Y4',
   'Medical Student Y5',
-  'Medical Student Y6 (Extern)',
+  'Extern',
   'Intern 1 (แพทย์เพิ่มพูนทักษะ)',
   'Intern 2 (แพทย์ใช้ทุน)',
   'Intern 3 (แพทย์ใช้ทุน)',
-  'Resident 1 (แพทย์ประจำบ้าน R1)',
-  'Resident 2 (แพทย์ประจำบ้าน R2)',
-  'Resident 3 (แพทย์ประจำบ้าน R3)',
-  'Fellow 1 (แพทย์ประจำบ้านต่อยอด F1)',
-  'Fellow 2 (แพทย์ประจำบ้านต่อยอด F2)',
-  'Attending (อาจารย์แพทย์)'
+  'Resident 1',
+  'Resident 2',
+  'Chief Resident',
+  'Fellow 1',
+  'Fellow 2',
+  'Young staff',
+  'Senior staff'
 ];
 
 export const AVATAR_OPTIONS = [

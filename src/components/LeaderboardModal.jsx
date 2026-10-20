@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { 
   X, Trophy, Medal, Crown, Calendar, Sparkles, RefreshCw, 
-  Flame, Award, Search, User, Clock, ArrowRight, ShieldCheck
+  Flame, Award, Search, User, Clock, ArrowRight, ShieldCheck, BookOpen
 } from 'lucide-react';
 import { getDailyLeaderboard, getAllTimeLeaderboard } from '../firebase';
 import { calculateUserProgression, calculateRxXp, AVATAR_OPTIONS, RANKS } from '../utils/leveling';
@@ -16,7 +16,7 @@ export default function LeaderboardModal({
   practiceRxBugIds = [],
   onOpenAuth 
 }) {
-  const [tab, setTab] = useState('daily'); // 'daily' | 'exp' | 'wins'
+  const [tab, setTab] = useState('daily'); // 'daily' | 'exp' | 'wins' | 'discovered'
   const [dailyScores, setDailyScores] = useState([]);
   const [allTimeScores, setAllTimeScores] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -113,7 +113,7 @@ export default function LeaderboardModal({
     });
   }, [allTimeScores, user, userProfile, userStats, currentUid, practiceRxBugIds]);
 
-  // Highest EXP List (Sorted by XP desc, then level desc, then wins desc)
+  // Highest Rank List (Sorted by Total XP desc, then level desc, then wins desc)
   const allTimeExpList = useMemo(() => {
     return [...processedAllTime].sort((a, b) => {
       const xpDiff = (b.prog?.totalXp || 0) - (a.prog?.totalXp || 0);
@@ -132,6 +132,18 @@ export default function LeaderboardModal({
       const streakDiff = (b.stats?.streak || 0) - (a.stats?.streak || 0);
       if (streakDiff !== 0) return streakDiff;
       return (b.prog?.totalXp || 0) - (a.prog?.totalXp || 0);
+    });
+  }, [processedAllTime]);
+
+  // Highest Discovered Pathogens List (Sorted by unlocked count desc, then total XP desc, then wins desc)
+  const allTimeDiscoveredList = useMemo(() => {
+    return [...processedAllTime].sort((a, b) => {
+      const bugsA = (a.unlockedBugIds || []).length;
+      const bugsB = (b.unlockedBugIds || []).length;
+      if (bugsB !== bugsA) return bugsB - bugsA;
+      const xpDiff = (b.prog?.totalXp || 0) - (a.prog?.totalXp || 0);
+      if (xpDiff !== 0) return xpDiff;
+      return (b.stats?.wins || 0) - (a.stats?.wins || 0);
     });
   }, [processedAllTime]);
 
@@ -155,6 +167,13 @@ export default function LeaderboardModal({
       return !searchTerm || name.toLowerCase().includes(searchTerm.toLowerCase());
     });
   }, [allTimeWinsList, searchTerm]);
+
+  const filteredDiscovered = useMemo(() => {
+    return allTimeDiscoveredList.filter(item => {
+      const name = item.profile?.displayName || item.displayName || item.id;
+      return !searchTerm || name.toLowerCase().includes(searchTerm.toLowerCase());
+    });
+  }, [allTimeDiscoveredList, searchTerm]);
 
   if (!isOpen) return null;
 
@@ -207,6 +226,7 @@ export default function LeaderboardModal({
         <div className="p-3 sm:p-4 bg-slate-950/60 border-b border-slate-800/80 shrink-0 space-y-3">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-1 sm:gap-1.5 p-1 bg-slate-900 border border-slate-800 rounded-2xl overflow-x-auto scrollbar-none max-w-full">
+              {/* Tab 1: Today's Case */}
               <button
                 onClick={() => setTab('daily')}
                 className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition shrink-0 ${
@@ -216,10 +236,10 @@ export default function LeaderboardModal({
                 }`}
               >
                 <Calendar className="w-3.5 h-3.5 shrink-0" />
-                <span className="hidden sm:inline">Today's Case ({currentDateStr})</span>
-                <span className="sm:hidden">Today</span>
+                <span>Today's Case</span>
               </button>
 
+              {/* Tab 2: Highest Rank */}
               <button
                 onClick={() => setTab('exp')}
                 className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition shrink-0 ${
@@ -232,6 +252,7 @@ export default function LeaderboardModal({
                 <span>Highest Rank</span>
               </button>
 
+              {/* Tab 3: All-Time Daily Wins */}
               <button
                 onClick={() => setTab('wins')}
                 className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition shrink-0 ${
@@ -243,6 +264,20 @@ export default function LeaderboardModal({
                 <Trophy className="w-3.5 h-3.5 shrink-0 text-amber-300" />
                 <span className="hidden sm:inline">All-Time Daily Wins</span>
                 <span className="sm:hidden">Daily Wins</span>
+              </button>
+
+              {/* Tab 4: Highest Discovered Pathogens */}
+              <button
+                onClick={() => setTab('discovered')}
+                className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition shrink-0 ${
+                  tab === 'discovered'
+                    ? 'bg-cyan-600 text-white shadow-md'
+                    : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                <BookOpen className="w-3.5 h-3.5 shrink-0 text-cyan-200" />
+                <span className="hidden sm:inline">Highest Discovered</span>
+                <span className="sm:hidden">Discovered</span>
               </button>
             </div>
 
@@ -365,11 +400,10 @@ export default function LeaderboardModal({
               ) : (
                 filteredExp.map((entry, idx) => {
                   const prof = entry.profile || {};
-                  const rowStats = entry.stats || {};
                   const avatarObj = AVATAR_OPTIONS.find(a => a.id === prof.avatar) || AVATAR_OPTIONS[0];
                   const prog = entry.prog;
                   const isCurrentUser = (user && user.uid === entry.id) || (currentUid && entry.id === currentUid);
-                  const hasNonDuplicateStatus = prof.status && prof.status.trim().toLowerCase() !== prog.title.trim().toLowerCase();
+                  const hasNonDuplicateStatus = prof.status && prof.status.trim() && prof.status.trim().toLowerCase() !== prog.title.trim().toLowerCase();
 
                   return (
                     <div
@@ -401,21 +435,16 @@ export default function LeaderboardModal({
                               </span>
                             )}
                           </div>
-                          <div className="text-[11px] text-slate-400 font-medium truncate flex items-center gap-1.5">
-                            {hasNonDuplicateStatus ? (
-                              <span className="text-slate-400 dark:text-slate-400 truncate">
-                                {prof.status}
-                              </span>
-                            ) : (
-                              <span className="text-slate-400 truncate">
-                                {rowStats.wins || 0} Wins • {(entry.unlockedBugIds || []).length} Discovered
-                              </span>
-                            )}
-                          </div>
+                          {/* If player has custom status, show it; otherwise leave blank */}
+                          {hasNonDuplicateStatus && (
+                            <div className="text-[11px] text-slate-400 font-medium truncate mt-0.5">
+                              {prof.status}
+                            </div>
+                          )}
                         </div>
                       </div>
 
-                      {/* Right: Rank Title (ex. Resident 2 (R2)) & Level / EXP */}
+                      {/* Right: Rank Title (ex. Resident 2) & Level / EXP */}
                       <div className="text-right shrink-0 space-y-0.5">
                         <div className="text-xs sm:text-sm font-black text-amber-400 flex items-center justify-end gap-1.5">
                           <span className="text-sm">{prog.badge}</span>
@@ -505,6 +534,83 @@ export default function LeaderboardModal({
                           </span>
                           <span className="text-slate-500">•</span>
                           <span className="font-mono text-slate-400">{prog.totalXp.toLocaleString()} XP</span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </>
+          )}
+
+          {/* TAB 4: Highest Discovered Pathogens Ranking */}
+          {tab === 'discovered' && !loading && (
+            <>
+              {filteredDiscovered.length === 0 ? (
+                <div className="py-12 text-center text-slate-400 text-xs space-y-1">
+                  <p className="font-semibold text-slate-300">No discovered pathogens recorded yet.</p>
+                  <p>Play Daily cases and Practice mode to unlock organisms in your Microdex!</p>
+                </div>
+              ) : (
+                filteredDiscovered.map((entry, idx) => {
+                  const prof = entry.profile || {};
+                  const avatarObj = AVATAR_OPTIONS.find(a => a.id === prof.avatar) || AVATAR_OPTIONS[0];
+                  const prog = entry.prog;
+                  const isCurrentUser = (user && user.uid === entry.id) || (currentUid && entry.id === currentUid);
+                  const hasNonDuplicateStatus = prof.status && prof.status.trim() && prof.status.trim().toLowerCase() !== prog.title.trim().toLowerCase();
+                  const discoveredCount = (entry.unlockedBugIds || []).length;
+
+                  return (
+                    <div
+                      key={entry.id || idx}
+                      className={`p-3.5 rounded-2xl border transition flex items-center justify-between gap-3 ${
+                        isCurrentUser 
+                          ? 'bg-cyan-950/40 border-cyan-500/60 shadow-lg shadow-cyan-950/30' 
+                          : 'bg-slate-900/80 border-slate-800/80 hover:bg-slate-800/60'
+                      }`}
+                    >
+                      {/* Left: Rank & Avatar & Info */}
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-7 text-center shrink-0">
+                          {getRankBadge(idx)}
+                        </div>
+
+                        <div className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-lg shrink-0">
+                          {avatarObj.emoji}
+                        </div>
+
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-sm text-white truncate">
+                              {prof.displayName || entry.displayName || 'Player'}
+                            </span>
+                            {isCurrentUser && (
+                              <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-cyan-900 text-cyan-300 border border-cyan-700">
+                                You
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-[11px] text-cyan-400 font-medium truncate flex items-center gap-1.5 mt-0.5">
+                            <span>{prog.badge}</span>
+                            <span>{prog.title}</span>
+                            {hasNonDuplicateStatus && (
+                              <span className="text-slate-400 font-normal truncate">
+                                • {prof.status}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Right: Discovered Metric */}
+                      <div className="text-right shrink-0 space-y-0.5">
+                        <div className="text-sm font-black text-white">
+                          <span className="text-cyan-400 text-sm sm:text-base font-mono">{discoveredCount}</span> <span className="text-xs text-slate-300 font-sans font-semibold">Discovered</span>
+                        </div>
+                        <div className="text-[11px] text-slate-400 flex items-center justify-end gap-1.5 font-medium font-mono">
+                          <span>{Math.round((discoveredCount / 70) * 100)}%</span>
+                          <span className="text-slate-600">•</span>
+                          <span>{prog.totalXp.toLocaleString()} XP</span>
                         </div>
                       </div>
                     </div>
