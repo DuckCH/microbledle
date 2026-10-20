@@ -78,7 +78,7 @@ export default function DischargeCardModal({
 
     ctx.font = '600 15px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
     ctx.fillStyle = '#94a3b8';
-    ctx.fillText('Daily Medical Microbiology Wordle', contentLeft, 94);
+    ctx.fillText('Daily Medical Microbiology Game', contentLeft, 94);
 
     // Date / Mode Pill on Right
     const modeLabel = isPractice ? 'PRACTICE MODE' : `DAILY • ${dateStr}`;
@@ -354,7 +354,7 @@ export default function DischargeCardModal({
 
     ctx.font = '14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
     ctx.fillStyle = '#94a3b8';
-    ctx.fillText('•   Daily Medical Microbiology Wordle', W / 2 + 55, footerY + 38);
+    ctx.fillText('•   Daily Medical Microbiology Game', W / 2 + 55, footerY + 38);
 
     ctx.font = 'bold 14px monospace';
     ctx.fillStyle = '#38bdf8';

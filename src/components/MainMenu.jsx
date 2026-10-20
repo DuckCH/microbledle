@@ -121,7 +121,7 @@ export default function MainMenu({
           MICROBLEDLE
         </h1>
         <p className="text-xs sm:text-sm font-bold text-emerald-600 dark:text-emerald-400 mt-0.5 sm:mt-1 uppercase tracking-wider">
-          Daily Medical Microbiology Wordle
+          Daily Medical Microbiology Game
         </p>
         <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 mt-0.5">
           Find the pathogen • Choose the treatment
