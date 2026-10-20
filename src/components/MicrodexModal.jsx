@@ -107,51 +107,52 @@ export default function MicrodexModal({ isOpen, onClose, unlockedBugIds = [], in
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 md:p-6 bg-black/80 backdrop-blur-md animate-fade">
-      <div className="bg-slate-900 border border-slate-700/80 rounded-3xl w-full max-w-4xl shadow-2xl relative flex flex-col max-h-[92vh] overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 md:p-6 bg-black/80 backdrop-blur-md animate-fade">
+      <div className="bg-slate-900 border border-slate-700/80 rounded-3xl w-full max-w-4xl shadow-2xl relative flex flex-col max-h-[94vh] sm:max-h-[92vh] overflow-hidden">
         
         {/* Header Bar */}
-        <div className="p-5 border-b border-slate-800 flex items-center justify-between shrink-0 bg-slate-900/90">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 text-emerald-400 rounded-2xl border border-emerald-500/30">
-              <BookOpen className="w-6 h-6" />
+        <div className="p-3.5 sm:p-5 border-b border-slate-800 flex items-center justify-between shrink-0 bg-slate-900/90 gap-2">
+          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+            <div className="p-2 sm:p-2.5 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 text-emerald-400 rounded-2xl border border-emerald-500/30 shrink-0">
+              <BookOpen className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
-            <div>
-              <h2 className="text-xl md:text-2xl font-black text-white tracking-tight">
+            <div className="min-w-0">
+              <h2 className="text-lg sm:text-xl md:text-2xl font-black text-white tracking-tight truncate">
                 Microdex Library
               </h2>
-              <p className="text-xs text-slate-400 mt-0.5">
+              <p className="text-[11px] sm:text-xs text-slate-400 mt-0.5 truncate">
                 Pathogen Guide & High-Yield Keyword
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             {/* Study Mode Toggle */}
             <button
               onClick={() => setStudyMode(!studyMode)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 border transition ${
+              className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 border transition whitespace-nowrap shrink-0 ${
                 studyMode 
                   ? 'bg-amber-950/80 border-amber-500/60 text-amber-300' 
                   : 'bg-slate-800/80 border-slate-700 text-slate-400 hover:text-slate-200'
               }`}
               title="Reveal all pathogens for exam studying"
             >
-              {studyMode ? <Eye className="w-3.5 h-3.5 text-amber-400" /> : <EyeOff className="w-3.5 h-3.5" />}
-              {studyMode ? 'Study Mode Active' : 'Study Mode (Reveal All)'}
+              {studyMode ? <Eye className="w-3.5 h-3.5 text-amber-400 shrink-0" /> : <EyeOff className="w-3.5 h-3.5 shrink-0" />}
+              <span className="hidden sm:inline">{studyMode ? 'Study Mode Active' : 'Study Mode (Reveal All)'}</span>
+              <span className="sm:hidden">{studyMode ? 'Studying' : 'Study'}</span>
             </button>
 
             <button
               onClick={onClose}
-              className="p-1.5 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 transition"
+              className="p-1.5 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 transition shrink-0"
             >
-              <X className="w-6 h-6" />
+              <X className="w-5 h-5 sm:w-6 sm:h-6" />
             </button>
           </div>
         </div>
 
         {/* Progress & Search Controls */}
-        <div className="p-4 bg-slate-950/60 border-b border-slate-800/80 shrink-0 space-y-3">
+        <div className="p-3.5 sm:p-4 bg-slate-950/60 border-b border-slate-800/80 shrink-0 space-y-2.5 sm:space-y-3">
           
           {/* Progress Bar */}
           <div className="flex items-center justify-between text-xs">
@@ -181,7 +182,7 @@ export default function MicrodexModal({ isOpen, onClose, unlockedBugIds = [], in
               />
             </div>
 
-            <div className="flex items-center gap-1 overflow-x-auto pb-1 sm:pb-0">
+            <div className="flex items-center gap-1 overflow-x-auto pb-1 sm:pb-0 no-scrollbar">
               {filterOptions.map((opt) => (
                 <button
                   key={opt}

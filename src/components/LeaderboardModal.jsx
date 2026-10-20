@@ -190,86 +190,88 @@ export default function LeaderboardModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 md:p-6 bg-black/85 backdrop-blur-md animate-fade">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6 bg-black/85 backdrop-blur-md animate-fade">
       <div className="bg-slate-900 border border-slate-700/80 rounded-3xl w-full max-w-2xl shadow-2xl relative flex flex-col max-h-[92vh] overflow-hidden text-left">
         
         {/* Header Bar */}
-        <div className="p-5 border-b border-slate-800 flex items-center justify-between shrink-0 bg-slate-900/90">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-gradient-to-br from-amber-500/20 to-emerald-500/20 text-amber-400 rounded-2xl border border-amber-500/30">
-              <Trophy className="w-6 h-6" />
+        <div className="p-3.5 sm:p-5 border-b border-slate-800 flex items-center justify-between shrink-0 bg-slate-900/90">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <div className="p-2 sm:p-2.5 bg-gradient-to-br from-amber-500/20 to-emerald-500/20 text-amber-400 rounded-2xl border border-amber-500/30 shrink-0">
+              <Trophy className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
             <div>
-              <h2 className="text-xl md:text-2xl font-black text-white tracking-tight">
+              <h2 className="text-lg sm:text-xl md:text-2xl font-black text-white tracking-tight">
                 Global Leaderboard
               </h2>
-              <p className="text-xs text-slate-400">
+              <p className="text-[11px] sm:text-xs text-slate-400">
                 Top Diagnosticians Worldwide
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             <button
               onClick={() => setShowRankInfoModal(true)}
-              className="px-2.5 sm:px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-750 border border-slate-700 text-slate-300 hover:text-amber-400 text-xs font-bold flex items-center gap-1.5 transition shadow-sm"
+              className="px-2 sm:px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-750 border border-slate-700 text-slate-300 hover:text-amber-400 text-xs font-bold flex items-center gap-1.5 transition shadow-sm"
               title="View Medical Rank Information Table"
             >
-              <Award className="w-4 h-4 text-amber-400" />
+              <Award className="w-4 h-4 text-amber-400 shrink-0" />
               <span className="hidden sm:inline">Rank Info</span>
             </button>
 
             <button
               onClick={fetchLeaderboards}
               disabled={loading}
-              className="p-2 rounded-xl bg-slate-800 hover:bg-slate-750 border border-slate-700 text-slate-300 hover:text-emerald-400 transition"
+              className="p-1.5 sm:p-2 rounded-xl bg-slate-800 hover:bg-slate-750 border border-slate-700 text-slate-300 hover:text-emerald-400 transition"
               title="Refresh Leaderboard"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-emerald-400' : ''}`} />
             </button>
             <button
               onClick={onClose}
-              className="p-1.5 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 transition"
+              className="p-1 sm:p-1.5 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 transition"
             >
-              <X className="w-6 h-6" />
+              <X className="w-5 h-5 sm:w-6 sm:h-6" />
             </button>
           </div>
         </div>
 
         {/* Tab Switcher & Search Bar */}
-        <div className="p-3 sm:p-4 bg-slate-950/60 border-b border-slate-800/80 shrink-0 space-y-3">
+        <div className="p-2.5 sm:p-4 bg-slate-950/60 border-b border-slate-800/80 shrink-0 space-y-2 sm:space-y-3">
           <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-1 sm:gap-1.5 p-1 bg-slate-900 border border-slate-800 rounded-2xl overflow-x-auto scrollbar-none max-w-full">
+            <div className="flex items-center gap-1 sm:gap-1.5 p-1 bg-slate-900 border border-slate-800 rounded-2xl overflow-x-auto no-scrollbar scrollbar-none max-w-full">
               {/* Tab 1: Today's Case */}
               <button
                 onClick={() => setTab('daily')}
-                className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition shrink-0 ${
+                className={`px-2 sm:px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1 sm:gap-1.5 transition shrink-0 ${
                   tab === 'daily'
                     ? 'bg-emerald-600 text-white shadow-md'
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
                 <Calendar className="w-3.5 h-3.5 shrink-0" />
-                <span>Today's Case</span>
+                <span className="hidden sm:inline">Today's Case</span>
+                <span className="sm:hidden">Today</span>
               </button>
 
               {/* Tab 2: Highest Rank */}
               <button
                 onClick={() => setTab('exp')}
-                className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition shrink-0 ${
+                className={`px-2 sm:px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1 sm:gap-1.5 transition shrink-0 ${
                   tab === 'exp'
                     ? 'bg-amber-600 text-white shadow-md'
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
                 <Sparkles className="w-3.5 h-3.5 shrink-0 text-amber-300" />
-                <span>Highest Rank</span>
+                <span className="hidden sm:inline">Highest Rank</span>
+                <span className="sm:hidden">Rank</span>
               </button>
 
               {/* Tab 3: All-Time Daily Wins */}
               <button
                 onClick={() => setTab('wins')}
-                className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition shrink-0 ${
+                className={`px-2 sm:px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1 sm:gap-1.5 transition shrink-0 ${
                   tab === 'wins'
                     ? 'bg-blue-600 text-white shadow-md'
                     : 'text-slate-400 hover:text-slate-200'
@@ -277,13 +279,13 @@ export default function LeaderboardModal({
               >
                 <Trophy className="w-3.5 h-3.5 shrink-0 text-amber-300" />
                 <span className="hidden sm:inline">All-Time Daily Wins</span>
-                <span className="sm:hidden">Daily Wins</span>
+                <span className="sm:hidden">Wins</span>
               </button>
 
               {/* Tab 4: Highest Discovered Pathogens */}
               <button
                 onClick={() => setTab('discovered')}
-                className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition shrink-0 ${
+                className={`px-2 sm:px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1 sm:gap-1.5 transition shrink-0 ${
                   tab === 'discovered'
                     ? 'bg-cyan-600 text-white shadow-md'
                     : 'text-slate-400 hover:text-slate-200'
@@ -309,7 +311,7 @@ export default function LeaderboardModal({
         </div>
 
         {/* Leaderboard Rows Container */}
-        <div className="p-4 overflow-y-auto flex-1 space-y-2">
+        <div className="p-2.5 sm:p-4 overflow-y-auto flex-1 space-y-2">
           
           {loading && (
             <div className="py-12 text-center text-slate-400 text-xs flex items-center justify-center gap-2">
@@ -340,34 +342,34 @@ export default function LeaderboardModal({
                   return (
                     <div
                       key={entry.id || idx}
-                      className={`p-3 rounded-2xl border transition flex items-center justify-between gap-3 ${
+                      className={`p-2.5 sm:p-3 rounded-2xl border transition flex items-center justify-between gap-2 sm:gap-3 ${
                         isCurrentUser 
                           ? 'bg-emerald-950/40 border-emerald-500/60 shadow-lg shadow-emerald-950/30' 
                           : 'bg-slate-900/80 border-slate-800/80 hover:bg-slate-800/60'
                       }`}
                     >
                       {/* Left: Rank & Avatar & Info */}
-                      <div className="flex items-center gap-3 min-w-0">
-                        <div className="w-7 text-center shrink-0">
+                      <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                        <div className="w-6 sm:w-7 text-center shrink-0">
                           {getRankBadge(idx)}
                         </div>
 
-                        <div className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-lg shrink-0">
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-base sm:text-lg shrink-0">
                           {avatarObj.emoji}
                         </div>
 
-                        <div className="min-w-0">
-                          <div className="flex items-center gap-2">
-                            <span className="font-bold text-sm text-white truncate">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-1.5 sm:gap-2">
+                            <span className="font-bold text-xs sm:text-sm text-white truncate">
                               {currentName}
                             </span>
                             {isCurrentUser && (
-                              <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-emerald-900 text-emerald-300 border border-emerald-700">
+                              <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-emerald-900 text-emerald-300 border border-emerald-700 shrink-0">
                                 You
                               </span>
                             )}
                           </div>
-                          <div className="text-[11px] text-emerald-400 font-medium truncate flex items-center gap-1.5">
+                          <div className="text-[10px] sm:text-[11px] text-emerald-400 font-medium truncate flex items-center gap-1 sm:gap-1.5">
                             <span>{entryBadge}</span>
                             <span>{entryTitle}</span>
                             {entryLevel && (
@@ -384,11 +386,12 @@ export default function LeaderboardModal({
 
                       {/* Right: Guesses count & Grid Preview */}
                       <div className="text-right shrink-0">
-                        <div className="font-mono font-black text-sm text-emerald-400">
-                          {entry.guessesCount}/6 Guesses
+                        <div className="font-mono font-black text-xs sm:text-sm text-emerald-400">
+                          <span className="sm:hidden">{entry.guessesCount}/6</span>
+                          <span className="hidden sm:inline">{entry.guessesCount}/6 Guesses</span>
                         </div>
-                        <div className="text-[10px] text-slate-400 flex items-center justify-end gap-1 mt-0.5">
-                          <Clock className="w-3 h-3 text-slate-500" />
+                        <div className="text-[9px] sm:text-[10px] text-slate-400 flex items-center justify-end gap-1 mt-0.5">
+                          <Clock className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-slate-500" />
                           <span>
                             {entry.submittedAt 
                               ? new Date(entry.submittedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
@@ -422,36 +425,36 @@ export default function LeaderboardModal({
                   return (
                     <div
                       key={entry.id || idx}
-                      className={`p-3.5 rounded-2xl border transition flex items-center justify-between gap-3 ${
+                      className={`p-2.5 sm:p-3.5 rounded-2xl border transition flex items-center justify-between gap-2 sm:gap-3 ${
                         isCurrentUser 
                           ? 'bg-amber-950/40 border-amber-500/60 shadow-lg shadow-amber-950/30' 
                           : 'bg-slate-900/80 border-slate-800/80 hover:bg-slate-800/60'
                       }`}
                     >
                       {/* Left: Rank & Avatar & Info */}
-                      <div className="flex items-center gap-3 min-w-0">
-                        <div className="w-7 text-center shrink-0">
+                      <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                        <div className="w-6 sm:w-7 text-center shrink-0">
                           {getRankBadge(idx)}
                         </div>
 
-                        <div className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-lg shrink-0">
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-base sm:text-lg shrink-0">
                           {avatarObj.emoji}
                         </div>
 
-                        <div className="min-w-0">
-                          <div className="flex items-center gap-2">
-                            <span className="font-bold text-sm text-white truncate">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-1.5 sm:gap-2">
+                            <span className="font-bold text-xs sm:text-sm text-white truncate">
                               {prof.displayName || entry.displayName || 'Player'}
                             </span>
                             {isCurrentUser && (
-                              <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-amber-900 text-amber-300 border border-amber-700">
+                              <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-amber-900 text-amber-300 border border-amber-700 shrink-0">
                                 You
                               </span>
                             )}
                           </div>
                           {/* If player has custom status, show it; otherwise leave blank */}
                           {hasNonDuplicateStatus && (
-                            <div className="text-[11px] text-slate-400 font-medium truncate mt-0.5">
+                            <div className="text-[10px] sm:text-[11px] text-slate-400 font-medium truncate mt-0.5">
                               {prof.status}
                             </div>
                           )}
@@ -459,12 +462,12 @@ export default function LeaderboardModal({
                       </div>
 
                       {/* Right: Rank Title (ex. Resident 2) & Level / EXP */}
-                      <div className="text-right shrink-0 space-y-0.5">
-                        <div className="text-xs sm:text-sm font-black text-amber-400 flex items-center justify-end gap-1.5">
-                          <span className="text-sm">{prog.badge}</span>
-                          <span className="truncate max-w-[140px] sm:max-w-none">{prog.title}</span>
+                      <div className="text-right shrink-0 space-y-0.5 max-w-[125px] sm:max-w-none">
+                        <div className="text-xs sm:text-sm font-black text-amber-400 flex items-center justify-end gap-1 sm:gap-1.5">
+                          <span className="text-xs sm:text-sm shrink-0">{prog.badge}</span>
+                          <span className="truncate">{prog.title}</span>
                         </div>
-                        <div className="text-[11px] text-slate-400 flex items-center justify-end gap-1.5 font-medium font-mono">
+                        <div className="text-[10px] sm:text-[11px] text-slate-400 flex items-center justify-end gap-1 sm:gap-1.5 font-medium font-mono">
                           <span>Lvl {prog.level}</span>
                           <span className="text-slate-600">•</span>
                           <span>{prog.totalXp.toLocaleString()} XP</span>
@@ -497,34 +500,34 @@ export default function LeaderboardModal({
                   return (
                     <div
                       key={entry.id || idx}
-                      className={`p-3.5 rounded-2xl border transition flex items-center justify-between gap-3 ${
+                      className={`p-2.5 sm:p-3.5 rounded-2xl border transition flex items-center justify-between gap-2 sm:gap-3 ${
                         isCurrentUser 
                           ? 'bg-blue-950/40 border-blue-500/60 shadow-lg shadow-blue-950/30' 
                           : 'bg-slate-900/80 border-slate-800/80 hover:bg-slate-800/60'
                       }`}
                     >
                       {/* Left: Rank & Avatar & Info */}
-                      <div className="flex items-center gap-3 min-w-0">
-                        <div className="w-7 text-center shrink-0">
+                      <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                        <div className="w-6 sm:w-7 text-center shrink-0">
                           {getRankBadge(idx)}
                         </div>
 
-                        <div className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-lg shrink-0">
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-base sm:text-lg shrink-0">
                           {avatarObj.emoji}
                         </div>
 
-                        <div className="min-w-0">
-                          <div className="flex items-center gap-2">
-                            <span className="font-bold text-sm text-white truncate">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-1.5 sm:gap-2">
+                            <span className="font-bold text-xs sm:text-sm text-white truncate">
                               {prof.displayName || entry.displayName || 'Player'}
                             </span>
                             {isCurrentUser && (
-                              <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-blue-900 text-blue-300 border border-blue-700">
+                              <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-blue-900 text-blue-300 border border-blue-700 shrink-0">
                                 You
                               </span>
                             )}
                           </div>
-                          <div className="text-[11px] text-blue-400 font-medium truncate flex items-center gap-1.5">
+                          <div className="text-[10px] sm:text-[11px] text-blue-400 font-medium truncate flex items-center gap-1 sm:gap-1.5">
                             <span>{prog.badge}</span>
                             <span>{prog.title}</span>
                             <span className="text-blue-500/90 font-semibold">(Lvl {prog.level})</span>
@@ -539,12 +542,12 @@ export default function LeaderboardModal({
 
                       {/* Right: Daily Wins Metric */}
                       <div className="text-right shrink-0 space-y-0.5">
-                        <div className="text-sm font-black text-white">
-                          <span className="text-emerald-400 text-sm sm:text-base font-mono">{rowStats.wins || 0}</span> Wins
+                        <div className="text-xs sm:text-sm font-black text-white">
+                          <span className="text-emerald-400 text-xs sm:text-sm sm:text-base font-mono">{rowStats.wins || 0}</span> Wins
                         </div>
-                        <div className="text-[11px] text-slate-300 dark:text-slate-400 flex items-center justify-end gap-1.5 font-medium">
+                        <div className="text-[10px] sm:text-[11px] text-slate-300 dark:text-slate-400 flex items-center justify-end gap-1 sm:gap-1.5 font-medium">
                           <span className="flex items-center gap-0.5 text-amber-400 font-semibold">
-                            <Flame className="w-3.5 h-3.5 fill-amber-400" /> {rowStats.streak || 0} streak
+                            <Flame className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-amber-400 shrink-0" /> {rowStats.streak || 0}
                           </span>
                           <span className="text-slate-500">•</span>
                           <span className="font-mono text-slate-400">{prog.totalXp.toLocaleString()} XP</span>
@@ -577,34 +580,34 @@ export default function LeaderboardModal({
                   return (
                     <div
                       key={entry.id || idx}
-                      className={`p-3.5 rounded-2xl border transition flex items-center justify-between gap-3 ${
+                      className={`p-2.5 sm:p-3.5 rounded-2xl border transition flex items-center justify-between gap-2 sm:gap-3 ${
                         isCurrentUser 
                           ? 'bg-cyan-950/40 border-cyan-500/60 shadow-lg shadow-cyan-950/30' 
                           : 'bg-slate-900/80 border-slate-800/80 hover:bg-slate-800/60'
                       }`}
                     >
                       {/* Left: Rank & Avatar & Info */}
-                      <div className="flex items-center gap-3 min-w-0">
-                        <div className="w-7 text-center shrink-0">
+                      <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                        <div className="w-6 sm:w-7 text-center shrink-0">
                           {getRankBadge(idx)}
                         </div>
 
-                        <div className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-lg shrink-0">
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-base sm:text-lg shrink-0">
                           {avatarObj.emoji}
                         </div>
 
-                        <div className="min-w-0">
-                          <div className="flex items-center gap-2">
-                            <span className="font-bold text-sm text-white truncate">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-1.5 sm:gap-2">
+                            <span className="font-bold text-xs sm:text-sm text-white truncate">
                               {prof.displayName || entry.displayName || 'Player'}
                             </span>
                             {isCurrentUser && (
-                              <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-cyan-900 text-cyan-300 border border-cyan-700">
+                              <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-cyan-900 text-cyan-300 border border-cyan-700 shrink-0">
                                 You
                               </span>
                             )}
                           </div>
-                          <div className="text-[11px] text-cyan-400 font-medium truncate flex items-center gap-1.5 mt-0.5">
+                          <div className="text-[10px] sm:text-[11px] text-cyan-400 font-medium truncate flex items-center gap-1 sm:gap-1.5 mt-0.5">
                             <span>{prog.badge}</span>
                             <span>{prog.title}</span>
                             {hasNonDuplicateStatus && (
@@ -618,10 +621,10 @@ export default function LeaderboardModal({
 
                       {/* Right: Discovered Metric */}
                       <div className="text-right shrink-0 space-y-0.5">
-                        <div className="text-sm font-black text-white">
-                          <span className="text-cyan-400 text-sm sm:text-base font-mono">{discoveredCount}</span> <span className="text-xs text-slate-300 font-sans font-semibold">Discovered</span>
+                        <div className="text-xs sm:text-sm font-black text-white">
+                          <span className="text-cyan-400 text-xs sm:text-sm sm:text-base font-mono">{discoveredCount}</span> <span className="text-[10px] sm:text-xs text-slate-300 font-sans font-semibold">Found</span>
                         </div>
-                        <div className="text-[11px] text-slate-400 flex items-center justify-end gap-1.5 font-medium font-mono">
+                        <div className="text-[10px] sm:text-[11px] text-slate-400 flex items-center justify-end gap-1 sm:gap-1.5 font-medium font-mono">
                           <span>{Math.round((discoveredCount / 70) * 100)}%</span>
                           <span className="text-slate-600">•</span>
                           <span>{prog.totalXp.toLocaleString()} XP</span>
@@ -638,17 +641,17 @@ export default function LeaderboardModal({
 
         {/* Footer Prompt if Not Logged In */}
         {!user && (
-          <div className="p-3 bg-slate-950 border-t border-slate-800/80 flex items-center justify-between gap-2 shrink-0">
-            <span className="text-xs text-slate-400 flex items-center gap-1.5">
-              <ShieldCheck className="w-4 h-4 text-emerald-400" />
-              Want to be in Global Leaderboard? Sign in to submit your rank and diagnoses!
+          <div className="p-2.5 sm:p-3 bg-slate-950 border-t border-slate-800/80 flex items-center justify-between gap-2 shrink-0">
+            <span className="text-[11px] sm:text-xs text-slate-400 flex items-center gap-1.5 truncate">
+              <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+              <span className="truncate">Sign in to submit your rank & diagnoses!</span>
             </span>
             <button
               onClick={() => {
                 onClose();
                 onOpenAuth();
               }}
-              className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center gap-1 transition shrink-0"
+              className="px-2.5 sm:px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center gap-1 transition shrink-0"
             >
               Sign In <ArrowRight className="w-3.5 h-3.5" />
             </button>

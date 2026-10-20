@@ -68,8 +68,8 @@ export default function ProfileModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 md:p-6 bg-black/85 backdrop-blur-md animate-fade">
-      <div className="bg-slate-900 border border-slate-700/80 rounded-3xl w-full max-w-lg shadow-2xl relative max-h-[92vh] overflow-y-auto text-left p-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 md:p-6 bg-black/85 backdrop-blur-md animate-fade">
+      <div className="bg-slate-900 border border-slate-700/80 rounded-3xl w-full max-w-lg shadow-2xl relative max-h-[92vh] overflow-y-auto text-left p-4 sm:p-6">
         
         {/* Close Button */}
         <button 
@@ -176,7 +176,7 @@ export default function ProfileModal({
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
               Select Profile Icon
             </label>
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-2">
+            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar scrollbar-none pb-2">
               {AVATAR_OPTIONS.map((item) => (
                 <button
                   type="button"
