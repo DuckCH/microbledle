@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import microbes from './data/microbes.json';
 import { playTileSound, playSelectSound, playWinSound, playDefeatSound } from './utils/audio';
-import { calculateUserProgression, AVATAR_OPTIONS, generateRandomPlayerName } from './utils/leveling';
+import { calculateUserProgression, calculateRxXp, AVATAR_OPTIONS, generateRandomPlayerName } from './utils/leveling';
 import MicrodexModal from './components/MicrodexModal';
 import AuthModal from './components/AuthModal';
 import ProfileModal from './components/ProfileModal';
@@ -387,6 +387,19 @@ export default function App() {
     }
   });
 
+  // Practice Rx Challenge solved organisms (prevents infinite practice EXP farming)
+  const [practiceRxBugIds, setPracticeRxBugIds] = useState(() => {
+    try {
+      const saved = localStorage.getItem('microbledle_practice_rx_bugs');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  // Track if current solved target is a new discovery (to give EXP only once per pathogen in practice)
+  const [isNewDiscovery, setIsNewDiscovery] = useState(false);
+
   const searchInputRef = useRef(null);
   const maxGuesses = 6;
 
@@ -398,13 +411,15 @@ export default function App() {
     maxStreak: 0,
     distribution: [0, 0, 0, 0, 0, 0],
     rxAttempted: 0,
-    rxCorrect: 0
+    rxCorrect: 0,
+    dailyRxWins: 0
   });
 
   // Progression calculation (including Rx Challenge bonus XP)
   const progression = useMemo(() => {
-    return calculateUserProgression(stats.wins, unlockedBugIds.length, (stats.rxCorrect || 0) * 50);
-  }, [stats.wins, unlockedBugIds.length, stats.rxCorrect]);
+    const rxBonusXp = calculateRxXp(stats, practiceRxBugIds);
+    return calculateUserProgression(stats.wins, unlockedBugIds.length, rxBonusXp);
+  }, [stats.wins, stats.dailyRxWins, stats.rxCorrect, unlockedBugIds.length, practiceRxBugIds]);
 
   const currentAvatarObj = useMemo(() => {
     return AVATAR_OPTIONS.find(a => a.id === profile?.avatar) || AVATAR_OPTIONS[0];
@@ -421,34 +436,70 @@ export default function App() {
 
   // Handle post-game Empiric Rx Challenge answer
   const handleRxAnswer = (isCorrect, rxPayload) => {
-    setStats(prev => {
-      if (!isPractice && prev.lastDailyRxDate === dateStr) {
-        return prev;
+    if (!isPractice) {
+      // Daily case: always eligible if correct and not already answered today
+      setStats(prev => {
+        if (prev.lastDailyRxDate === dateStr) {
+          return prev;
+        }
+
+        const updated = {
+          ...prev,
+          lastDailyRxDate: dateStr,
+          dailyRxWins: (prev.dailyRxWins || 0) + (isCorrect ? 1 : 0),
+          rxAttempted: (prev.rxAttempted || 0) + 1,
+          rxCorrect: (prev.rxCorrect || 0) + (isCorrect ? 1 : 0)
+        };
+        localStorage.setItem('microbledle_stats_v1', JSON.stringify(updated));
+        if (user && isFirebaseConfigured) {
+          saveUserProgress(user.uid, { stats: updated });
+        }
+        return updated;
+      });
+
+      if (rxPayload) {
+        const rxSaveData = {
+          dateStr,
+          ...rxPayload,
+          updatedAt: new Date().toISOString()
+        };
+        localStorage.setItem(`microbledle_daily_rx_${dateStr}`, JSON.stringify(rxSaveData));
+        if (user && isFirebaseConfigured) {
+          saveUserProgress(user.uid, { lastDailyRx: rxSaveData });
+        }
+      }
+    } else {
+      // Practice mode:
+      // EXP is gained ONLY ONCE per pathogen, and ONLY if diagnosed for the first time
+      // ("If you diagnosed the pathogen that you already discovered/diagnose, you will not gain any EXP from Diagnose or the Antibiotics Challenge.")
+      const isEligibleForExp = isNewDiscovery && !practiceRxBugIds.includes(target.id);
+
+      if (isEligibleForExp && isCorrect) {
+        setPracticeRxBugIds(prev => {
+          if (!prev.includes(target.id)) {
+            const updated = [...prev, target.id];
+            localStorage.setItem('microbledle_practice_rx_bugs', JSON.stringify(updated));
+            if (user && isFirebaseConfigured) {
+              saveUserProgress(user.uid, { practiceRxBugIds: updated });
+            }
+            return updated;
+          }
+          return prev;
+        });
       }
 
-      const updated = {
-        ...prev,
-        ...(!isPractice ? { lastDailyRxDate: dateStr } : {}),
-        rxAttempted: (prev.rxAttempted || 0) + 1,
-        rxCorrect: (prev.rxCorrect || 0) + (isCorrect ? 1 : 0)
-      };
-      localStorage.setItem('microbledle_stats_v1', JSON.stringify(updated));
-      if (user && isFirebaseConfigured) {
-        saveUserProgress(user.uid, { stats: updated });
-      }
-      return updated;
-    });
-
-    if (!isPractice && rxPayload) {
-      const rxSaveData = {
-        dateStr,
-        ...rxPayload,
-        updatedAt: new Date().toISOString()
-      };
-      localStorage.setItem(`microbledle_daily_rx_${dateStr}`, JSON.stringify(rxSaveData));
-      if (user && isFirebaseConfigured) {
-        saveUserProgress(user.uid, { lastDailyRx: rxSaveData });
-      }
+      setStats(prev => {
+        const updated = {
+          ...prev,
+          rxAttempted: (prev.rxAttempted || 0) + 1,
+          rxCorrect: (prev.rxCorrect || 0) + (isCorrect ? 1 : 0)
+        };
+        localStorage.setItem('microbledle_stats_v1', JSON.stringify(updated));
+        if (user && isFirebaseConfigured) {
+          saveUserProgress(user.uid, { stats: updated });
+        }
+        return updated;
+      });
     }
   };
 
@@ -462,7 +513,8 @@ export default function App() {
           ...prev,
           ...parsed,
           rxAttempted: parsed.rxAttempted || 0,
-          rxCorrect: parsed.rxCorrect || 0
+          rxCorrect: parsed.rxCorrect || 0,
+          dailyRxWins: parsed.dailyRxWins !== undefined ? parsed.dailyRxWins : Math.min(parsed.rxCorrect || 0, parsed.wins || 0)
         }));
       } catch (e) {
         console.error('Failed to parse stats', e);
@@ -523,6 +575,10 @@ export default function App() {
       let currentMaxStreak = Math.max(localStats.maxStreak || 0, cloudData?.stats?.maxStreak || 0);
       let currentRxAttempted = Math.max(localStats.rxAttempted || 0, cloudData?.stats?.rxAttempted || 0);
       let currentRxCorrect = Math.max(localStats.rxCorrect || 0, cloudData?.stats?.rxCorrect || 0);
+      let currentDailyRxWins = Math.max(localStats.dailyRxWins || 0, cloudData?.stats?.dailyRxWins || 0);
+      if (currentDailyRxWins === 0 && (currentRxCorrect > 0 || currentWins > 0)) {
+        currentDailyRxWins = Math.min(currentRxCorrect, currentWins);
+      }
 
       const baseDist = localStats.distribution || [0, 0, 0, 0, 0, 0];
       const cloudDist = cloudData?.stats?.distribution || [0, 0, 0, 0, 0, 0];
@@ -544,6 +600,7 @@ export default function App() {
         distribution: currentDist,
         rxAttempted: currentRxAttempted,
         rxCorrect: currentRxCorrect,
+        dailyRxWins: currentDailyRxWins,
         lastDailyDate: cloudData?.stats?.lastDailyDate || localStats.lastDailyDate || (resolvedDailyGame?.gameOver ? todayStr : null),
         lastDailyRxDate: cloudData?.stats?.lastDailyRxDate || localStats.lastDailyRxDate || null
       };
@@ -555,6 +612,12 @@ export default function App() {
       const mergedBugs = Array.from(new Set([...localBugs, ...(cloudData?.unlockedBugIds || [])]));
       setUnlockedBugIds(mergedBugs);
       localStorage.setItem('microbledle_unlocked_bugs', JSON.stringify(mergedBugs));
+
+      // 4b. MERGE Practice Rx solved list
+      const localPracticeRx = JSON.parse(localStorage.getItem('microbledle_practice_rx_bugs') || '[]');
+      const mergedPracticeRx = Array.from(new Set([...localPracticeRx, ...(cloudData?.practiceRxBugIds || [])]));
+      setPracticeRxBugIds(mergedPracticeRx);
+      localStorage.setItem('microbledle_practice_rx_bugs', JSON.stringify(mergedPracticeRx));
 
       // 5. MERGE Profile information
       const mergedProfile = {
@@ -853,6 +916,10 @@ export default function App() {
             origin: { y: 0.6 }
           });
 
+          // Check if pathogen was already discovered before unlocking
+          const wasAlreadyDiscovered = unlockedBugIds.includes(target.id);
+          setIsNewDiscovery(!wasAlreadyDiscovered);
+
           // Unlock pathogen in Microdex & Save to BOTH Local and Cloud
           setUnlockedBugIds(prev => {
             if (!prev.includes(target.id)) {
@@ -922,10 +989,12 @@ export default function App() {
         // Submit daily case score to Global Leaderboard
         if (isVictory) {
           const newWins = stats.wins + (stats.lastDailyDate === dateStr ? 0 : 1);
+          const wasAlreadyDiscovered = unlockedBugIds.includes(target.id);
+          const rxXp = calculateRxXp(stats, practiceRxBugIds);
           const currentProg = calculateUserProgression(
             newWins,
-            unlockedBugIds.length + (!unlockedBugIds.includes(target.id) ? 1 : 0),
-            (stats.rxCorrect || 0) * 50
+            unlockedBugIds.length + (!wasAlreadyDiscovered ? 1 : 0),
+            rxXp
           );
 
           let guestId = localStorage.getItem('microbledle_guest_id');
@@ -983,6 +1052,7 @@ export default function App() {
     setGuesses([]);
     setGameOver(false);
     setWon(false);
+    setIsNewDiscovery(false);
     setShowStatsModal(false);
     setShowCaseResultModal(false);
     setSearchTerm('');
@@ -1977,6 +2047,31 @@ export default function App() {
                   </div>
                   <h2 className="text-2xl font-black text-emerald-400">Diagnosis Confirmed!</h2>
                   <p className="text-xs text-slate-300">You identified the pathogen in {guesses.length} {guesses.length === 1 ? 'guess' : 'guesses'}!</p>
+
+                  {/* EXP Feedback Pill */}
+                  <div className="pt-2">
+                    {!isPractice ? (
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-bold shadow-sm">
+                        <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+                        <span>+100 XP (Daily Case)</span>
+                        {isNewDiscovery && (
+                          <>
+                            <span className="text-emerald-500">•</span>
+                            <span>+50 XP (Microdex Unlock)</span>
+                          </>
+                        )}
+                      </div>
+                    ) : isNewDiscovery ? (
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 text-xs font-bold shadow-sm">
+                        <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+                        <span>New Discovery Unlocked! (+50 XP)</span>
+                      </div>
+                    ) : (
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-slate-400 text-xs font-semibold shadow-sm">
+                        <span>Practice Mode: Already in Microdex (+0 XP)</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
               ) : (
                 <div className="space-y-1">
@@ -2019,6 +2114,12 @@ export default function App() {
               isMuted={isMuted}
               onAnswer={handleRxAnswer}
               onOpenMicrodex={() => handleOpenMicrodex(target)}
+              canEarnExp={!isPractice || (isNewDiscovery && !practiceRxBugIds.includes(target.id))}
+              expReason={
+                !isPractice 
+                  ? '' 
+                  : (!isNewDiscovery ? 'Already Discovered (+0 XP)' : (practiceRxBugIds.includes(target.id) ? 'Rx Solved (+0 XP)' : ''))
+              }
             />
 
             {/* Action buttons */}
@@ -2296,6 +2397,8 @@ export default function App() {
         stats={stats}
         unlockedCount={unlockedBugIds.length}
         profile={profile}
+        progression={progression}
+        practiceRxBugIds={practiceRxBugIds}
         onSaveProfile={handleSaveProfile}
         onLogout={handleLogout}
       />
@@ -2308,6 +2411,7 @@ export default function App() {
         user={user}
         userStats={stats}
         userProfile={profile}
+        practiceRxBugIds={practiceRxBugIds}
         onOpenAuth={() => setShowAuthModal(true)}
       />
 

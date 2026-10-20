@@ -4,7 +4,7 @@ import {
   Flame, Award, Search, User, Clock, ArrowRight, ShieldCheck
 } from 'lucide-react';
 import { getDailyLeaderboard, getAllTimeLeaderboard } from '../firebase';
-import { calculateUserProgression, AVATAR_OPTIONS, RANKS } from '../utils/leveling';
+import { calculateUserProgression, calculateRxXp, AVATAR_OPTIONS, RANKS } from '../utils/leveling';
 
 export default function LeaderboardModal({ 
   isOpen, 
@@ -13,6 +13,7 @@ export default function LeaderboardModal({
   user,
   userStats,
   userProfile,
+  practiceRxBugIds = [],
   onOpenAuth 
 }) {
   const [tab, setTab] = useState('daily'); // 'daily' | 'exp' | 'wins'
@@ -93,10 +94,13 @@ export default function LeaderboardModal({
       const prof = isCurrent && userProfile ? { ...entry.profile, ...userProfile } : (entry.profile || {});
       const st = isCurrent && userStats ? { ...entry.stats, ...userStats } : (entry.stats || {});
       const unlocked = isCurrent ? JSON.parse(localStorage.getItem('microbledle_unlocked_bugs') || '[]') : (entry.unlockedBugIds || []);
+      const practiceRx = isCurrent 
+        ? (practiceRxBugIds?.length ? practiceRxBugIds : JSON.parse(localStorage.getItem('microbledle_practice_rx_bugs') || '[]')) 
+        : (entry.practiceRxBugIds || []);
       const prog = calculateUserProgression(
         st.wins || 0,
         unlocked.length,
-        (st.rxCorrect || 0) * 50
+        calculateRxXp(st, practiceRx)
       );
       return {
         ...entry,
@@ -107,7 +111,7 @@ export default function LeaderboardModal({
         prog
       };
     });
-  }, [allTimeScores, user, userProfile, userStats, currentUid]);
+  }, [allTimeScores, user, userProfile, userStats, currentUid, practiceRxBugIds]);
 
   // Highest EXP List (Sorted by XP desc, then level desc, then wins desc)
   const allTimeExpList = useMemo(() => {

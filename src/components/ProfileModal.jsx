@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { 
   calculateUserProgression, 
+  calculateRxXp,
   AVATAR_OPTIONS,
   generateRandomPlayerName
 } from '../utils/leveling';
@@ -17,6 +18,8 @@ export default function ProfileModal({
   stats, 
   unlockedCount, 
   profile, 
+  progression: propProgression,
+  practiceRxBugIds = [],
   onSaveProfile,
   onLogout 
 }) {
@@ -36,7 +39,11 @@ export default function ProfileModal({
 
   if (!isOpen) return null;
 
-  const progression = calculateUserProgression(stats.wins, unlockedCount, (stats.rxCorrect || 0) * 50);
+  const progression = propProgression || calculateUserProgression(
+    stats.wins, 
+    unlockedCount, 
+    calculateRxXp(stats, practiceRxBugIds)
+  );
   const selectedAvatarObj = AVATAR_OPTIONS.find(a => a.id === avatar) || AVATAR_OPTIONS[0];
 
   const handleSave = (e) => {

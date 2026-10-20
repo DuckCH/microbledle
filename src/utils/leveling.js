@@ -1,22 +1,22 @@
 // Thai Medical System Leveling & Ranking for Microbledle
 
 export const RANKS = [
-  { level: 1,  title: 'Pre-Med',                       minXp: 0,    maxXp: 150,      badge: '📖' },
-  { level: 2,  title: 'Y1 Medical Student',            minXp: 150,  maxXp: 300,      badge: '🔬' },
-  { level: 3,  title: 'Y2 Medical Student',            minXp: 300,  maxXp: 500,      badge: '📚' },
-  { level: 4,  title: 'Y3 Medical Student',            minXp: 500,  maxXp: 750,      badge: '🧬' },
-  { level: 5,  title: 'Y4 Medical Student',            minXp: 750,  maxXp: 1050,     badge: '🩺' },
-  { level: 6,  title: 'Y5 Medical Student',            minXp: 1050, maxXp: 1400,     badge: '🥼' },
-  { level: 7,  title: 'Y6 Medical Student (Extern)',   minXp: 1400, maxXp: 1800,     badge: '⭐' },
-  { level: 8,  title: 'Intern 1',                      minXp: 1800, maxXp: 2300,     badge: '🧫' },
-  { level: 9,  title: 'Intern 2',                      minXp: 2300, maxXp: 2900,     badge: '🏥' },
-  { level: 10, title: 'Intern 3',                      minXp: 2900, maxXp: 3600,     badge: '💉' },
-  { level: 11, title: 'Resident 1 (R1)',               minXp: 3600, maxXp: 4400,     badge: '💊' },
-  { level: 12, title: 'Resident 2 (R2)',               minXp: 4400, maxXp: 5300,     badge: '📋' },
-  { level: 13, title: 'Resident 3 (R3 / Chief)',       minXp: 5300, maxXp: 6300,     badge: '🏅' },
-  { level: 14, title: 'Fellow 1 (F1)',                 minXp: 6300, maxXp: 7500,     badge: '🎯' },
-  { level: 15, title: 'Fellow 2 (F2)',                 minXp: 7500, maxXp: 9000,     badge: '🌟' },
-  { level: 16, title: 'Attending (อาจารย์แพทย์)',       minXp: 9000, maxXp: Infinity, badge: '👑' },
+  { level: 1,  title: 'Pre-Med',                       minXp: 0,     maxXp: 250,      badge: '📖' },
+  { level: 2,  title: 'Y1 Medical Student',            minXp: 250,   maxXp: 600,      badge: '🔬' },
+  { level: 3,  title: 'Y2 Medical Student',            minXp: 600,   maxXp: 1100,     badge: '📚' },
+  { level: 4,  title: 'Y3 Medical Student',            minXp: 1100,  maxXp: 1800,     badge: '🧬' },
+  { level: 5,  title: 'Y4 Medical Student',            minXp: 1800,  maxXp: 2700,     badge: '🩺' },
+  { level: 6,  title: 'Y5 Medical Student',            minXp: 2700,  maxXp: 3800,     badge: '🥼' },
+  { level: 7,  title: 'Y6 Medical Student (Extern)',   minXp: 3800,  maxXp: 5100,     badge: '⭐' },
+  { level: 8,  title: 'Intern 1',                      minXp: 5100,  maxXp: 6700,     badge: '🧫' },
+  { level: 9,  title: 'Intern 2',                      minXp: 6700,  maxXp: 8600,     badge: '🏥' },
+  { level: 10, title: 'Intern 3',                      minXp: 8600,  maxXp: 10800,    badge: '💉' },
+  { level: 11, title: 'Resident 1 (R1)',               minXp: 10800, maxXp: 13400,    badge: '💊' },
+  { level: 12, title: 'Resident 2 (R2)',               minXp: 13400, maxXp: 16500,    badge: '📋' },
+  { level: 13, title: 'Resident 3 (R3 / Chief)',       minXp: 16500, maxXp: 20200,    badge: '🏅' },
+  { level: 14, title: 'Fellow 1 (F1)',                 minXp: 20200, maxXp: 24600,    badge: '🎯' },
+  { level: 15, title: 'Fellow 2 (F2)',                 minXp: 24600, maxXp: 30000,    badge: '🌟' },
+  { level: 16, title: 'Attending (อาจารย์แพทย์)',       minXp: 30000, maxXp: Infinity, badge: '👑' },
 ];
 
 export const STATUS_OPTIONS = [
@@ -51,8 +51,16 @@ export const AVATAR_OPTIONS = [
   { id: 'bug', emoji: '🦠', label: 'Microbe' }
 ];
 
+export function calculateRxXp(stats = {}, practiceRxBugIds = []) {
+  const dailyRx = stats.dailyRxWins !== undefined 
+    ? (stats.dailyRxWins || 0) 
+    : Math.min(stats.rxCorrect || 0, stats.wins || 0);
+  const practiceCount = Array.isArray(practiceRxBugIds) ? practiceRxBugIds.length : 0;
+  return (dailyRx + practiceCount) * 50;
+}
+
 export function calculateUserProgression(wins = 0, unlockedCount = 0, bonusXp = 0) {
-  // 100 XP per solved case + 50 XP per unique Microdex unlocked pathogen + bonus XP
+  // 100 XP per solved daily case + 50 XP per unique Microdex unlocked pathogen (one-time only) + Rx bonus XP
   const totalXp = Math.max(0, (wins * 100) + (unlockedCount * 50) + Number(bonusXp || 0));
 
   let currentRank = RANKS[0];
@@ -93,4 +101,3 @@ export function generateRandomPlayerName() {
   const num = Math.floor(100 + Math.random() * 900); // 100 - 999
   return `${prefix}_${num}`;
 }
-

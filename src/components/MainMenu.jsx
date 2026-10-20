@@ -22,7 +22,7 @@ export default function MainMenu({
   currentAvatarObj,
   stats,
   unlockedBugIds = [],
-  totalBugsCount = 40,
+  totalBugsCount = 70,
   dailyInfo,
   countdown,
   dailyGameState,
@@ -46,7 +46,10 @@ export default function MainMenu({
       {/* Top Bar */}
       <div className="w-full flex items-center justify-between py-2.5 border-b border-slate-200 dark:border-slate-800/80 px-1">
         <div className="flex items-center gap-2">
-          {/* Header left */}
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/25 dark:border-emerald-500/30 shadow-sm">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            Beta version
+          </span>
         </div>
 
         <div className="flex items-center gap-2.5">

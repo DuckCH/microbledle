@@ -4,7 +4,16 @@ import { playRxSuccessSound, playRxFailSound } from '../utils/audio';
 import confetti from 'canvas-confetti';
 import microbes from '../data/microbes.json';
 
-export default function RxChallenge({ target, isDaily, dateStr, isMuted, onAnswer, onOpenMicrodex }) {
+export default function RxChallenge({ 
+  target, 
+  isDaily, 
+  dateStr, 
+  isMuted, 
+  onAnswer, 
+  onOpenMicrodex,
+  canEarnExp = true,
+  expReason = ''
+}) {
   const handleOpenMicrodex = onOpenMicrodex;
   const [selectedChoice, setSelectedChoice] = useState(null);
   const [answered, setAnswered] = useState(false);
@@ -143,10 +152,16 @@ export default function RxChallenge({ target, isDaily, dateStr, isMuted, onAnswe
           </div>
         </div>
 
-        <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 text-[11px] font-bold">
-          <Sparkles className="w-3 h-3 text-amber-400" />
-          +50 XP
-        </div>
+        {canEarnExp ? (
+          <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 text-[11px] font-bold">
+            <Sparkles className="w-3 h-3 text-amber-400" />
+            +50 XP
+          </div>
+        ) : (
+          <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-800 border border-slate-700 text-slate-400 text-[11px] font-semibold" title={expReason || "Already discovered pathogen - 0 EXP in Practice Mode"}>
+            <span>{expReason || "+0 XP (Practice)"}</span>
+          </div>
+        )}
       </div>
 
       {/* Case Question */}
@@ -220,7 +235,11 @@ export default function RxChallenge({ target, isDaily, dateStr, isMuted, onAnswe
               <Award className="w-5 h-5 text-emerald-400 shrink-0" />
               <div>
                 <span className="font-bold">Correct Treatment!</span>
-                <p className="text-[11px] text-emerald-200/90 mt-0.5">+50 Bonus XP awarded!</p>
+                {canEarnExp ? (
+                  <p className="text-[11px] text-emerald-200/90 mt-0.5">+50 Bonus XP awarded!</p>
+                ) : (
+                  <p className="text-[11px] text-slate-400 mt-0.5">{expReason || 'Practice Mode (Already Discovered)'} • +0 XP</p>
+                )}
               </div>
             </div>
           ) : (
