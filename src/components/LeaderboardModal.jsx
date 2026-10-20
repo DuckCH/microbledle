@@ -229,7 +229,7 @@ export default function LeaderboardModal({
                 }`}
               >
                 <Sparkles className="w-3.5 h-3.5 shrink-0 text-amber-300" />
-                <span>Highest EXP</span>
+                <span>Highest Rank</span>
               </button>
 
               <button
@@ -354,13 +354,13 @@ export default function LeaderboardModal({
             </>
           )}
 
-          {/* TAB 2: Highest EXP Ranking */}
+          {/* TAB 2: Highest Rank (by Total EXP) */}
           {tab === 'exp' && !loading && (
             <>
               {filteredExp.length === 0 ? (
                 <div className="py-12 text-center text-slate-400 text-xs space-y-1">
                   <p className="font-semibold text-slate-300">No players recorded yet.</p>
-                  <p>Play Daily cases, discover pathogens, and complete Rx challenges to earn EXP!</p>
+                  <p>Play Daily cases, discover pathogens, and complete Rx challenges to earn EXP and level up!</p>
                 </div>
               ) : (
                 filteredExp.map((entry, idx) => {
@@ -401,28 +401,30 @@ export default function LeaderboardModal({
                               </span>
                             )}
                           </div>
-                          <div className="text-[11px] text-amber-400 font-medium truncate flex items-center gap-1.5">
-                            <span>{prog.badge}</span>
-                            <span>{prog.title}</span>
-                            <span className="text-amber-500/90 font-semibold">(Lvl {prog.level})</span>
-                            {hasNonDuplicateStatus && (
-                              <span className="text-slate-400 dark:text-slate-500 font-normal truncate">
-                                • {prof.status}
+                          <div className="text-[11px] text-slate-400 font-medium truncate flex items-center gap-1.5">
+                            {hasNonDuplicateStatus ? (
+                              <span className="text-slate-400 dark:text-slate-400 truncate">
+                                {prof.status}
+                              </span>
+                            ) : (
+                              <span className="text-slate-400 truncate">
+                                {rowStats.wins || 0} Wins • {(entry.unlockedBugIds || []).length} Discovered
                               </span>
                             )}
                           </div>
                         </div>
                       </div>
 
-                      {/* Right: EXP Metric */}
+                      {/* Right: Rank Title (ex. Resident 2 (R2)) & Level / EXP */}
                       <div className="text-right shrink-0 space-y-0.5">
-                        <div className="text-sm font-black text-amber-400 font-mono">
-                          <span className="text-sm sm:text-base">{prog.totalXp.toLocaleString()}</span> XP
+                        <div className="text-xs sm:text-sm font-black text-amber-400 flex items-center justify-end gap-1.5">
+                          <span className="text-sm">{prog.badge}</span>
+                          <span className="truncate max-w-[140px] sm:max-w-none">{prog.title}</span>
                         </div>
-                        <div className="text-[11px] text-slate-400 flex items-center justify-end gap-1.5 font-medium">
+                        <div className="text-[11px] text-slate-400 flex items-center justify-end gap-1.5 font-medium font-mono">
                           <span>Lvl {prog.level}</span>
                           <span className="text-slate-600">•</span>
-                          <span>{rowStats.wins || 0} Wins</span>
+                          <span>{prog.totalXp.toLocaleString()} XP</span>
                         </div>
                       </div>
                     </div>
