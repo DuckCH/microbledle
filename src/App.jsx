@@ -279,6 +279,10 @@ export default function App() {
   };
 
   const [isPractice, setIsPractice] = useState(false);
+  const isPracticeRef = useRef(isPractice);
+  useEffect(() => {
+    isPracticeRef.current = isPractice;
+  }, [isPractice]);
   const [target, setTarget] = useState(dailyInfo.target);
   const [dateStr, setDateStr] = useState(dailyInfo.dateStr);
 
@@ -629,10 +633,10 @@ export default function App() {
       setProfile(mergedProfile);
       localStorage.setItem('microbledle_profile', JSON.stringify(mergedProfile));
 
-      // 6. SYNC Daily Game state across devices
+      // 6. SYNC Daily Game state across devices (Never overwrite if currently in Practice Mode)
       if (resolvedDailyGame) {
         localStorage.setItem(`microbledle_game_${todayStr}`, JSON.stringify(resolvedDailyGame));
-        if (!isPractice) {
+        if (!isPracticeRef.current) {
           setGuesses(resolvedDailyGame.guesses || []);
           setGameOver(Boolean(resolvedDailyGame.gameOver));
           setWon(Boolean(resolvedDailyGame.won));
@@ -748,7 +752,7 @@ export default function App() {
       window.removeEventListener('focus', handleSync);
       document.removeEventListener('visibilitychange', handleSync);
     };
-  }, [user]);
+  }, [user, isPractice]);
 
   // Click / touch outside listener to dismiss pathogen search dropdown
   useEffect(() => {
@@ -1089,6 +1093,7 @@ export default function App() {
   };
 
   const startNewPractice = () => {
+    isPracticeRef.current = true;
     const randomIndex = Math.floor(Math.random() * microbes.length);
     setTarget(microbes[randomIndex]);
     setGuesses([]);
@@ -1114,6 +1119,7 @@ export default function App() {
   }, [dailyInfo.dateStr, isPractice, gameOver, won, guesses]);
 
   const handleStartDaily = () => {
+    isPracticeRef.current = false;
     setIsPractice(false);
     setTarget(dailyInfo.target);
     setDateStr(dailyInfo.dateStr);
