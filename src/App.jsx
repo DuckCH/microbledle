@@ -401,6 +401,7 @@ export default function App() {
   const [isNewDiscovery, setIsNewDiscovery] = useState(false);
 
   const searchInputRef = useRef(null);
+  const searchContainerRef = useRef(null);
   const maxGuesses = 6;
 
   // Persistent statistics
@@ -749,6 +750,21 @@ export default function App() {
     };
   }, [user]);
 
+  // Click / touch outside listener to dismiss pathogen search dropdown
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(e.target)) {
+        setIsSearchOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, []);
+
   // Save profile changes to BOTH Local Storage and Cloud Firestore
   const handleSaveProfile = async (updatedProfile) => {
     setProfile(updatedProfile);
@@ -829,18 +845,25 @@ export default function App() {
   }, [isPractice, dailyInfo]);
 
   // Autocomplete suggestions (pathogen name, common name, taxonomy)
+  // When search box is clicked/focused, shows ALL available pathogens from A to Z, scrollable
   const availableMicrobes = useMemo(() => {
     const guessedIds = new Set(guesses.map(g => g.guess.id));
+    const unguesseds = microbes.filter(m => !guessedIds.has(m.id));
+    
+    // Sort all remaining pathogens from A to Z by scientific name
+    const sorted = [...unguesseds].sort((a, b) => a.name.localeCompare(b.name));
+
     const term = searchTerm.trim().toLowerCase();
-    if (!term) return [];
-    return microbes
-      .filter(m => !guessedIds.has(m.id))
-      .filter(m => 
-        m.name.toLowerCase().includes(term) || 
-        m.commonName.toLowerCase().includes(term) ||
-        m.taxonomy.toLowerCase().includes(term)
-      )
-      .slice(0, 6);
+    if (!term) {
+      // Return complete A to Z list when search box is empty
+      return sorted;
+    }
+
+    return sorted.filter(m => 
+      m.name.toLowerCase().includes(term) || 
+      m.commonName.toLowerCase().includes(term) ||
+      m.taxonomy.toLowerCase().includes(term)
+    );
   }, [searchTerm, guesses]);
 
   const handleKeyDown = (e) => {
@@ -856,7 +879,7 @@ export default function App() {
       e.preventDefault();
       if (searchSelectedIndex >= 0 && searchSelectedIndex < availableMicrobes.length) {
         handleSelectMicrobe(availableMicrobes[searchSelectedIndex]);
-      } else if (availableMicrobes.length > 0) {
+      } else if (searchTerm.trim() && availableMicrobes.length > 0) {
         handleSelectMicrobe(availableMicrobes[0]);
       }
     } else if (e.key === 'Escape') {
@@ -1488,7 +1511,7 @@ export default function App() {
         
         {/* Search & Deduction Input */}
         {!gameOver ? (
-          <div className="relative w-full max-w-xl mx-auto">
+          <div ref={searchContainerRef} className="relative w-full max-w-xl mx-auto">
             <div className="relative group">
               <Search className="absolute left-3.5 sm:left-4 top-3 sm:top-3.5 h-4 sm:h-5 w-4 sm:w-5 text-emerald-500 dark:text-emerald-400 group-focus-within:text-emerald-400 transition" />
               <input
@@ -1502,45 +1525,87 @@ export default function App() {
                   setSearchSelectedIndex(-1);
                 }}
                 onKeyDown={handleKeyDown}
-                onFocus={() => setIsSearchOpen(true)}
-                className="w-full pl-10 sm:pl-12 pr-4 py-2.5 sm:py-3.5 bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-600 hover:border-slate-400 dark:hover:border-slate-500 focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-4 focus:ring-emerald-500/20 rounded-2xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-400 text-xs sm:text-sm font-medium shadow-lg transition"
+                onFocus={() => {
+                  setIsSearchOpen(true);
+                  setSearchSelectedIndex(-1);
+                }}
+                onClick={() => {
+                  setIsSearchOpen(true);
+                }}
+                className="w-full pl-10 sm:pl-12 pr-10 py-2.5 sm:py-3.5 bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-600 hover:border-slate-400 dark:hover:border-slate-500 focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-4 focus:ring-emerald-500/20 rounded-2xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-400 text-xs sm:text-sm font-medium shadow-lg transition"
               />
+              {searchTerm && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearchTerm('');
+                    setIsSearchOpen(true);
+                    setSearchSelectedIndex(-1);
+                    searchInputRef.current?.focus();
+                  }}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 dark:hover:text-white rounded-lg transition"
+                  title="Clear input"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
             </div>
 
-            {/* Autocomplete Dropdown with Keyboard Selection */}
-            {isSearchOpen && availableMicrobes.length > 0 && (
-              <div className="absolute z-30 left-0 right-0 mt-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/90 rounded-2xl shadow-2xl overflow-hidden divide-y divide-slate-100 dark:divide-slate-800 backdrop-blur-md max-h-56 sm:max-h-72 overflow-y-auto">
-                {availableMicrobes.map((bug, idx) => {
-                  const isSelected = idx === searchSelectedIndex;
-                  const gramInfo = getGramBadge(bug.morphology.gram);
+            {/* Autocomplete Dropdown with A-Z Full Scrollable List */}
+            {isSearchOpen && (
+              <div className="absolute z-30 left-0 right-0 mt-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/90 rounded-2xl shadow-2xl overflow-hidden backdrop-blur-md max-h-64 sm:max-h-80 flex flex-col">
+                {/* Sticky Header with Counter */}
+                <div className="px-4 py-2 bg-slate-50/95 dark:bg-slate-950/95 text-[11px] font-semibold text-slate-500 dark:text-slate-400 flex items-center justify-between sticky top-0 z-10 border-b border-slate-100 dark:border-slate-800 shrink-0">
+                  <span>{!searchTerm.trim() ? "All Pathogens (A to Z)" : "Search Results"}</span>
+                  <span className="font-mono text-[10px] text-emerald-600 dark:text-emerald-400 font-bold">
+                    {availableMicrobes.length} {availableMicrobes.length === 1 ? 'organism' : 'organisms'}
+                  </span>
+                </div>
 
-                  return (
-                    <button
-                      key={bug.id}
-                      onClick={() => handleSelectMicrobe(bug)}
-                      onMouseEnter={() => setSearchSelectedIndex(idx)}
-                      className={`w-full text-left px-4 py-3 transition flex items-center justify-between group ${
-                        isSelected 
-                          ? 'bg-emerald-50 dark:bg-slate-800/95 ring-1 ring-emerald-500/50' 
-                          : 'hover:bg-slate-50 dark:hover:bg-slate-800/60'
-                      }`}
-                    >
-                      <div className="min-w-0 pr-2">
-                        <div className="font-semibold text-emerald-600 dark:text-emerald-400 italic group-hover:text-emerald-500 dark:group-hover:text-emerald-300 flex items-center gap-2 flex-wrap">
-                          <span>{bug.name}</span>
-                          <span className={`not-italic text-[10px] font-bold px-2 py-0.5 rounded-full border flex items-center gap-1 ${gramInfo.bg}`}>
-                            <span className={`w-1.5 h-1.5 rounded-full ${gramInfo.dot}`} />
-                            {gramInfo.label}
-                          </span>
-                        </div>
-                        <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate">
-                          <span className="text-slate-700 dark:text-slate-300 font-medium">{bug.commonName}</span> • {bug.taxonomy}
-                        </div>
-                      </div>
-                      <ChevronRight className={`w-5 h-5 shrink-0 transform transition ${isSelected ? 'text-emerald-500 dark:text-emerald-400 translate-x-1' : 'text-slate-400 dark:text-slate-500 group-hover:text-emerald-500 dark:group-hover:text-emerald-400 group-hover:translate-x-0.5'}`} />
-                    </button>
-                  );
-                })}
+                {availableMicrobes.length === 0 ? (
+                  <div className="p-4 text-center text-xs text-slate-500 dark:text-slate-400">
+                    No pathogens found matching "{searchTerm}"
+                  </div>
+                ) : (
+                  <div className="overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800">
+                    {availableMicrobes.map((bug, idx) => {
+                      const isSelected = idx === searchSelectedIndex;
+                      const gramInfo = getGramBadge(bug.morphology.gram);
+
+                      return (
+                        <button
+                          ref={el => {
+                            if (isSelected && el) {
+                              el.scrollIntoView({ block: 'nearest' });
+                            }
+                          }}
+                          key={bug.id}
+                          onClick={() => handleSelectMicrobe(bug)}
+                          onMouseEnter={() => setSearchSelectedIndex(idx)}
+                          className={`w-full text-left px-4 py-2.5 sm:py-3 transition flex items-center justify-between group ${
+                            isSelected 
+                              ? 'bg-emerald-50 dark:bg-slate-800/95 ring-1 ring-emerald-500/50' 
+                              : 'hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                          }`}
+                        >
+                          <div className="min-w-0 pr-2">
+                            <div className="font-semibold text-xs sm:text-sm text-emerald-600 dark:text-emerald-400 italic group-hover:text-emerald-500 dark:group-hover:text-emerald-300 flex items-center gap-2 flex-wrap">
+                              <span>{bug.name}</span>
+                              <span className={`not-italic text-[10px] font-bold px-2 py-0.5 rounded-full border flex items-center gap-1 ${gramInfo.bg}`}>
+                                <span className={`w-1.5 h-1.5 rounded-full ${gramInfo.dot}`} />
+                                {gramInfo.label}
+                              </span>
+                            </div>
+                            <div className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate">
+                              <span className="text-slate-700 dark:text-slate-300 font-medium">{bug.commonName}</span> • {bug.taxonomy}
+                            </div>
+                          </div>
+                          <ChevronRight className={`w-4 h-4 sm:w-5 sm:h-5 shrink-0 transform transition ${isSelected ? 'text-emerald-500 dark:text-emerald-400 translate-x-1' : 'text-slate-400 dark:text-slate-500 group-hover:text-emerald-500 dark:group-hover:text-emerald-400 group-hover:translate-x-0.5'}`} />
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             )}
           </div>
