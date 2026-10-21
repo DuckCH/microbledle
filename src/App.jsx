@@ -844,8 +844,9 @@ export default function App() {
     }
   }, [isPractice, dailyInfo]);
 
-  // Autocomplete suggestions (pathogen name, common name, taxonomy)
+  // Autocomplete suggestions (pathogen name)
   // When search box is clicked/focused, shows ALL available pathogens from A to Z, scrollable
+  // Typing filters the A to Z list by their 1st letter / prefix
   const availableMicrobes = useMemo(() => {
     const guessedIds = new Set(guesses.map(g => g.guess.id));
     const unguesseds = microbes.filter(m => !guessedIds.has(m.id));
@@ -859,11 +860,29 @@ export default function App() {
       return sorted;
     }
 
-    return sorted.filter(m => 
-      m.name.toLowerCase().includes(term) || 
-      m.commonName.toLowerCase().includes(term) ||
-      m.taxonomy.toLowerCase().includes(term)
-    );
+    return sorted.filter(m => {
+      const nameLower = m.name.toLowerCase();
+
+      // Filter by 1st letter / prefix: e.g. typing 'a' -> only A pathogens, 'b' -> B pathogens, 'st' -> Staph/Strep
+      if (nameLower.startsWith(term)) {
+        return true;
+      }
+
+      // Also support standard medical abbreviation with genus initial: e.g. "s. aureus" or "e. coli"
+      if (term.includes('.') || term.includes(' ')) {
+        const cleaned = term.replace('.', '').trim().split(/\s+/);
+        if (cleaned.length >= 2) {
+          const genusInitial = cleaned[0];
+          const speciesPrefix = cleaned[1];
+          const nameWords = nameLower.split(' ');
+          if (nameWords.length >= 2 && nameWords[0].startsWith(genusInitial) && nameWords[1].startsWith(speciesPrefix)) {
+            return true;
+          }
+        }
+      }
+
+      return false;
+    });
   }, [searchTerm, guesses]);
 
   const handleKeyDown = (e) => {
