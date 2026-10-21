@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Microbledle - Medical Infographic Generator</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon-32x32.png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=Prompt:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+  <!-- QRCode.js for generating QR code on canvas -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', 'Prompt', sans-serif;
+      background-color: #070b14;
+      color: #f1f5f9;
+    }
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+  </style>
+</head>
+<body class="min-h-screen p-4 sm:p-8 flex flex-col items-center">
+
+  {/* Main Container */}
+  <div class="max-w-5xl w-full space-y-6">
+    
+    {/* Page Header */}
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800 pb-6">
+      <div class="flex items-center gap-3">
+        <div class="p-3 bg-emerald-500/15 border border-emerald-500/30 rounded-2xl text-2xl">
+          🔬
+        </div>
+        <div>
+          <h1 class="text-2xl sm:text-3xl font-black text-white tracking-tight flex items-center gap-2">
+            MICROBLEDLE <span class="text-xs px-2.5 py-0.5 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800 font-bold">Promo Kit</span>
+          </h1>
+          <p class="text-xs sm:text-sm text-slate-400">
+            Medical Infographic & Share Kit for LINE Groups & Facebook
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <a 
+          href="/" 
+          class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl border border-slate-700 transition"
+        >
+          ← Back to Game
+        </a>
+      </div>
+    </div>
+
+    {/* Infographic Controls & Download Actions */}
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-3 w-full sm:w-auto">
+        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Language:</span>
+        <div class="flex bg-slate-950 p-1 rounded-xl border border-slate-800">
+          <button id="btn-lang-th" onclick="setLang('th')" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 text-white transition">
+            ภาษาไทย 🇹🇭
+          </button>
+          <button id="btn-lang-en" onclick="setLang('en')" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition">
+            English 🇬🇧
+          </button>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+        <button 
+          onclick="downloadInfographic('feed')" 
+          class="flex-1 sm:flex-none px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs rounded-xl shadow-lg shadow-emerald-950/50 flex items-center justify-center gap-2 transition active:scale-95"
+        >
+          <span>📥</span> Download 4:5 Post (LINE / FB Feed)
+        </button>
+        <button 
+          onclick="downloadInfographic('story')" 
+          class="flex-1 sm:flex-none px-4 py-2.5 bg-slate-800 hover:bg-slate-750 text-slate-200 hover:text-white font-bold text-xs rounded-xl border border-slate-700 flex items-center justify-center gap-2 transition active:scale-95"
+        >
+          <span>📱</span> Download 9:16 Story
+        </button>
+      </div>
+    </div>
+
+    {/* Live Canvas Preview */}
+    <div class="flex flex-col lg:flex-row gap-8 items-start">
+      
+      {/* Canvas Viewport */}
+      <div class="w-full lg:w-7/12 flex flex-col items-center">
+        <div class="p-3 bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden max-w-[480px] w-full">
+          <canvas id="infographicCanvas" class="w-full h-auto rounded-2xl border border-slate-800/80 shadow-inner bg-slate-950"></canvas>
+        </div>
+        <p class="text-[11px] text-slate-500 mt-2 text-center">
+          * Renders at ultra-crisp 2160×2700 (2x Retina) PNG upon download.
+        </p>
+      </div>
+
+      {/* Social Media Captions to Copy */}
+      <div class="w-full lg:w-5/12 space-y-4">
+        
+        {/* Short LINE Caption Card */}
+        <div class="p-5 bg-slate-900 border border-slate-800 rounded-3xl space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
+              <span>💬</span> แคปชั่นสำหรับส่งใน LINE กลุ่มแพทย์
+            </h3>
+            <button 
+              onclick="copyText('caption-line')" 
+              class="px-2.5 py-1 bg-emerald-950 hover:bg-emerald-900 text-emerald-300 text-[11px] font-bold rounded-lg border border-emerald-800 transition"
+              id="btn-copy-line"
+            >
+              Copy Text
+            </button>
+          </div>
+          <textarea 
+            id="caption-line" 
+            readonly 
+            rows="7" 
+            class="w-full p-3 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-300 leading-relaxed font-sans focus:outline-none resize-none"
+          >เพื่อนๆ หมอและ นศพ. ทุกคน! 🩺🔬
+ชวนมาเล่น "Microbledle" เกมทายเชื้อจุลชีพทางคลินิกสไตล์ Wordle สำหรับสายการแพทย์โดยเฉพาะ!
+
+🔹 มี Daily Clinical Case ประจำวัน (อายุ, เพศ, Chief Complaint)
+🔹 ทายเชื้อก่อโรคใน 6 ครั้ง ดูผล Gram stain, Morphology, Lab tests
+🔹 ทายถูกมี Antibiotic Challenge ท้าดวลเลือกยาฆ่าเชื้อ Empiric Rx
+🔹 ไต่อันดับยศแพทย์ตั้งแต่ Extern, Intern จนถึง Senior Staff (อาจารย์แพทย์)
+🔹 Microdex คลัง 70 เชื้อ เอาไว้ทบทวนสอบบอร์ด/NL สบายๆ
+
+เล่นฟรีบนเว็บ ไม่ต้องโหลดแอพ:
+👉 https://microbledle.com</textarea>
+        </div>
+
+        {/* Full Facebook Post Caption */}
+        <div class="p-5 bg-slate-900 border border-slate-800 rounded-3xl space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs font-bold text-cyan-400 uppercase tracking-wider flex items-center gap-1.5">
+              <span>📘</span> โพสต์ Facebook / Threads / X
+            </h3>
+            <button 
+              onclick="copyText('caption-fb')" 
+              class="px-2.5 py-1 bg-cyan-950 hover:bg-cyan-900 text-cyan-300 text-[11px] font-bold rounded-lg border border-cyan-800 transition"
+              id="btn-copy-fb"
+            >
+              Copy Text
+            </button>
+          </div>
+          <textarea 
+            id="caption-fb" 
+            readonly 
+            rows="9" 
+            class="w-full p-3 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-300 leading-relaxed font-sans focus:outline-none resize-none"
+          >🩺 เมื่อ Wordle โคจรมาพบกับวอร์ดอายุรกรรม & จุลชีววิทยาคลินิก! 🦠
+
+ขอแนะนำ "Microbledle" — เว็บเกมทายเชื้อก่อโรคและชาเลนจ์ยาฆ่าเชื้อสำหรับบุคลากรทางการแพทย์และนักศึกษาแพทย์ 🔬
+
+✨ จุดเด่นในเกม:
+1. Daily Case: วิเคราะห์โจทย์ผู้ป่วยจริงพร้อม Chief Complaint ทุกเช้า
+2. 6 Tries Diagnosis: ทายเชื้อพร้อมเปรียบเทียบผล Gram stain, รูปร่าง, การเพาะเชื้อ, และ Biochemical tests
+3. Antibiotics Challenge: วินิจฉัยถูกปุ๊บ สั่งยาฆ่าเชื้อ Empiric ต่อทันที เก็บแต้ม EXP
+4. Medical Rank System: ไต่ระดับยศแพทย์ 17 ขั้น (Pre-med ➡️ Extern ➡️ Intern ➡️ Chief Resident ➡️ Senior Staff)
+5. Microdex: คลังรวบรวม 70 เชื้อเด่นพร้อม Treatment Guideline ทบทวนสอบได้ทุกที่
+6. Global Leaderboard: ท้าดวลความแม่นกับหมอทั่วประเทศ
+
+🎮 เล่นฟรีผ่านเบราว์เซอร์ ทั้งมือถือและไอแพด:
+👉 https://microbledle.com
+
+#Microbledle #MedicalGame #Microbiology #MedicalStudent #Resident #Doctor</textarea>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  {/* Hidden QR Code element container */}
+  <div id="qrcode-temp" class="hidden"></div>
+
+  <script>
+    let currentLang = 'th';
+    let currentRatio = 'feed'; // 'feed' (4:5) | 'story' (9:16)
+    let qrImage = null;
+    let logoImage = new Image();
+    logoImage.src = '/microbledle_logo_transparent.png';
+
+    // Generate real QR code in memory
+    function generateQrCode(callback) {
+      const tempDiv = document.getElementById('qrcode-temp');
+      tempDiv.innerHTML = '';
+      new QRCode(tempDiv, {
+        text: 'https://microbledle.com',
+        width: 260,
+        height: 260,
+        colorDark: '#ffffff',
+        colorLight: '#070b14',
+        correctLevel: QRCode.CorrectLevel.H
+      });
+
+      setTimeout(() => {
+        const qrCanvas = tempDiv.querySelector('canvas') || tempDiv.querySelector('img');
+        if (qrCanvas) {
+          qrImage = qrCanvas;
+          if (callback) callback();
+        }
+      }, 150);
+    }
+
+    function setLang(lang) {
+      currentLang = lang;
+      document.getElementById('btn-lang-th').className = lang === 'th' 
+        ? 'px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 text-white transition'
+        : 'px-3 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition';
+      document.getElementById('btn-lang-en').className = lang === 'en' 
+        ? 'px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 text-white transition'
+        : 'px-3 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition';
+      drawCanvas();
+    }
+
+    function drawCanvas() {
+      const canvas = document.getElementById('infographicCanvas');
+      const ctx = canvas.getContext('2d');
+
+      // Base dimensions for 4:5 Feed ratio (1080 x 1350)
+      const baseW = 1080;
+      const baseH = currentRatio === 'story' ? 1920 : 1350;
+
+      // Render at 1x in DOM preview, upscale for export
+      canvas.width = baseW;
+      canvas.height = baseH;
+
+      // Background Gradient
+      const bgGrad = ctx.createLinearGradient(0, 0, 0, baseH);
+      bgGrad.addColorStop(0, '#070d18');
+      bgGrad.addColorStop(0.5, '#0b1329');
+      bgGrad.addColorStop(1, '#050811');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, baseW, baseH);
+
+      // Subtle Cyber Grid & Glowing Orbs
+      ctx.save();
+      // Glow orb 1 (top emerald)
+      const orb1 = ctx.createRadialGradient(250, 150, 10, 250, 150, 450);
+      orb1.addColorStop(0, 'rgba(16, 185, 129, 0.16)');
+      orb1.addColorStop(1, 'rgba(16, 185, 129, 0)');
+      ctx.fillStyle = orb1;
+      ctx.beginPath();
+      ctx.arc(250, 150, 450, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Glow orb 2 (right cyan)
+      const orb2 = ctx.createRadialGradient(850, 700, 10, 850, 700, 500);
+      orb2.addColorStop(0, 'rgba(6, 182, 212, 0.12)');
+      orb2.addColorStop(1, 'rgba(6, 182, 212, 0)');
+      ctx.fillStyle = orb2;
+      ctx.beginPath();
+      ctx.arc(850, 700, 500, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      // Header Badge
+      drawBadge(ctx, 540, 70, currentLang === 'th' ? "⚡ ความท้าทายทางการแพทย์รายวัน" : "⚡ THE DAILY MEDICAL CHALLENGE", '#10b981');
+
+      // Main Title: MICROBLEDLE
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '900 68px "Plus Jakarta Sans", sans-serif';
+      ctx.fillText("MICROBLEDLE", 540, 155);
+
+      // Subtitle Tagline
+      ctx.font = currentLang === 'th' ? '700 28px "Prompt", sans-serif' : '700 26px "Plus Jakarta Sans", sans-serif';
+      ctx.fillStyle = '#34d399';
+      const tagline = currentLang === 'th' 
+        ? "เกมทายเชื้อจุลชีพทางคลินิก & ท้าดวลยาฆ่าเชื้อ ATB สำหรับแพทย์"
+        : "Clinical Microbiology & Antibiotics Challenge for Medics";
+      ctx.fillText(tagline, 540, 205);
+
+      // Wordle Color Tiles Preview
+      drawWordleTilesRow(ctx, 540, 245);
+
+      // 4 Feature Cards Layout
+      const cardY = 320;
+      const cardW = 460;
+      const cardH = 210;
+
+      // Card 1: Daily Clinical Case
+      drawFeatureCard(
+        ctx, 60, cardY, cardW, cardH,
+        "1. Daily Clinical Case",
+        currentLang === 'th' ? "เคสผู้ป่วยจริงรายวัน" : "Daily Patient Clue",
+        currentLang === 'th' 
+          ? "โจทย์ระบุ อายุ, เพศ และ Chief Complaint ชัดเจน เช่น\n'A 24-year-old female presents with acute dysuria, frequency, and suprapubic pain.'"
+          : "Realistic patient clues with Age, Sex & Chief Complaint:\n'A 24-year-old female presents with acute dysuria, frequency, and suprapubic pain.'",
+        "🩺", "#10b981"
+      );
+
+      // Card 2: 6 Tries to Guess
+      drawFeatureCard(
+        ctx, 560, cardY, cardW, cardH,
+        "2. 6 Tries Diagnosis",
+        currentLang === 'th' ? "ทายเชื้อใน 6 ครั้ง" : "Pathogen Feedback",
+        currentLang === 'th' 
+          ? "ตารางเฉลยสีเขียว/เหลือง/เทา เปรียบเทียบ Gram stain, รูปร่าง, การเพาะเชื้อ, Catalase, Oxidase และ Lactose Ferment"
+          : "Wordle-style color tiles comparing Gram stain, Morphology, Oxygen, Catalase, Oxidase & Lactose test.",
+        "🔬", "#06b6d4"
+      );
+
+      // Card 3: Antibiotic Challenge
+      const row2Y = cardY + cardH + 25;
+      drawFeatureCard(
+        ctx, 60, row2Y, cardW, cardH,
+        "3. Antibiotic Challenge",
+        currentLang === 'th' ? "ท้าดวลสั่งยาฆ่าเชื้อ" : "Empiric Rx Challenge",
+        currentLang === 'th' 
+          ? "วินิจฉัยเชื้อถูกปุ๊บ เลือกรักษาต่อด้วย Empiric Antibiotics ที่ตรง Guideline ถูกต้องรับโบนัส +50 EXP!"
+          : "Diagnosed the bug? Pick the correct empiric antibiotic treatment to earn +50 bonus EXP!",
+        "💊", "#f59e0b"
+      );
+
+      // Card 4: Microdex Library (70 Bugs)
+      drawFeatureCard(
+        ctx, 560, row2Y, cardW, cardH,
+        "4. Microdex (70 Pathogens)",
+        currentLang === 'th' ? "คลัง 70 เชื้อจุลชีพ" : "Study Mode Library",
+        currentLang === 'th' 
+          ? "รวบรวม 70 เชื้อก่อโรคพร้อม High-Yield Keywords, Key Clues และ Treatment สรุปเตรียมสอบ NL / Board"
+          : "Full encyclopedia of 70 high-yield pathogens, exam buzzwords, and first-line treatment regimens.",
+        "📖", "#8b5cf6"
+      );
+
+      // Medical Hierarchy Progression Strip
+      const rankStripY = row2Y + cardH + 25;
+      drawRankStrip(ctx, 60, rankStripY, 960, 110);
+
+      // Bottom Call to Action + QR Code Box
+      const footerY = rankStripY + 130;
+      drawFooterCta(ctx, 60, footerY, 960, 240);
+
+      // Credit watermark
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#64748b';
+      ctx.font = '600 16px "Plus Jakarta Sans", sans-serif';
+      ctx.fillText("MICROBLEDLE.COM • 100% FREE • NO DOWNLOAD REQUIRED • MOBILE & DESKTOP", 540, baseH - 30);
+    }
+
+    // Helper: Draw Category Badge
+    function drawBadge(ctx, x, y, text, color) {
+      ctx.save();
+      ctx.font = '800 15px "Plus Jakarta Sans", sans-serif';
+      const textW = ctx.measureText(text).width;
+      const padX = 20;
+      const h = 34;
+
+      ctx.fillStyle = 'rgba(16, 185, 129, 0.15)';
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1.5;
+
+      roundRect(ctx, x - (textW + padX * 2) / 2, y - h / 2, textW + padX * 2, h, 17, true, true);
+
+      ctx.fillStyle = '#6ee7b7';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, x, y);
+      ctx.restore();
+    }
+
+    // Helper: Draw Wordle Tiles Row
+    function drawWordleTilesRow(ctx, centerX, y) {
+      const tiles = [
+        { label: 'GRAM', color: '#10b981', symbol: '✓' },
+        { label: 'SHAPE', color: '#10b981', symbol: '✓' },
+        { label: 'O₂', color: '#f59e0b', symbol: '~' },
+        { label: 'CATALASE', color: '#334155', symbol: '✕' },
+        { label: 'OXIDASE', color: '#10b981', symbol: '✓' },
+        { label: 'LACTOSE', color: '#10b981', symbol: '✓' }
+      ];
+
+      const tileW = 90;
+      const tileH = 34;
+      const gap = 10;
+      const totalW = tiles.length * tileW + (tiles.length - 1) * gap;
+      let startX = centerX - totalW / 2;
+
+      ctx.save();
+      tiles.forEach((t) => {
+        ctx.fillStyle = t.color;
+        roundRect(ctx, startX, y, tileW, tileH, 8, true, false);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '800 11px "JetBrains Mono", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(t.label, startX + tileW / 2, y + tileH / 2);
+
+        startX += tileW + gap;
+      });
+      ctx.restore();
+    }
+
+    // Helper: Draw Feature Card
+    function drawFeatureCard(ctx, x, y, w, h, title, subtitle, desc, icon, accentColor) {
+      ctx.save();
+      // Background card
+      ctx.fillStyle = '#0f172a';
+      ctx.strokeStyle = 'rgba(51, 65, 85, 0.8)';
+      ctx.lineWidth = 1.5;
+      roundRect(ctx, x, y, w, h, 24, true, true);
+
+      // Icon pill
+      ctx.fillStyle = accentColor + '20';
+      ctx.strokeStyle = accentColor + '50';
+      ctx.lineWidth = 1;
+      roundRect(ctx, x + 20, y + 20, 52, 52, 16, true, true);
+
+      ctx.font = '28px "Plus Jakarta Sans", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(icon, x + 46, y + 46);
+
+      // Title & Subtitle
+      ctx.textAlign = 'left';
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '800 20px "Plus Jakarta Sans", sans-serif';
+      ctx.fillText(title, x + 85, y + 36);
+
+      ctx.fillStyle = accentColor;
+      ctx.font = currentLang === 'th' ? '700 15px "Prompt", sans-serif' : '700 14px "Plus Jakarta Sans", sans-serif';
+      ctx.fillText(subtitle, x + 85, y + 60);
+
+      // Description text (wrapped)
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = currentLang === 'th' ? '400 15px "Prompt", sans-serif' : '400 14px "Plus Jakarta Sans", sans-serif';
+      wrapText(ctx, desc, x + 20, y + 105, w - 40, 22);
+
+      ctx.restore();
+    }
+
+    // Helper: Draw Rank Progression Strip
+    function drawRankStrip(ctx, x, y, w, h) {
+      ctx.save();
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
+      ctx.strokeStyle = 'rgba(245, 158, 11, 0.3)';
+      ctx.lineWidth = 1.5;
+      roundRect(ctx, x, y, w, h, 24, true, true);
+
+      // Header inside strip
+      ctx.textAlign = 'left';
+      ctx.fillStyle = '#fbbf24';
+      ctx.font = '800 16px "Plus Jakarta Sans", sans-serif';
+      ctx.fillText(currentLang === 'th' ? "🏆 17-LEVEL MEDICAL RANKING SYSTEM" : "🏆 17-LEVEL MEDICAL HIERARCHY SCALE", x + 25, y + 32);
+
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = currentLang === 'th' ? '500 13px "Prompt", sans-serif' : '500 13px "Plus Jakarta Sans", sans-serif';
+      ctx.fillText(
+        currentLang === 'th' ? "สะสม EXP จากการวินิจฉัยรายวันและตอบคำถามยาฆ่าเชื้อ ไต่อันดับยศแพทย์สู่จุดสูงสุด!" : "Gain EXP from Daily Cases & Rx Quiz to climb from Medical Student to Senior Staff!",
+        x + 25, y + 54
+      );
+
+      // Ranks flow pills
+      const ranks = [
+        { label: 'Extern', badge: '🩺', lvl: 'Lvl 6' },
+        { label: 'Intern', badge: '🥼', lvl: 'Lvl 7' },
+        { label: 'Resident', badge: '💉', lvl: 'Lvl 9' },
+        { label: 'Chief Res.', badge: '🏆', lvl: 'Lvl 12' },
+        { label: 'Senior Staff', badge: '👑', lvl: 'Lvl 17' }
+      ];
+
+      let pillX = x + 25;
+      const pillY = y + 68;
+      ranks.forEach((r, idx) => {
+        ctx.fillStyle = '#1e293b';
+        ctx.strokeStyle = idx === ranks.length - 1 ? '#fbbf24' : '#334155';
+        ctx.lineWidth = 1;
+        roundRect(ctx, pillX, pillY, 150, 28, 8, true, true);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '700 12px "Plus Jakarta Sans", sans-serif';
+        ctx.fillText(`${r.badge} ${r.label}`, pillX + 10, pillY + 18);
+
+        ctx.fillStyle = idx === ranks.length - 1 ? '#fbbf24' : '#64748b';
+        ctx.font = '800 11px "JetBrains Mono", sans-serif';
+        ctx.fillText(r.lvl, pillX + 105, pillY + 18);
+
+        if (idx < ranks.length - 1) {
+          ctx.fillStyle = '#64748b';
+          ctx.font = '700 14px "Plus Jakarta Sans", sans-serif';
+          ctx.fillText("→", pillX + 158, pillY + 19);
+          pillX += 185;
+        }
+      });
+
+      ctx.restore();
+    }
+
+    // Helper: Draw Footer Call-to-Action with QR Code
+    function drawFooterCta(ctx, x, y, w, h) {
+      ctx.save();
+      // Glowing background container
+      const grad = ctx.createLinearGradient(x, y, x + w, y + h);
+      grad.addColorStop(0, 'rgba(16, 185, 129, 0.12)');
+      grad.addColorStop(0.5, 'rgba(6, 182, 212, 0.08)');
+      grad.addColorStop(1, 'rgba(15, 23, 42, 0.95)');
+      ctx.fillStyle = grad;
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 2;
+      roundRect(ctx, x, y, w, h, 28, true, true);
+
+      // Left text
+      ctx.textAlign = 'left';
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '900 32px "Plus Jakarta Sans", sans-serif';
+      ctx.fillText(currentLang === 'th' ? "พร้อมท้าทายความรู้แล้วหรือยัง?" : "Ready for Today's Case?", x + 40, y + 55);
+
+      ctx.fillStyle = '#34d399';
+      ctx.font = currentLang === 'th' ? '700 22px "Prompt", sans-serif' : '700 20px "Plus Jakarta Sans", sans-serif';
+      ctx.fillText(
+        currentLang === 'th' ? "สแกน QR Code หรือเข้าเว็บเพื่อเริ่มเล่นได้ทันที" : "Scan QR code or click link to play directly on web",
+        x + 40, y + 95
+      );
+
+      ctx.fillStyle = '#e2e8f0';
+      ctx.font = '800 34px "JetBrains Mono", monospace';
+      ctx.fillText("MICROBLEDLE.COM", x + 40, y + 150);
+
+      // Features badge
+      ctx.font = currentLang === 'th' ? '600 16px "Prompt", sans-serif' : '600 16px "Plus Jakarta Sans", sans-serif';
+      ctx.fillStyle = '#94a3b8';
+      ctx.fillText(
+        currentLang === 'th' 
+          ? "✓ เล่นฟรี 100%   ✓ ซิงก์คะแนนคลาวด์   ✓ แข่งขัน Leaderboard กับเพื่อนแพทย์"
+          : "✓ 100% Free   ✓ Cloud Auto-Save   ✓ Compete on Global Doctor Leaderboards",
+        x + 40, y + 195
+      );
+
+      // Right QR Code
+      const qrBoxSize = 190;
+      const qrBoxX = x + w - qrBoxSize - 35;
+      const qrBoxY = y + (h - qrBoxSize) / 2;
+
+      ctx.fillStyle = '#ffffff';
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 3;
+      roundRect(ctx, qrBoxX, qrBoxY, qrBoxSize, qrBoxSize, 20, true, true);
+
+      if (qrImage) {
+        ctx.drawImage(qrImage, qrBoxX + 10, qrBoxY + 10, qrBoxSize - 20, qrBoxSize - 20);
+      }
+
+      ctx.restore();
+    }
+
+    // Canvas Round Rectangle Utility
+    function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
+      ctx.beginPath();
+      ctx.moveTo(x + radius, y);
+      ctx.lineTo(x + width - radius, y);
+      ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+      ctx.lineTo(x + width, y + height - radius);
+      ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+      ctx.lineTo(x + radius, y + height);
+      ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+      ctx.lineTo(x, y + radius);
+      ctx.quadraticCurveTo(x, y, x + radius, y);
+      ctx.closePath();
+      if (fill) ctx.fill();
+      if (stroke) ctx.stroke();
+    }
+
+    // Canvas Text Wrapping Utility
+    function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+      const paragraphs = text.split('\n');
+      paragraphs.forEach((para) => {
+        const words = para.split(' ');
+        let line = '';
+        for (let n = 0; n < words.length; n++) {
+          const testLine = line + words[n] + ' ';
+          const metrics = ctx.measureText(testLine);
+          const testWidth = metrics.width;
+          if (testWidth > maxWidth && n > 0) {
+            ctx.fillText(line, x, y);
+            line = words[n] + ' ';
+            y += lineHeight;
+          } else {
+            line = testLine;
+          }
+        }
+        ctx.fillText(line, x, y);
+        y += lineHeight;
+      });
+    }
+
+    // Download High-Resolution Infographic PNG
+    function downloadInfographic(ratio) {
+      currentRatio = ratio;
+      drawCanvas();
+
+      // Upscale for ultra-sharp Retina output (2x multiplier = 2160x2700)
+      const exportCanvas = document.createElement('canvas');
+      const scale = 2;
+      exportCanvas.width = 1080 * scale;
+      exportCanvas.height = (ratio === 'story' ? 1920 : 1350) * scale;
+      const exportCtx = exportCanvas.getContext('2d');
+      exportCtx.scale(scale, scale);
+
+      // Temporarily draw onto upscale canvas
+      const mainCanvas = document.getElementById('infographicCanvas');
+      exportCtx.drawImage(mainCanvas, 0, 0);
+
+      const link = document.createElement('a');
+      link.download = `microbledle-infographic-${currentLang}-${ratio}.png`;
+      link.href = exportCanvas.toDataURL('image/png');
+      link.click();
+    }
+
+    // Copy caption utility
+    function copyText(elemId) {
+      const copyText = document.getElementById(elemId);
+      copyText.select();
+      copyText.setSelectionRange(0, 99999);
+      navigator.clipboard.writeText(copyText.value);
+
+      const btn = elemId === 'caption-line' ? document.getElementById('btn-copy-line') : document.getElementById('btn-copy-fb');
+      const originalText = btn.innerText;
+      btn.innerText = 'Copied! ✓';
+      btn.className = btn.className.replace('text-emerald-300', 'text-white bg-emerald-600').replace('text-cyan-300', 'text-white bg-cyan-600');
+      setTimeout(() => {
+        btn.innerText = originalText;
+        btn.className = elemId === 'caption-line' 
+          ? 'px-2.5 py-1 bg-emerald-950 hover:bg-emerald-900 text-emerald-300 text-[11px] font-bold rounded-lg border border-emerald-800 transition'
+          : 'px-2.5 py-1 bg-cyan-950 hover:bg-cyan-900 text-cyan-300 text-[11px] font-bold rounded-lg border border-cyan-800 transition';
+      }, 2000);
+    }
+
+    // Initialize on load
+    window.onload = () => {
+      generateQrCode(() => {
+        drawCanvas();
+      });
+    };
+  </script>
+</body>
+</html>
