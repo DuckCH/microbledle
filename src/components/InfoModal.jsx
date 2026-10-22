@@ -353,11 +353,24 @@ export default function InfoModal({ isOpen, onClose, initialTab = 'about' }) {
           {activeTab === 'sources' && (
             <div className="space-y-4 animate-fade text-xs leading-relaxed">
               <div>
-                <h3 className="text-base font-bold text-white mb-0.5">Scientific References & Compendia</h3>
-                <p className="text-[11px] text-slate-400">Standardized clinical references used across pathogen profiles</p>
+                <h3 className="text-base font-bold text-white mb-0.5">References & Sources</h3>
+                <p className="text-[11px] text-slate-400">Current information methodology & citation roadmap</p>
+              </div>
+
+              {/* AI-Generated Information Notice */}
+              <div className="p-3.5 rounded-2xl bg-emerald-950/40 border border-emerald-700/60 flex items-start gap-3">
+                <Sparkles className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                <div className="space-y-1">
+                  <strong className="text-emerald-300 block text-xs">AI-Generated Information Notice</strong>
+                  <p className="text-[11px] text-slate-300 leading-relaxed">
+                    We currently use <strong>AI-generated information</strong> to assist in curating clinical vignettes, pathogen characteristics, and educational clues across Microbledle. Direct textbook citations will be incorporated in future updates.
+                  </p>
+                </div>
               </div>
 
               <div className="space-y-2 text-slate-300">
+                <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-400 pt-1">Planned Textbook Citations</h4>
+
                 <div className="p-3 rounded-xl bg-slate-800/40 border border-slate-700/60 flex items-start gap-3">
                   <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 shrink-0 mt-0.5">
                     <BookOpen className="w-4 h-4" />
