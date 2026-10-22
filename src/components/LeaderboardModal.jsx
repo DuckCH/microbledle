@@ -6,6 +6,7 @@ import {
 import { getDailyLeaderboard, getAllTimeLeaderboard } from '../firebase';
 import { calculateUserProgression, calculateRxXp, AVATAR_OPTIONS, RANKS } from '../utils/leveling';
 import RankInfoModal from './RankInfoModal';
+import microbes from '../data/microbes.json';
 
 export default function LeaderboardModal({ 
   isOpen, 
@@ -663,7 +664,7 @@ export default function LeaderboardModal({
                           <span className="text-cyan-400 text-xs sm:text-sm sm:text-base font-mono">{discoveredCount}</span> <span className="text-[10px] sm:text-xs text-slate-300 font-sans font-semibold">Found</span>
                         </div>
                         <div className="text-[10px] sm:text-[11px] text-slate-400 flex items-center justify-end gap-1 sm:gap-1.5 font-medium font-mono">
-                          <span>{Math.round((discoveredCount / 70) * 100)}%</span>
+                          <span>{Math.round((discoveredCount / (microbes.length || 100)) * 100)}%</span>
                           <span className="text-slate-600">•</span>
                           <span>{prog.totalXp.toLocaleString()} XP</span>
                         </div>

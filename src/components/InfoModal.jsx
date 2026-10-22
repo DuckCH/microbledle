@@ -147,7 +147,7 @@ export default function InfoModal({ isOpen, onClose, initialTab = 'about' }) {
                   </div>
                   <div className="p-3 rounded-xl bg-slate-800/50 border border-slate-700/60">
                     <strong className="text-cyan-400 block mb-1">📖 USMLE Microdex Compendium</strong>
-                    Unlock 70+ high-yield medical microbiology profile cards packed with board-exam buzzwords and culture media.
+                    Unlock 100 high-yield medical microbiology profile cards packed with board-exam buzzwords and culture media.
                   </div>
                   <div className="p-3 rounded-xl bg-slate-800/50 border border-slate-700/60">
                     <strong className="text-amber-400 block mb-1">🏆 Career Progression</strong>
