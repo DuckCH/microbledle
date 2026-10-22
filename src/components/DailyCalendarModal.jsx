@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { 
   X, Calendar, Flame, Trophy, Award, BarChart2, Pill, ChevronLeft, ChevronRight, 
-  CheckCircle2, XCircle, Lock, Play, ArrowRight, Sparkles, BookOpen, Clock, ShieldCheck 
+  CheckCircle2, XCircle, Lock, Play, ArrowRight, Sparkles, BookOpen, Clock, ShieldCheck, RotateCcw 
 } from 'lucide-react';
 import { 
   getStreakHealth, 
@@ -25,6 +25,7 @@ export default function DailyCalendarModal({
   historyMap = {},
   todayDateStr = getTodayDateStr(),
   onSelectDateToPlay,
+  onResetAndPlayArchive,
   onOpenLeaderboard,
   onOpenMicrodex,
   initialTab = 'calendar' // 'calendar' | 'stats'
@@ -440,16 +441,35 @@ export default function DailyCalendarModal({
                         <span>Start Today's Case</span>
                       </button>
                     ) : selectedCell.isSolved ? (
-                      <button
-                        onClick={() => {
-                          onClose();
-                          onSelectDateToPlay(selectedCell.dateStr);
-                        }}
-                        className="w-full py-2.5 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition shadow-md bg-slate-800 hover:bg-slate-750 border border-slate-700 text-slate-200"
-                      >
-                        <ArrowRight className="w-4 h-4 text-emerald-400" />
-                        <span>Review Case Resolution</span>
-                      </button>
+                      <div className="space-y-1.5 w-full">
+                        <button
+                          onClick={() => {
+                            onClose();
+                            onSelectDateToPlay(selectedCell.dateStr);
+                          }}
+                          className="w-full py-2.5 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition shadow-md bg-slate-800 hover:bg-slate-750 border border-slate-700 text-slate-200"
+                        >
+                          <ArrowRight className="w-4 h-4 text-emerald-400" />
+                          <span>Review Case Resolution</span>
+                        </button>
+                        {!selectedCell.isToday && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              onClose();
+                              if (onResetAndPlayArchive) {
+                                onResetAndPlayArchive(selectedCell.dateStr);
+                              } else {
+                                onSelectDateToPlay(selectedCell.dateStr);
+                              }
+                            }}
+                            className="w-full py-2 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition border border-purple-500/40 text-purple-300 hover:bg-purple-950/50"
+                          >
+                            <RotateCcw className="w-3.5 h-3.5" />
+                            <span>Replay Case (Study Fresh)</span>
+                          </button>
+                        )}
+                      </div>
                     ) : (
                       <div className="space-y-1 w-full text-center">
                         <button

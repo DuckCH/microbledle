@@ -7,7 +7,7 @@ import {
   Check, Calendar, Shuffle, Volume2, VolumeX, Clock, TestTube2,
   BookOpen, User, LogOut, Cloud, ShieldCheck, Pill,
   ArrowLeft, ArrowRight, Home, Sun, Moon, FileText, BarChart2,
-  Mail, AlertTriangle, Menu
+  Mail, AlertTriangle, Menu, RotateCcw
 } from 'lucide-react';
 import microbes from './data/microbes.json';
 import { playTileSound, playSelectSound, playWinSound, playDefeatSound } from './utils/audio';
@@ -281,6 +281,10 @@ export default function App() {
   }, [isArchive]);
   const [target, setTarget] = useState(dailyInfo.target);
   const [dateStr, setDateStr] = useState(dailyInfo.dateStr);
+  const dateStrRef = useRef(dateStr);
+  useEffect(() => {
+    dateStrRef.current = dateStr;
+  }, [dateStr]);
 
   const [guesses, setGuesses] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -645,10 +649,14 @@ export default function App() {
       setProfile(mergedProfile);
       localStorage.setItem('microbledle_profile', JSON.stringify(mergedProfile));
 
-      // 6. SYNC Daily Game state across devices (Never overwrite if currently in Practice Mode)
+      // 6. SYNC Daily Game state across devices:
+      // Cache resolvedDailyGame to localStorage, but ONLY overwrite active in-game state
+      // if player is currently on TODAY'S live daily case.
+      // NEVER overwrite active state if user is in Archive Mode, Practice Mode, or playing a different date.
       if (resolvedDailyGame) {
         localStorage.setItem(`microbledle_game_${todayStr}`, JSON.stringify(resolvedDailyGame));
-        if (!isPracticeRef.current) {
+        const isCurrentActiveLiveDaily = !isPracticeRef.current && !isArchiveRef.current && dateStrRef.current === todayStr;
+        if (isCurrentActiveLiveDaily) {
           setGuesses(resolvedDailyGame.guesses || []);
           setGameOver(Boolean(resolvedDailyGame.gameOver));
           setWon(Boolean(resolvedDailyGame.won));
@@ -830,6 +838,11 @@ export default function App() {
 
   // Load or sync game state
   useEffect(() => {
+    // CRITICAL: If in Archive mode or currently viewing a past date, do NOT overwrite with dailyInfo
+    if (isArchiveRef.current || isArchive || dateStrRef.current !== dailyInfo.dateStr) {
+      return;
+    }
+
     if (isPractice) {
       setGuesses([]);
       setGameOver(false);
@@ -839,6 +852,7 @@ export default function App() {
     } else {
       setTarget(dailyInfo.target);
       setDateStr(dailyInfo.dateStr);
+      dateStrRef.current = dailyInfo.dateStr;
       const savedGame = localStorage.getItem(`microbledle_game_${dailyInfo.dateStr}`);
       if (savedGame) {
         try {
@@ -858,7 +872,7 @@ export default function App() {
         setWon(false);
       }
     }
-  }, [isPractice, dailyInfo]);
+  }, [isPractice, isArchive, dailyInfo]);
 
   // Autocomplete suggestions (pathogen name)
   // When search box is clicked/focused, shows ALL available pathogens from A to Z, scrollable
@@ -1154,6 +1168,7 @@ export default function App() {
     setIsPractice(true);
     isArchiveRef.current = false;
     setIsArchive(false);
+    dateStrRef.current = 'practice';
     const randomIndex = Math.floor(Math.random() * microbes.length);
     setTarget(microbes[randomIndex]);
     setGuesses([]);
@@ -1191,6 +1206,7 @@ export default function App() {
     const resolvedInfo = targetDateStr ? getDailyTarget(targetDateStr) : dailyInfo;
     setTarget(resolvedInfo.target);
     setDateStr(resolvedInfo.dateStr);
+    dateStrRef.current = resolvedInfo.dateStr;
     logAnalyticsEvent('game_start', { 
       mode: isPastArchive ? 'archive' : 'daily', 
       date: resolvedInfo.dateStr 
@@ -1200,19 +1216,48 @@ export default function App() {
     if (savedGame) {
       try {
         const parsed = JSON.parse(savedGame);
-        setGuesses(parsed.guesses || []);
-        setGameOver(parsed.gameOver || false);
-        setWon(parsed.won || false);
-        if (parsed.gameOver) {
-          setShowCaseResultModal(true);
+        // Cross-contamination auto-healing:
+        // If a game is marked 'won', the last guess must match target.id.
+        // If it doesn't match or dateStr mismatch, it was contaminated by another date's sync.
+        const lastGuess = parsed.guesses && parsed.guesses[parsed.guesses.length - 1];
+        const isCorrupted = (parsed.won && lastGuess?.guess?.id !== resolvedInfo.target.id) ||
+                            (parsed.dateStr && parsed.dateStr !== resolvedInfo.dateStr);
+
+        if (isCorrupted) {
+          console.warn("Auto-healing contaminated game cache for date:", resolvedInfo.dateStr);
+          localStorage.removeItem(`microbledle_game_${resolvedInfo.dateStr}`);
+          setGuesses([]);
+          setGameOver(false);
+          setWon(false);
+        } else {
+          setGuesses(parsed.guesses || []);
+          setGameOver(parsed.gameOver || false);
+          setWon(parsed.won || false);
+          if (parsed.gameOver) {
+            setShowCaseResultModal(true);
+          }
         }
-      } catch (e) {}
+      } catch (e) {
+        setGuesses([]);
+        setGameOver(false);
+        setWon(false);
+      }
     } else {
       setGuesses([]);
       setGameOver(false);
       setWon(false);
     }
     setCurrentScreen('game');
+  };
+
+  const handleResetArchiveCase = (targetDate) => {
+    if (!targetDate) return;
+    localStorage.removeItem(`microbledle_game_${targetDate}`);
+    localStorage.removeItem(`microbledle_daily_rx_${targetDate}`);
+    setGuesses([]);
+    setGameOver(false);
+    setWon(false);
+    setShowCaseResultModal(false);
   };
 
   const handleStartPractice = () => {
@@ -1761,11 +1806,18 @@ export default function App() {
             <div className="font-bold text-lg text-emerald-600 dark:text-emerald-400 italic">
               {target.name} ({target.commonName})
             </div>
-            <div className="mt-2 flex items-center justify-center gap-2 text-xs text-slate-500 dark:text-slate-400">
-              <Clock className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" />
-              Next daily case in: <span className="font-mono text-emerald-600 dark:text-emerald-300 font-bold">{countdown}</span>
-            </div>
-            <div className="mt-3 flex items-center justify-center gap-2">
+            {!isArchive ? (
+              <div className="mt-2 flex items-center justify-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+                <Clock className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" />
+                Next daily case in: <span className="font-mono text-emerald-600 dark:text-emerald-300 font-bold">{countdown}</span>
+              </div>
+            ) : (
+              <div className="mt-2 flex items-center justify-center gap-2 text-xs text-purple-600 dark:text-purple-400 font-semibold">
+                <Calendar className="w-3.5 h-3.5 text-purple-400" />
+                Archive Study Case ({dateStr}) • Study Mode (+0 XP)
+              </div>
+            )}
+            <div className="mt-3 flex items-center justify-center gap-2 flex-wrap">
               <button
                 onClick={() => setShowCaseResultModal(true)}
                 className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 rounded-xl text-xs font-semibold text-white shadow transition inline-flex items-center gap-1.5"
@@ -1778,6 +1830,15 @@ export default function App() {
               >
                 <BookOpen className="w-4 h-4" /> Open in Microdex
               </button>
+              {isArchive && (
+                <button
+                  onClick={() => handleResetArchiveCase(dateStr)}
+                  className="px-4 py-2 bg-purple-600 hover:bg-purple-500 rounded-xl text-xs font-semibold text-white shadow transition inline-flex items-center gap-1.5"
+                  title="Replay this archive case from scratch"
+                >
+                  <RotateCcw className="w-4 h-4" /> Replay Case
+                </button>
+              )}
             </div>
           </div>
         )}
@@ -2386,9 +2447,20 @@ export default function App() {
               {isPractice && (
                 <button
                   onClick={startNewPractice}
-                  className="w-full py-3 bg-slate-800 hover:bg-slate-700 font-semibold rounded-2xl flex items-center justify-center gap-2 text-slate-200 transition text-xs sm:text-sm"
+                  className="w-full py-3 bg-slate-800 hover:bg-slate-750 font-semibold rounded-2xl flex items-center justify-center gap-2 text-slate-200 transition text-xs sm:text-sm"
                 >
                   <ArrowRight className="w-4 h-4" /> Next Practice Organism
+                </button>
+              )}
+
+              {isArchive && (
+                <button
+                  onClick={() => {
+                    handleResetArchiveCase(dateStr);
+                  }}
+                  className="w-full py-3 bg-purple-600 hover:bg-purple-500 font-semibold rounded-2xl flex items-center justify-center gap-2 text-white transition text-xs sm:text-sm shadow-md"
+                >
+                  <RotateCcw className="w-4 h-4" /> Replay Case (Study Fresh)
                 </button>
               )}
 
@@ -2418,6 +2490,11 @@ export default function App() {
         initialTab={calendarInitialTab}
         onSelectDateToPlay={(selectedDate) => {
           setShowStatsModal(false);
+          handleStartDaily(selectedDate);
+        }}
+        onResetAndPlayArchive={(selectedDate) => {
+          setShowStatsModal(false);
+          handleResetArchiveCase(selectedDate);
           handleStartDaily(selectedDate);
         }}
         onOpenLeaderboard={() => {
