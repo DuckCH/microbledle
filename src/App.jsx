@@ -273,6 +273,12 @@ export default function App() {
   useEffect(() => {
     isPracticeRef.current = isPractice;
   }, [isPractice]);
+
+  const [isArchive, setIsArchive] = useState(false);
+  const isArchiveRef = useRef(isArchive);
+  useEffect(() => {
+    isArchiveRef.current = isArchive;
+  }, [isArchive]);
   const [target, setTarget] = useState(dailyInfo.target);
   const [dateStr, setDateStr] = useState(dailyInfo.dateStr);
 
@@ -433,6 +439,20 @@ export default function App() {
 
   // Handle post-game Empiric Rx Challenge answer
   const handleRxAnswer = (isCorrect, rxPayload) => {
+    // In Archive mode: User will NOT gain any XP/Level/Win rate or record progression (study only)
+    if (isArchiveRef.current) {
+      if (rxPayload) {
+        const rxSaveData = {
+          dateStr,
+          ...rxPayload,
+          isArchive: true,
+          updatedAt: new Date().toISOString()
+        };
+        localStorage.setItem(`microbledle_daily_rx_${dateStr}`, JSON.stringify(rxSaveData));
+      }
+      return;
+    }
+
     if (!isPractice) {
       // Daily case: always eligible if correct and not already answered today
       setStats(prev => {
@@ -954,28 +974,34 @@ export default function App() {
             origin: { y: 0.6 }
           });
 
-          // Check if pathogen was already discovered before unlocking
-          const wasAlreadyDiscovered = unlockedBugIds.includes(target.id);
-          setIsNewDiscovery(!wasAlreadyDiscovered);
+          // In Archive mode, user will NOT gain any XP/Level or Microdex unlock progression (study only)
+          if (!isArchiveRef.current) {
+            // Check if pathogen was already discovered before unlocking
+            const wasAlreadyDiscovered = unlockedBugIds.includes(target.id);
+            setIsNewDiscovery(!wasAlreadyDiscovered);
 
-          // Unlock pathogen in Microdex & Save to BOTH Local and Cloud
-          setUnlockedBugIds(prev => {
-            if (!prev.includes(target.id)) {
-              const updated = [...prev, target.id];
-              localStorage.setItem('microbledle_unlocked_bugs', JSON.stringify(updated));
-              if (user && isFirebaseConfigured) {
-                saveUserProgress(user.uid, { unlockedBugIds: updated });
+            // Unlock pathogen in Microdex & Save to BOTH Local and Cloud
+            setUnlockedBugIds(prev => {
+              if (!prev.includes(target.id)) {
+                const updated = [...prev, target.id];
+                localStorage.setItem('microbledle_unlocked_bugs', JSON.stringify(updated));
+                if (user && isFirebaseConfigured) {
+                  saveUserProgress(user.uid, { unlockedBugIds: updated });
+                }
+                return updated;
               }
-              return updated;
-            }
-            return prev;
-          });
+              return prev;
+            });
+          } else {
+            setIsNewDiscovery(false);
+          }
         } else {
           playDefeatSound(isMuted);
         }
       }, 700);
 
-      if (!isPractice) {
+      // In Archive mode: Do not update user stats, streaks, or win rate
+      if (!isPractice && !isArchiveRef.current) {
         setStats(prev => {
           if (prev.lastDailyDate === dateStr) {
             console.log("Daily stats already recorded for date:", dateStr);
@@ -1025,12 +1051,15 @@ export default function App() {
 
           return updated;
         });
+      }
 
+      if (!isPractice) {
         const dailyGameData = {
           dateStr,
           guesses: newGuesses,
           gameOver: true,
           won: isVictory,
+          isArchive: Boolean(isArchiveRef.current),
           updatedAt: new Date().toISOString()
         };
 
@@ -1042,21 +1071,25 @@ export default function App() {
         }
 
         if (user && isFirebaseConfigured) {
-          saveUserProgress(user.uid, { 
-            lastDailyGame: dailyGameData,
+          const cloudPayload = {
             [`dailyHistory.${dateStr}`]: {
               dateStr,
               won: isVictory,
               guessesCount: newGuesses.length,
               bugId: target.id,
               bugName: target.name,
+              isArchive: Boolean(isArchiveRef.current),
               completedAt: new Date().toISOString()
             }
-          });
+          };
+          if (!isArchiveRef.current) {
+            cloudPayload.lastDailyGame = dailyGameData;
+          }
+          saveUserProgress(user.uid, cloudPayload);
         }
 
-        // Submit daily case score to Global Leaderboard
-        if (isVictory) {
+        // Submit daily case score to Global Leaderboard ONLY if it is live Daily (never in archive mode!)
+        if (isVictory && !isArchiveRef.current) {
           const newWins = stats.wins + (stats.lastDailyDate === dateStr ? 0 : 1);
           const wasAlreadyDiscovered = unlockedBugIds.includes(target.id);
           const rxXp = calculateRxXp(stats, practiceRxBugIds);
@@ -1106,10 +1139,11 @@ export default function App() {
         guesses: newGuesses,
         gameOver: false,
         won: false,
+        isArchive: Boolean(isArchiveRef.current),
         updatedAt: new Date().toISOString()
       };
       localStorage.setItem(`microbledle_game_${dateStr}`, JSON.stringify(ongoingDaily));
-      if (user && isFirebaseConfigured) {
+      if (user && isFirebaseConfigured && !isArchiveRef.current) {
         saveUserProgress(user.uid, { lastDailyGame: ongoingDaily });
       }
     }
@@ -1117,6 +1151,9 @@ export default function App() {
 
   const startNewPractice = () => {
     isPracticeRef.current = true;
+    setIsPractice(true);
+    isArchiveRef.current = false;
+    setIsArchive(false);
     const randomIndex = Math.floor(Math.random() * microbes.length);
     setTarget(microbes[randomIndex]);
     setGuesses([]);
@@ -1135,21 +1172,29 @@ export default function App() {
       const saved = localStorage.getItem(`microbledle_game_${dailyInfo.dateStr}`);
       if (saved) return JSON.parse(saved);
     } catch (e) {}
-    if (!isPractice) {
+    if (!isPractice && !isArchive) {
       return { gameOver, won, guesses };
     }
     return { gameOver: false, won: false, guesses: [] };
-  }, [dailyInfo.dateStr, isPractice, gameOver, won, guesses]);
+  }, [dailyInfo.dateStr, isPractice, isArchive, gameOver, won, guesses]);
 
   const handleStartDaily = (targetDateStr) => {
     isPracticeRef.current = false;
     setIsPractice(false);
     
+    // Check if target date is in the past (Archive Mode)
+    const isPastArchive = Boolean(targetDateStr && targetDateStr !== dailyInfo.dateStr);
+    setIsArchive(isPastArchive);
+    isArchiveRef.current = isPastArchive;
+
     // Resolve info for targetDateStr (if archive date clicked from calendar) or today
     const resolvedInfo = targetDateStr ? getDailyTarget(targetDateStr) : dailyInfo;
     setTarget(resolvedInfo.target);
     setDateStr(resolvedInfo.dateStr);
-    logAnalyticsEvent('game_start', { mode: 'daily', date: resolvedInfo.dateStr });
+    logAnalyticsEvent('game_start', { 
+      mode: isPastArchive ? 'archive' : 'daily', 
+      date: resolvedInfo.dateStr 
+    });
 
     const savedGame = localStorage.getItem(`microbledle_game_${resolvedInfo.dateStr}`);
     if (savedGame) {
@@ -1172,6 +1217,9 @@ export default function App() {
 
   const handleStartPractice = () => {
     setIsPractice(true);
+    isPracticeRef.current = true;
+    setIsArchive(false);
+    isArchiveRef.current = false;
     startNewPractice();
     logAnalyticsEvent('game_start', { mode: 'practice' });
     setCurrentScreen('game');
@@ -1191,7 +1239,9 @@ export default function App() {
       return `${statusMap[taxonomy.status]}${statusMap[morphology.status]}${statusMap[respiration.status]}${statusMap[keyTest.status]}${statusMap[tropism.status]}`;
     }).join('\n');
 
-    const header = isPractice ? 'Microbledle (Practice)' : `Microbledle ${dateStr}`;
+    const header = isPractice 
+      ? 'Microbledle (Practice)' 
+      : (isArchive ? `Microbledle (Archive ${dateStr})` : `Microbledle ${dateStr}`);
     const score = won ? `${guesses.length}/${maxGuesses}` : `X/${maxGuesses}`;
     const playUrl = window.location.origin.includes('localhost') ? window.location.href : 'https://microbledle.com/';
     const text = `${header} ${score}\n\n${gridRows}\n\nPlay at: ${playUrl}`;
@@ -1299,7 +1349,11 @@ export default function App() {
                     <span className="text-base font-black tracking-tight bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500 dark:from-emerald-400 dark:via-teal-300 dark:to-cyan-400 bg-clip-text text-transparent">
                       MICROBLEDLE
                     </span>
-                    {isPractice ? (
+                    {isArchive ? (
+                      <span className="text-[9px] uppercase font-bold tracking-wider px-1.5 py-0.2 rounded-full bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-400 border border-purple-200 dark:border-purple-800">
+                        ARCHIVE
+                      </span>
+                    ) : isPractice ? (
                       <span className="text-[9px] uppercase font-bold tracking-wider px-1.5 py-0.2 rounded-full bg-cyan-100 dark:bg-cyan-950 text-cyan-700 dark:text-cyan-400 border border-cyan-200 dark:border-cyan-800">
                         PRAC
                       </span>
@@ -1351,6 +1405,18 @@ export default function App() {
                 </button>
               )}
 
+              {/* Archive return to today button if in archive */}
+              {isArchive && (
+                <button
+                  onClick={() => handleStartDaily(dailyInfo.dateStr)}
+                  className="px-2 py-1.5 rounded-xl bg-purple-100 dark:bg-purple-950 border border-purple-200 dark:border-purple-800 text-purple-700 dark:text-purple-300 transition flex items-center gap-1 text-[11px] font-semibold shadow-sm"
+                  title="Return to Today's Daily Case"
+                >
+                  <Calendar className="w-3.5 h-3.5 text-purple-500 dark:text-purple-400" />
+                  <span>Today</span>
+                </button>
+              )}
+
               {/* Mobile More / Tools Button */}
               <button
                 onClick={() => setShowMobileToolsModal(true)}
@@ -1392,21 +1458,30 @@ export default function App() {
                     <h1 className="text-2xl md:text-3xl font-black tracking-tight bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500 dark:from-emerald-400 dark:via-teal-300 dark:to-cyan-400 bg-clip-text text-transparent group-hover:opacity-90 transition">
                       MICROBLEDLE
                     </h1>
-                    {isPractice && (
+                    {isArchive ? (
+                      <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-400 border border-purple-200 dark:border-purple-800 flex items-center gap-1">
+                        <Calendar className="w-3 h-3" /> Archive Case (Study Only)
+                      </span>
+                    ) : isPractice ? (
                       <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-cyan-100 dark:bg-cyan-950 text-cyan-700 dark:text-cyan-400 border border-cyan-200 dark:border-cyan-800">
                         Practice
                       </span>
-                    )}
+                    ) : null}
                   </div>
                   <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                     <span className="flex items-center gap-1">
                       <Calendar className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
-                      {isPractice ? 'Practice' : dateStr}
+                      {isPractice ? 'Practice' : (isArchive ? `Archive: ${dateStr}` : dateStr)}
                     </span>
-                    {!isPractice && (
+                    {!isPractice && !isArchive && (
                       <span className="flex items-center gap-1 text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-900 px-2 py-0.5 rounded-full border border-slate-200 dark:border-slate-800">
                         <Clock className="w-3 h-3 text-emerald-500 dark:text-emerald-400" />
                         Next in <span className="font-mono text-emerald-600 dark:text-emerald-300 font-semibold">{countdown}</span>
+                      </span>
+                    )}
+                    {isArchive && (
+                      <span className="text-[11px] text-purple-600 dark:text-purple-400 font-medium">
+                        (No XP / Stats recorded)
                       </span>
                     )}
                   </div>
@@ -1495,14 +1570,27 @@ export default function App() {
             {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
           </button>
 
+          {/* If in Archive Mode, button to switch back to Today's Case */}
+          {isArchive && (
+            <button
+              onClick={() => handleStartDaily(dailyInfo.dateStr)}
+              className="px-3 py-2 rounded-xl bg-purple-950/60 border border-purple-500/40 hover:bg-purple-900/60 text-purple-300 transition flex items-center gap-1.5 text-xs font-semibold shadow-sm"
+              title="Return to Today's Live Daily Case"
+            >
+              <Calendar className="w-3.5 h-3.5 text-purple-400" />
+              <span>Today's Case</span>
+            </button>
+          )}
+
           {/* Practice Mode Toggle */}
           <button
             onClick={() => {
               if (isPractice) {
                 setIsPractice(false);
+                setIsArchive(false);
+                handleStartDaily(dailyInfo.dateStr);
               } else {
-                setIsPractice(true);
-                startNewPractice();
+                handleStartPractice();
               }
             }}
             className={`px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 border transition ${
@@ -2173,7 +2261,12 @@ export default function App() {
 
                   {/* EXP Feedback Pill */}
                   <div className="pt-2">
-                    {!isPractice ? (
+                    {isArchive ? (
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-950/50 border border-purple-500/40 text-purple-300 text-xs font-semibold shadow-sm">
+                        <Calendar className="w-3.5 h-3.5 text-purple-400" />
+                        <span>Archive Study Mode: No XP or stats recorded (+0 XP)</span>
+                      </div>
+                    ) : !isPractice ? (
                       <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-bold shadow-sm">
                         <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
                         <span>+100 XP (Daily Case)</span>
@@ -2232,16 +2325,18 @@ export default function App() {
             {/* Empiric Rx Challenge (Post-game Treatment Quiz) */}
             <RxChallenge
               target={target}
-              isDaily={!isPractice}
+              isDaily={!isPractice && !isArchive}
               dateStr={dateStr}
               isMuted={isMuted}
               onAnswer={handleRxAnswer}
               onOpenMicrodex={() => handleOpenMicrodex(target)}
-              canEarnExp={!isPractice || (isNewDiscovery && !practiceRxBugIds.includes(target.id))}
+              canEarnExp={!isArchive && (!isPractice || (isNewDiscovery && !practiceRxBugIds.includes(target.id)))}
               expReason={
-                !isPractice 
-                  ? '' 
-                  : (!isNewDiscovery ? 'Already Discovered (+0 XP)' : (practiceRxBugIds.includes(target.id) ? 'Rx Solved (+0 XP)' : ''))
+                isArchive
+                  ? 'Archive Study Mode: No XP recorded (+0 XP)'
+                  : (!isPractice 
+                      ? '' 
+                      : (!isNewDiscovery ? 'Already Discovered (+0 XP)' : (practiceRxBugIds.includes(target.id) ? 'Rx Solved (+0 XP)' : '')))
               }
             />
 
@@ -2448,6 +2543,7 @@ export default function App() {
         guesses={guesses}
         won={won}
         isPractice={isPractice}
+        isArchive={isArchive}
         dateStr={dateStr}
         profile={profile}
         progression={progression}
@@ -2499,21 +2595,23 @@ export default function App() {
 
             {/* Action Buttons Grid */}
             <div className="grid grid-cols-2 gap-2">
-              {/* Daily / Practice Switch */}
+              {/* Daily / Practice / Archive Switch */}
               <button
                 onClick={() => {
                   setShowMobileToolsModal(false);
-                  if (isPractice) {
+                  if (isArchive) {
+                    handleStartDaily(dailyInfo.dateStr);
+                  } else if (isPractice) {
                     setIsPractice(false);
+                    handleStartDaily(dailyInfo.dateStr);
                   } else {
-                    setIsPractice(true);
-                    startNewPractice();
+                    handleStartPractice();
                   }
                 }}
                 className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 flex flex-col items-center justify-center gap-1.5 text-center text-xs font-semibold text-slate-800 dark:text-slate-200 hover:border-emerald-500/40 transition shadow-sm"
               >
                 <Shuffle className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
-                <span>{isPractice ? 'Switch to Daily' : 'Switch to Practice'}</span>
+                <span>{isArchive ? "Return to Today" : (isPractice ? 'Switch to Daily' : 'Switch to Practice')}</span>
               </button>
 
               {/* Theme Toggle */}

@@ -367,7 +367,7 @@ export default function DailyCalendarModal({
                           ? 'Case available to solve now'
                           : selectedCell.isFuture
                           ? 'Case locked until this date'
-                          : 'Unplayed past case (Available in Archive Mode)'}
+                          : 'Unplayed past case (Study in Archive Mode • No EXP/Stats)'}
                       </p>
                     </div>
 
@@ -428,36 +428,46 @@ export default function DailyCalendarModal({
 
                   {/* Action Button */}
                   {!selectedCell.isFuture && onSelectDateToPlay && (
-                    <button
-                      onClick={() => {
-                        onClose();
-                        onSelectDateToPlay(selectedCell.dateStr);
-                      }}
-                      className={`w-full py-2.5 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition shadow-md ${
-                        selectedCell.isToday && !selectedCell.isSolved
-                          ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 hover:from-emerald-400 hover:to-teal-400 font-black'
-                          : selectedCell.isSolved
-                          ? 'bg-slate-800 hover:bg-slate-750 border border-slate-700 text-slate-200'
-                          : 'bg-cyan-600 hover:bg-cyan-500 text-white'
-                      }`}
-                    >
-                      {selectedCell.isToday && !selectedCell.isSolved ? (
-                        <>
-                          <Play className="w-4 h-4 fill-slate-950" />
-                          <span>Start Today's Case</span>
-                        </>
-                      ) : selectedCell.isSolved ? (
-                        <>
-                          <ArrowRight className="w-4 h-4 text-emerald-400" />
-                          <span>Review Case Resolution</span>
-                        </>
-                      ) : (
-                        <>
+                    selectedCell.isToday && !selectedCell.isSolved ? (
+                      <button
+                        onClick={() => {
+                          onClose();
+                          onSelectDateToPlay(selectedCell.dateStr);
+                        }}
+                        className="w-full py-2.5 px-4 rounded-xl text-xs font-black flex items-center justify-center gap-2 transition shadow-md bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 hover:from-emerald-400 hover:to-teal-400"
+                      >
+                        <Play className="w-4 h-4 fill-slate-950" />
+                        <span>Start Today's Case</span>
+                      </button>
+                    ) : selectedCell.isSolved ? (
+                      <button
+                        onClick={() => {
+                          onClose();
+                          onSelectDateToPlay(selectedCell.dateStr);
+                        }}
+                        className="w-full py-2.5 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition shadow-md bg-slate-800 hover:bg-slate-750 border border-slate-700 text-slate-200"
+                      >
+                        <ArrowRight className="w-4 h-4 text-emerald-400" />
+                        <span>Review Case Resolution</span>
+                      </button>
+                    ) : (
+                      <div className="space-y-1 w-full text-center">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            onClose();
+                            onSelectDateToPlay(selectedCell.dateStr);
+                          }}
+                          className="w-full py-2.5 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition shadow-md bg-purple-600 hover:bg-purple-500 text-white"
+                        >
                           <Play className="w-4 h-4" />
-                          <span>Play Past Case ({formatFriendlyDate(selectedCell.dateStr)})</span>
-                        </>
-                      )}
-                    </button>
+                          <span>Study Past Case ({formatFriendlyDate(selectedCell.dateStr)})</span>
+                        </button>
+                        <p className="text-[10px] text-slate-400">
+                          Archive Mode: Study only (no XP, rank, streaks, or stats recorded).
+                        </p>
+                      </div>
+                    )
                   )}
                 </div>
               )}

@@ -12,6 +12,7 @@ export default function DischargeCardModal({
   guesses = [],
   won,
   isPractice,
+  isArchive = false,
   dateStr,
   profile,
   progression,
@@ -81,7 +82,9 @@ export default function DischargeCardModal({
     ctx.fillText('Daily Medical Microbiology Game', contentLeft, 94);
 
     // Date / Mode Pill on Right
-    const modeLabel = isPractice ? 'PRACTICE MODE' : `DAILY • ${dateStr}`;
+    const modeLabel = isPractice 
+      ? 'PRACTICE MODE' 
+      : (isArchive ? `ARCHIVE • ${dateStr}` : `DAILY • ${dateStr}`);
     ctx.font = 'bold 13px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
     const pillTextW = ctx.measureText(modeLabel).width;
     const pillW = pillTextW + 28;
@@ -369,7 +372,7 @@ export default function DischargeCardModal({
       }
     }, 'image/png', 0.95);
 
-  }, [isOpen, target, guesses, won, isPractice, dateStr, profile, progression, stats]);
+  }, [isOpen, target, guesses, won, isPractice, isArchive, dateStr, profile, progression, stats]);
 
   if (!isOpen) return null;
 
@@ -444,7 +447,9 @@ export default function DischargeCardModal({
       return `${statusMap[taxonomy.status]}${statusMap[morphology.status]}${statusMap[respiration.status]}${statusMap[keyTest.status]}${statusMap[tropism.status]}`;
     }).join('\n');
 
-    const header = isPractice ? 'Microbledle (Practice)' : `Microbledle ${dateStr}`;
+    const header = isPractice 
+      ? 'Microbledle (Practice)' 
+      : (isArchive ? `Microbledle (Archive ${dateStr})` : `Microbledle ${dateStr}`);
     const score = won ? `${guesses.length}/6` : 'X/6';
     const text = `${header} ${score}\n\n${gridRows}\n\nPlay at: https://microbledle.com/`;
 
