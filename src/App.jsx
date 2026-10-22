@@ -20,12 +20,15 @@ import RxChallenge from './components/RxChallenge';
 import MainMenu from './components/MainMenu';
 import DischargeCardModal from './components/DischargeCardModal';
 import InfoModal from './components/InfoModal';
+import DailyCalendarModal from './components/DailyCalendarModal';
 import StaticPageLayout from './pages/StaticPageLayout';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import PrivacyPage from './pages/PrivacyPage';
 import TermsPage from './pages/TermsPage';
 import ReferencesPage from './pages/ReferencesPage';
+import { getDailyTarget, getTodayDateStr } from './utils/dailyTarget';
+import { loadDailyHistory, saveDailyHistoryEntry, getYesterdayDateStr } from './utils/streak';
 import { 
   auth, 
   logoutUser, 
@@ -37,19 +40,6 @@ import {
   logAnalyticsEvent
 } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth';
-
-// Deterministic daily target pathogen using UTC date
-function getDailyTarget() {
-  const now = new Date();
-  const dateStr = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, '0')}-${String(now.getUTCDate()).padStart(2, '0')}`;
-  let hash = 0;
-  for (let i = 0; i < dateStr.length; i++) {
-    hash = (hash << 5) - hash + dateStr.charCodeAt(i);
-    hash |= 0;
-  }
-  const index = Math.abs(hash) % microbes.length;
-  return { target: microbes[index], dateStr };
-}
 
 // Live Countdown hook to 00:00:00 UTC
 function useUtcCountdown() {
@@ -293,6 +283,8 @@ export default function App() {
   const [gameOver, setGameOver] = useState(false);
   const [won, setWon] = useState(false);
   const [showStatsModal, setShowStatsModal] = useState(false);
+  const [calendarInitialTab, setCalendarInitialTab] = useState('calendar');
+  const [dailyHistory, setDailyHistory] = useState(() => loadDailyHistory());
   const [showCaseResultModal, setShowCaseResultModal] = useState(false);
   const [showDischargeModal, setShowDischargeModal] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
@@ -990,17 +982,33 @@ export default function App() {
             return prev;
           }
 
+          const isTodayCase = dateStr === dailyInfo.dateStr;
+          const yesterdayStr = getYesterdayDateStr(dailyInfo.dateStr);
+
           const newPlayed = prev.played + 1;
           const newWins = isVictory ? prev.wins + 1 : prev.wins;
-          const newStreak = isVictory ? prev.streak + 1 : 0;
-          const newMaxStreak = Math.max(prev.maxStreak, newStreak);
+          
+          let newStreak = prev.streak || 0;
+          if (isTodayCase) {
+            if (isVictory) {
+              if (prev.lastDailyDate === yesterdayStr) {
+                newStreak = (prev.streak || 0) + 1;
+              } else {
+                newStreak = 1;
+              }
+            } else {
+              newStreak = 0;
+            }
+          }
+
+          const newMaxStreak = Math.max(prev.maxStreak || 0, newStreak);
           const newDist = [...(prev.distribution || [0, 0, 0, 0, 0, 0])];
           if (isVictory && newGuesses.length <= 6) {
             newDist[newGuesses.length - 1] = (newDist[newGuesses.length - 1] || 0) + 1;
           }
           const updated = {
             ...prev,
-            lastDailyDate: dateStr,
+            lastDailyDate: isTodayCase ? dateStr : (prev.lastDailyDate || dateStr),
             played: newPlayed,
             wins: newWins,
             streak: newStreak,
@@ -1028,8 +1036,23 @@ export default function App() {
 
         localStorage.setItem(`microbledle_game_${dateStr}`, JSON.stringify(dailyGameData));
 
+        const updatedHistory = saveDailyHistoryEntry(dateStr, dailyGameData, target);
+        if (updatedHistory) {
+          setDailyHistory(updatedHistory);
+        }
+
         if (user && isFirebaseConfigured) {
-          saveUserProgress(user.uid, { lastDailyGame: dailyGameData });
+          saveUserProgress(user.uid, { 
+            lastDailyGame: dailyGameData,
+            [`dailyHistory.${dateStr}`]: {
+              dateStr,
+              won: isVictory,
+              guessesCount: newGuesses.length,
+              bugId: target.id,
+              bugName: target.name,
+              completedAt: new Date().toISOString()
+            }
+          });
         }
 
         // Submit daily case score to Global Leaderboard
@@ -1118,14 +1141,17 @@ export default function App() {
     return { gameOver: false, won: false, guesses: [] };
   }, [dailyInfo.dateStr, isPractice, gameOver, won, guesses]);
 
-  const handleStartDaily = () => {
+  const handleStartDaily = (targetDateStr) => {
     isPracticeRef.current = false;
     setIsPractice(false);
-    setTarget(dailyInfo.target);
-    setDateStr(dailyInfo.dateStr);
-    logAnalyticsEvent('game_start', { mode: 'daily', date: dailyInfo.dateStr });
+    
+    // Resolve info for targetDateStr (if archive date clicked from calendar) or today
+    const resolvedInfo = targetDateStr ? getDailyTarget(targetDateStr) : dailyInfo;
+    setTarget(resolvedInfo.target);
+    setDateStr(resolvedInfo.dateStr);
+    logAnalyticsEvent('game_start', { mode: 'daily', date: resolvedInfo.dateStr });
 
-    const savedGame = localStorage.getItem(`microbledle_game_${dailyInfo.dateStr}`);
+    const savedGame = localStorage.getItem(`microbledle_game_${resolvedInfo.dateStr}`);
     if (savedGame) {
       try {
         const parsed = JSON.parse(savedGame);
@@ -1214,7 +1240,14 @@ export default function App() {
           onStartPractice={handleStartPractice}
           onOpenMicrodex={() => setShowMicrodexModal(true)}
           onOpenLeaderboard={() => setShowLeaderboardModal(true)}
-          onOpenStats={() => setShowStatsModal(true)}
+          onOpenStats={() => {
+            setCalendarInitialTab('stats');
+            setShowStatsModal(true);
+          }}
+          onOpenCalendar={() => {
+            setCalendarInitialTab('calendar');
+            setShowStatsModal(true);
+          }}
           onOpenProfile={() => setShowProfileModal(true)}
           onOpenHelp={() => setShowHelpModal(true)}
           onOpenAuth={() => setShowAuthModal(true)}
@@ -2280,125 +2313,27 @@ export default function App() {
         </div>
       )}
 
-      {/* Personal Statistics Modal */}
-      {showStatsModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-sm animate-fade">
-          <div className="bg-slate-900 border border-slate-700/80 rounded-3xl p-4 sm:p-6 max-w-lg w-full shadow-2xl relative max-h-[92vh] sm:max-h-[90vh] overflow-y-auto">
-            <button 
-              onClick={() => setShowStatsModal(false)}
-              className="absolute right-3.5 top-3.5 sm:right-4 sm:top-4 text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition"
-              title="Close"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            {/* Header */}
-            <div className="text-center mb-5 sm:mb-6">
-              <div className="inline-flex items-center justify-center p-2.5 sm:p-3 rounded-2xl bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 mb-2">
-                <BarChart2 className="w-6 h-6 sm:w-7 sm:h-7" />
-              </div>
-              <h2 className="text-xl sm:text-2xl font-black text-white">Personal Statistics</h2>
-            </div>
-
-            {/* Overall Statistics */}
-            <div className="mb-5 sm:mb-6">
-              <div className="grid grid-cols-4 gap-1.5 sm:gap-2 text-center">
-                <div className="p-2 sm:p-3 bg-slate-800/60 rounded-xl sm:rounded-2xl border border-slate-800">
-                  <div className="text-lg sm:text-2xl font-black text-white">{stats.played}</div>
-                  <div className="text-[9px] sm:text-[10px] text-slate-400 uppercase font-semibold">Played</div>
-                </div>
-                <div className="p-2 sm:p-3 bg-slate-800/60 rounded-xl sm:rounded-2xl border border-slate-800">
-                  <div className="text-lg sm:text-2xl font-black text-emerald-400">
-                    {stats.played > 0 ? Math.round((stats.wins / stats.played) * 100) : 0}%
-                  </div>
-                  <div className="text-[9px] sm:text-[10px] text-slate-400 uppercase font-semibold">Win %</div>
-                </div>
-                <div className="p-2 sm:p-3 bg-slate-800/60 rounded-xl sm:rounded-2xl border border-slate-800">
-                  <div className="text-lg sm:text-2xl font-black text-amber-400 flex items-center justify-center gap-0.5 sm:gap-1">
-                    <Flame className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-amber-400 text-amber-400 shrink-0" />
-                    <span>{stats.streak}</span>
-                  </div>
-                  <div className="text-[9px] sm:text-[10px] text-slate-400 uppercase font-semibold">Streak</div>
-                </div>
-                <div className="p-2 sm:p-3 bg-slate-800/60 rounded-xl sm:rounded-2xl border border-slate-800">
-                  <div className="text-lg sm:text-2xl font-black text-cyan-400">{stats.maxStreak}</div>
-                  <div className="text-[9px] sm:text-[10px] text-slate-400 uppercase font-semibold">Max</div>
-                </div>
-              </div>
-
-              {/* Antibiotic Challenge Stat Row */}
-              <div className="mt-2.5 p-3 bg-slate-800/50 rounded-2xl border border-slate-800 flex items-center justify-between text-xs">
-                <div className="flex items-center gap-2.5">
-                  <div className="p-2 rounded-xl bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
-                    <Pill className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <span className="font-bold text-slate-200">Antibiotic Challenge</span>
-                    <p className="text-[11px] text-slate-400">
-                      {stats.rxCorrect || 0} / {stats.rxAttempted || 0} Solved
-                    </p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="text-lg font-black text-indigo-400">
-                    {stats.rxAttempted ? Math.round(((stats.rxCorrect || 0) / stats.rxAttempted) * 100) : 0}%
-                  </div>
-                  <div className="text-[10px] text-slate-400 uppercase font-semibold">Win %</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Guess Distribution Bars */}
-            <div className="mb-6">
-              <div className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2 text-center">
-                Guess Distribution
-              </div>
-              <div className="space-y-1.5 text-xs">
-                {stats.distribution.map((count, idx) => {
-                  const maxCount = Math.max(1, ...stats.distribution);
-                  const pct = Math.max(8, Math.round((count / maxCount) * 100));
-                  return (
-                    <div key={idx} className="flex items-center gap-2">
-                      <span className="w-3 text-right text-slate-400 font-mono text-xs">{idx + 1}</span>
-                      <div className="flex-1 bg-slate-800 rounded-md overflow-hidden h-5">
-                        <div 
-                          style={{ width: `${pct}%` }} 
-                          className="h-full flex items-center justify-end pr-2 font-bold text-[10px] transition-all duration-500 bg-emerald-500/80 text-slate-950"
-                        >
-                          {count}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Action buttons */}
-            <div className="space-y-2">
-              {/* View Global Leaderboard Button */}
-              <button
-                onClick={() => {
-                  setShowStatsModal(false);
-                  setShowLeaderboardModal(true);
-                }}
-                className="w-full py-3 bg-slate-800/90 hover:bg-slate-750 border border-amber-500/40 hover:border-amber-400 text-amber-300 font-bold rounded-2xl flex items-center justify-center gap-2 transition text-xs sm:text-sm"
-              >
-                <Trophy className="w-4 h-4 text-amber-400" />
-                <span>View Global Leaderboard</span>
-              </button>
-
-              {/* Close Button */}
-              <button
-                onClick={() => setShowStatsModal(false)}
-                className="w-full py-2.5 bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-slate-300 hover:text-white font-semibold rounded-2xl flex items-center justify-center gap-2 transition text-xs"
-              >
-                <span>Close</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Daily Case Calendar & Personal Statistics Modal */}
+      <DailyCalendarModal
+        isOpen={showStatsModal}
+        onClose={() => setShowStatsModal(false)}
+        stats={stats}
+        historyMap={dailyHistory}
+        todayDateStr={dailyInfo.dateStr}
+        initialTab={calendarInitialTab}
+        onSelectDateToPlay={(selectedDate) => {
+          setShowStatsModal(false);
+          handleStartDaily(selectedDate);
+        }}
+        onOpenLeaderboard={() => {
+          setShowStatsModal(false);
+          setShowLeaderboardModal(true);
+        }}
+        onOpenMicrodex={(bug) => {
+          setShowStatsModal(false);
+          handleOpenMicrodex(bug);
+        }}
+      />
 
       {/* Rules & Help Modal */}
       {showHelpModal && (
