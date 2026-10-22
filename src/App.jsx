@@ -1203,7 +1203,7 @@ export default function App() {
     isArchiveRef.current = isPastArchive;
 
     // Resolve info for targetDateStr (if archive date clicked from calendar) or today
-    const resolvedInfo = targetDateStr ? getDailyTarget(targetDateStr) : dailyInfo;
+    const resolvedInfo = targetDateStr ? getDailyTarget(targetDateStr, dailyHistory) : dailyInfo;
     setTarget(resolvedInfo.target);
     setDateStr(resolvedInfo.dateStr);
     dateStrRef.current = resolvedInfo.dateStr;

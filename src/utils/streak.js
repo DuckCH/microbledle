@@ -203,7 +203,7 @@ export function getMonthCalendarData(year, monthIndex, historyMap = {}, todayDat
     const isSolved = Boolean(record && record.won);
     const isFailed = Boolean(record && record.gameOver && !record.won);
     const guessesCount = record?.guessesCount || (record?.guesses?.length) || null;
-    const dailyTargetInfo = getDailyTarget(dateStr);
+    const dailyTargetInfo = getDailyTarget(dateStr, historyMap);
 
     cells.push({
       key: dateStr,
