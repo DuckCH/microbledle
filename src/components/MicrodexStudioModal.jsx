@@ -23,6 +23,9 @@ export default function MicrodexStudioModal({
   const [authError, setAuthError] = useState('');
 
   // Selected pathogen in studio
+  const sortedMicrobes = useMemo(() => {
+    return [...allMicrobes].sort((a, b) => a.name.localeCompare(b.name));
+  }, [allMicrobes]);
   const [selectedBugId, setSelectedBugId] = useState(() => initialBugId || allMicrobes[0]?.id || '');
   const [activeTab, setActiveTab] = useState('textbooks'); // 'textbooks' | 'diagnostics' | 'vignette' | 'rx' | 'backup'
 
@@ -322,7 +325,7 @@ export default function MicrodexStudioModal({
                   onChange={(e) => setSelectedBugId(e.target.value)}
                   className="bg-slate-900 border border-slate-700 text-white rounded-xl px-3 py-1.5 font-bold italic focus:outline-none focus:border-emerald-500 w-full text-xs"
                 >
-                  {allMicrobes.map(m => (
+                  {sortedMicrobes.map(m => (
                     <option key={m.id} value={m.id} className="not-italic">
                       {m.name} ({m.commonName})
                     </option>

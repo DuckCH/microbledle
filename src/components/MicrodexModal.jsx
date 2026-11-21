@@ -111,8 +111,8 @@ export default function MicrodexModal({
       }
 
       return true;
-    });
-  }, [activeFilter, searchTerm]);
+    }).sort((a, b) => a.name.localeCompare(b.name));
+  }, [microbes, activeFilter, searchTerm]);
 
   const masteryPercentage = Math.round((unlockedSet.size / microbes.length) * 100);
 

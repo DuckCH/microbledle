@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { 
   X, ArrowLeft, BookOpen, Edit3, Save, Sparkles, Check, AlertCircle, 
   Tag, ExternalLink, RefreshCw, Key, ShieldCheck, FileText, ChevronRight
@@ -31,6 +31,10 @@ export default function ChapterWikiModal({
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [saveError, setSaveError] = useState('');
+
+  const sortedAllMicrobes = useMemo(() => {
+    return [...allMicrobes].sort((a, b) => a.name.localeCompare(b.name));
+  }, [allMicrobes]);
 
   // Load existing chapter summary data when chapter changes
   useEffect(() => {
@@ -289,7 +293,7 @@ export default function ChapterWikiModal({
                   Linked Microdex Pathogens ({selectedBugs.length} tagged)
                 </label>
                 <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto p-2 rounded-xl bg-slate-950 border border-slate-800">
-                  {allMicrobes.map(bug => {
+                  {sortedAllMicrobes.map(bug => {
                     const isSelected = selectedBugs.includes(bug.id);
                     return (
                       <button
