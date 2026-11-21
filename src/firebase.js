@@ -530,4 +530,60 @@ export async function loadCloudChapterSummaries() {
   return {};
 }
 
+/**
+ * Batch save chapter summaries map to Firestore under the verified admin document
+ */
+export async function saveBatchChapterSummariesToCloud(summariesMap) {
+  if (!isFirebaseConfigured || !db || !summariesMap || typeof summariesMap !== 'object') {
+    return false;
+  }
+  if (!auth?.currentUser || auth.currentUser.uid !== ADMIN_UID) {
+    throw new Error('Admin authentication required. Please unlock with admin password.');
+  }
+  try {
+    const nowIso = new Date().toISOString();
+    const adminDocRef = doc(db, 'users', ADMIN_UID);
+    await setDoc(adminDocRef, {
+      lastUpdatedAt: nowIso,
+      textbookSummaries: summariesMap
+    }, { merge: true });
+    return true;
+  } catch (err) {
+    console.warn("Error batch saving chapter summaries to Firestore:", err);
+    throw err;
+  }
+}
+
+/**
+ * Batch save pathogens list to Firestore under the verified admin document (users/ADMIN_UID)
+ */
+export async function saveBatchMicrobesToCloud(microbesList) {
+  if (!isFirebaseConfigured || !db || !Array.isArray(microbesList) || microbesList.length === 0) {
+    return false;
+  }
+  if (!auth?.currentUser || auth.currentUser.uid !== ADMIN_UID) {
+    throw new Error('Admin authentication required. Please unlock with admin password.');
+  }
+  try {
+    const nowIso = new Date().toISOString();
+    const adminDocRef = doc(db, 'users', ADMIN_UID);
+    const microbesMap = {};
+    microbesList.forEach(m => {
+      if (m && m.id) {
+        microbesMap[m.id] = { ...m, updatedAt: nowIso };
+      }
+    });
+    await setDoc(adminDocRef, {
+      lastUpdatedAt: nowIso,
+      publishedMicrobes: microbesMap
+    }, { merge: true });
+    return true;
+  } catch (err) {
+    console.warn("Error batch saving microbes to Firestore:", err);
+    throw err;
+  }
+}
+
+
+
 

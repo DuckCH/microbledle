@@ -2,18 +2,38 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { 
   X, Save, Download, GitBranch, BookOpen, Check, AlertCircle, 
   Sparkles, Dna, Stethoscope, Microscope, TestTube2, Pill, 
-  ShieldAlert, Plus, Trash2, Key, RefreshCw, ExternalLink, ChevronDown
+  ShieldAlert, Plus, Trash2, Key, RefreshCw, ExternalLink, ChevronDown,
+  Upload, Database, FileJson, CheckCircle2, ShieldCheck, FileText, ArrowRight,
+  Layers, HardDrive, AlertTriangle
 } from 'lucide-react';
 import { TEXTBOOK_REGISTRY, getTextbookById } from '../data/textbooks';
-import { downloadPathogensJson, commitPathogensToGitHub } from '../utils/githubSync';
-import { savePathogenToCloud, checkIsAdmin, verifyAndAuthorizeAdmin, auth, ADMIN_UID } from '../firebase';
+import { 
+  downloadPathogensJson, 
+  downloadChapterSummariesJson, 
+  downloadFullEcosystemBackup, 
+  parseBackupJson,
+  commitPathogensToGitHub,
+  commitChapterSummariesToGitHub
+} from '../utils/githubSync';
+import { 
+  savePathogenToCloud, 
+  saveBatchMicrobesToCloud,
+  saveBatchChapterSummariesToCloud,
+  checkIsAdmin, 
+  verifyAndAuthorizeAdmin, 
+  auth, 
+  ADMIN_UID 
+} from '../firebase';
 
 export default function MicrodexStudioModal({
   isOpen,
   onClose,
   initialBugId = null,
   allMicrobes = [],
+  chapterSummaries = {},
   onUpdateMicrobeInApp,
+  onBatchUpdateMicrobes,
+  onBatchUpdateChapterSummaries,
   user = null,
   profile = null
 }) {
@@ -44,6 +64,15 @@ export default function MicrodexStudioModal({
   });
   const [isCommittingGithub, setIsCommittingGithub] = useState(false);
   const [githubCommitResult, setGithubCommitResult] = useState(null);
+
+  // Backup & Restore state
+  const [backupParsed, setBackupParsed] = useState(null);
+  const [backupFileName, setBackupFileName] = useState('');
+  const [isRestoring, setIsRestoring] = useState(false);
+  const [restoreStatusMsg, setRestoreStatusMsg] = useState('');
+  const [restoreErrorMsg, setRestoreErrorMsg] = useState('');
+  const [isCommittingSummaries, setIsCommittingSummaries] = useState(false);
+  const [summariesCommitResult, setSummariesCommitResult] = useState(null);
 
   // Check admin status on open
   useEffect(() => {
@@ -183,17 +212,103 @@ export default function MicrodexStudioModal({
     }
   };
 
-  // 2. OPTION A: 1-Click Download JSON Backup
-  const handleDownloadBackup = () => {
-    if (!formData) return;
-    // Merge current form into full list
-    const updatedFullList = allMicrobes.map(m => m.id === formData.id ? formData : m);
-    downloadPathogensJson(updatedFullList, `microbes-backup-${new Date().toISOString().split('T')[0]}.json`);
+  // 2. 1-Click Ecosystem Snapshot Downloads
+  const handleDownloadFullBackup = () => {
+    downloadFullEcosystemBackup({
+      microbesList: allMicrobes,
+      chapterSummaries: chapterSummaries || {}
+    });
+    setSaveSuccessMsg('Downloaded unified full ecosystem backup (Microbes + Chapter Summaries)!');
+    setTimeout(() => setSaveSuccessMsg(''), 4000);
+  };
+
+  const handleDownloadMicrobesBackup = () => {
+    const updatedFullList = formData ? allMicrobes.map(m => m.id === formData.id ? formData : m) : allMicrobes;
+    downloadPathogensJson(updatedFullList);
     setSaveSuccessMsg('Downloaded pristine microbes.json snapshot to your device!');
     setTimeout(() => setSaveSuccessMsg(''), 4000);
   };
 
-  // 3. OPTION B: Direct GitHub Commit via REST API
+  const handleDownloadSummariesBackup = () => {
+    downloadChapterSummariesJson(chapterSummaries || {});
+    setSaveSuccessMsg('Downloaded chapter-summaries.json snapshot to your device!');
+    setTimeout(() => setSaveSuccessMsg(''), 4000);
+  };
+
+  // 3. File Upload / Parse Handler
+  const handleBackupFileSelect = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setBackupFileName(file.name);
+    setRestoreErrorMsg('');
+    setRestoreStatusMsg('');
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const rawText = event.target?.result;
+      const parsed = parseBackupJson(rawText);
+      if (!parsed.valid) {
+        setRestoreErrorMsg(parsed.error || 'Failed to parse backup JSON file.');
+        setBackupParsed(null);
+      } else {
+        setBackupParsed(parsed);
+      }
+    };
+    reader.onerror = () => {
+      setRestoreErrorMsg('Error reading file from disk.');
+    };
+    reader.readAsText(file);
+  };
+
+  // 4. Disaster Recovery & Cloud Sync Handler
+  const handleExecuteRestore = async () => {
+    if (!backupParsed || !backupParsed.valid) return;
+    if (!isAdminState) {
+      setRestoreErrorMsg('Please unlock Administrator access with the admin password first.');
+      return;
+    }
+
+    setIsRestoring(true);
+    setRestoreErrorMsg('');
+    setRestoreStatusMsg('');
+
+    try {
+      let restoredMicrobesCount = 0;
+      let restoredSummariesCount = 0;
+
+      // 1. Restore Chapter Summaries if present
+      if (backupParsed.chapterSummaries && Object.keys(backupParsed.chapterSummaries).length > 0) {
+        await saveBatchChapterSummariesToCloud(backupParsed.chapterSummaries);
+        if (onBatchUpdateChapterSummaries) {
+          onBatchUpdateChapterSummaries(backupParsed.chapterSummaries);
+        }
+        restoredSummariesCount = Object.keys(backupParsed.chapterSummaries).length;
+      }
+
+      // 2. Restore Microbes if present
+      if (backupParsed.microbes && Array.isArray(backupParsed.microbes) && backupParsed.microbes.length > 0) {
+        await saveBatchMicrobesToCloud(backupParsed.microbes);
+        if (onBatchUpdateMicrobes) {
+          onBatchUpdateMicrobes(backupParsed.microbes);
+        }
+        restoredMicrobesCount = backupParsed.microbes.length;
+      }
+
+      const summaryParts = [];
+      if (restoredMicrobesCount) summaryParts.push(`${restoredMicrobesCount} pathogens`);
+      if (restoredSummariesCount) summaryParts.push(`${restoredSummariesCount} chapter summaries`);
+
+      setRestoreStatusMsg(
+        `Restored ${summaryParts.join(' and ')} to Cloud Firestore and local runtime successfully!`
+      );
+    } catch (err) {
+      setRestoreErrorMsg(err.message || 'Failed to restore backup to cloud.');
+    } finally {
+      setIsRestoring(false);
+    }
+  };
+
+  // 5. Direct GitHub Commits via REST API
   const handleCommitToGitHub = async () => {
     if (!githubToken.trim()) {
       setActiveTab('backup');
@@ -206,11 +321,11 @@ export default function MicrodexStudioModal({
     setSaveErrorMsg('');
 
     try {
-      const updatedFullList = allMicrobes.map(m => m.id === formData.id ? formData : m);
+      const updatedFullList = formData ? allMicrobes.map(m => m.id === formData.id ? formData : m) : allMicrobes;
       const res = await commitPathogensToGitHub({
         token: githubToken,
         microbesList: updatedFullList,
-        commitMessage: `chore(microdex): update textbook citations for ${formData.name} via In-App Studio`
+        commitMessage: `chore(microdex): update textbook citations for ${formData?.name || 'pathogens'} via In-App Studio`
       });
 
       setGithubCommitResult(res);
@@ -219,6 +334,33 @@ export default function MicrodexStudioModal({
       setSaveErrorMsg(err.message || 'GitHub commit failed.');
     } finally {
       setIsCommittingGithub(false);
+    }
+  };
+
+  const handleCommitSummariesToGitHub = async () => {
+    if (!githubToken.trim()) {
+      setActiveTab('backup');
+      setSaveErrorMsg('Please enter your GitHub Personal Access Token in the Backup & GitHub tab first.');
+      return;
+    }
+
+    setIsCommittingSummaries(true);
+    setSummariesCommitResult(null);
+    setSaveErrorMsg('');
+
+    try {
+      const res = await commitChapterSummariesToGitHub({
+        token: githubToken,
+        chapterSummaries: chapterSummaries || {},
+        commitMessage: `chore(textbooks): sync bundled textbook chapter summaries from WikiMicrobe Studio`
+      });
+
+      setSummariesCommitResult(res);
+      setSaveSuccessMsg(`Committed chapter summaries to GitHub main! SHA: ${res.commitSha?.slice(0, 7)}`);
+    } catch (err) {
+      setSaveErrorMsg(err.message || 'GitHub commit of chapter summaries failed.');
+    } finally {
+      setIsCommittingSummaries(false);
     }
   };
 
@@ -346,14 +488,14 @@ export default function MicrodexStudioModal({
                   <span>{isSavingCloud ? 'Publishing...' : 'Save & Publish'}</span>
                 </button>
 
-                {/* 2. Option A: 1-Click JSON Download */}
+                {/* 2. Option A: 1-Click Unified JSON Backup */}
                 <button
-                  onClick={handleDownloadBackup}
+                  onClick={handleDownloadFullBackup}
                   className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-200 border border-slate-700 font-semibold flex items-center gap-1.5 transition"
-                  title="Download clean microbes.json snapshot file"
+                  title="Download unified full ecosystem backup (.json) containing all pathogens and textbook summaries"
                 >
                   <Download className="w-3.5 h-3.5 text-cyan-400" />
-                  <span className="hidden sm:inline">1-Click JSON</span>
+                  <span className="hidden sm:inline">1-Click Backup</span>
                 </button>
 
                 {/* 3. Option B: Direct GitHub Commit */}
@@ -918,45 +1060,209 @@ export default function MicrodexStudioModal({
 
                   {/* TAB 5: BACKUP & GITHUB SYNC */}
                   {activeTab === 'backup' && (
-                    <div className="space-y-4 text-xs">
+                    <div className="space-y-5 text-xs">
                       
-                      {/* Option A Card */}
-                      <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-2">
+                      {/* Ecosystem Overview Banner */}
+                      <div className="p-4 rounded-2xl bg-gradient-to-r from-purple-950/40 via-indigo-950/30 to-slate-900 border border-purple-500/30 flex flex-wrap items-center justify-between gap-3">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <Layers className="w-4 h-4 text-purple-400" />
+                            <h3 className="font-bold text-white text-sm">WikiMicrobe Studio Safety & Backup Hub</h3>
+                          </div>
+                          <p className="text-slate-400 text-[11px] mt-0.5">
+                            Dual-redundant disaster recovery, 1-click JSON snapshot exports, and automatic GitHub CI sync.
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2 sm:gap-3">
+                          <div className="px-3 py-1.5 rounded-xl bg-slate-950/60 border border-slate-800 text-center">
+                            <span className="block text-[10px] text-slate-400 uppercase font-bold">Microbes</span>
+                            <span className="font-mono text-emerald-400 font-bold text-xs">{allMicrobes.length}</span>
+                          </div>
+                          <div className="px-3 py-1.5 rounded-xl bg-slate-950/60 border border-slate-800 text-center">
+                            <span className="block text-[10px] text-slate-400 uppercase font-bold">Summaries</span>
+                            <span className="font-mono text-cyan-400 font-bold text-xs">{Object.keys(chapterSummaries || {}).length}</span>
+                          </div>
+                          <div className="px-3 py-1.5 rounded-xl bg-slate-950/60 border border-slate-800 text-center">
+                            <span className="block text-[10px] text-slate-400 uppercase font-bold">Cloud Status</span>
+                            <span className="font-mono text-purple-300 font-bold text-[11px] flex items-center gap-1">
+                              <CheckCircle2 className="w-3 h-3 text-emerald-400" /> Live
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Section 1: 1-Click Ecosystem Backups (Export) */}
+                      <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-3">
                         <div className="flex items-center justify-between">
                           <span className="font-bold text-white flex items-center gap-1.5 text-xs">
-                            <Download className="w-4 h-4 text-cyan-400" />
-                            <span>Option A: 1-Click JSON Snapshot Download</span>
+                            <Download className="w-4 h-4 text-emerald-400" />
+                            <span>Option 1: 1-Click Snapshot Exports (Zero Setup)</span>
                           </span>
-                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-cyan-950 border border-cyan-500/40 text-cyan-300 font-semibold">
-                            Zero Setup
+                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-950 border border-emerald-500/40 text-emerald-300 font-semibold">
+                            Recommended
                           </span>
                         </div>
                         <p className="text-slate-400 text-[11px] leading-relaxed">
-                          Generates a full snapshot of all 100 pathogens formatted as clean <code className="text-cyan-300">microbes.json</code> and saves it to your iPad or laptop download folder.
+                          Download pristine, timestamped JSON snapshots directly to your iPad or laptop downloads folder. No GitHub token or internet upload needed.
                         </p>
-                        <button
-                          type="button"
-                          onClick={handleDownloadBackup}
-                          className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-white font-bold flex items-center gap-1.5 transition text-xs shadow"
-                        >
-                          <Download className="w-4 h-4 text-cyan-400" />
-                          <span>Export & Download microbes.json</span>
-                        </button>
+
+                        {/* Primary unified export button */}
+                        <div className="p-3.5 rounded-xl bg-gradient-to-r from-emerald-950/50 via-slate-900 to-slate-900 border border-emerald-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                          <div>
+                            <div className="font-bold text-emerald-300 text-xs flex items-center gap-1.5">
+                              <Database className="w-4 h-4 text-emerald-400" />
+                              <span>Unified Full Ecosystem Backup</span>
+                            </div>
+                            <span className="text-[11px] text-slate-400">
+                              Bundles all {allMicrobes.length} pathogens and {Object.keys(chapterSummaries || {}).length} textbook chapter summaries into a single restore-ready file.
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={handleDownloadFullBackup}
+                            className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold flex items-center justify-center gap-2 transition text-xs shadow-md whitespace-nowrap"
+                          >
+                            <Download className="w-4 h-4" />
+                            <span>Export Full Ecosystem (.json)</span>
+                          </button>
+                        </div>
+
+                        {/* Individual separate downloads */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                          <button
+                            type="button"
+                            onClick={handleDownloadMicrobesBackup}
+                            className="p-3 rounded-xl bg-slate-900 hover:bg-slate-850 border border-slate-700/80 text-left transition flex items-center justify-between group"
+                          >
+                            <div>
+                              <div className="font-bold text-slate-200 group-hover:text-white flex items-center gap-1.5">
+                                <FileJson className="w-3.5 h-3.5 text-cyan-400" />
+                                <span>Pathogens Only (microbes.json)</span>
+                              </div>
+                              <span className="text-[10px] text-slate-400">Standard Microbledle database snapshot</span>
+                            </div>
+                            <Download className="w-4 h-4 text-slate-500 group-hover:text-cyan-400 transition" />
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={handleDownloadSummariesBackup}
+                            className="p-3 rounded-xl bg-slate-900 hover:bg-slate-850 border border-slate-700/80 text-left transition flex items-center justify-between group"
+                          >
+                            <div>
+                              <div className="font-bold text-slate-200 group-hover:text-white flex items-center gap-1.5">
+                                <FileText className="w-3.5 h-3.5 text-purple-400" />
+                                <span>Textbook Summaries Only</span>
+                              </div>
+                              <span className="text-[10px] text-slate-400">WikiMicrobe chapter notes & tables</span>
+                            </div>
+                            <Download className="w-4 h-4 text-slate-500 group-hover:text-purple-400 transition" />
+                          </button>
+                        </div>
                       </div>
 
-                      {/* Option B Card */}
+                      {/* Section 2: Disaster Recovery & Import / Restore */}
+                      <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-white flex items-center gap-1.5 text-xs">
+                            <Upload className="w-4 h-4 text-amber-400" />
+                            <span>Option 2: Restore from Backup (Disaster Recovery & Sync)</span>
+                          </span>
+                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-950 border border-amber-500/40 text-amber-300 font-semibold">
+                            Cloud & Local Sync
+                          </span>
+                        </div>
+                        <p className="text-slate-400 text-[11px] leading-relaxed">
+                          Upload any previously exported Microbledle JSON backup file (unified ecosystem, <code className="text-amber-300">microbes.json</code>, or <code className="text-purple-300">chapter-summaries.json</code>). You can review the contents before confirming synchronization.
+                        </p>
+
+                        {/* File input */}
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                          <label className="flex-1 cursor-pointer flex items-center gap-2 px-3 py-2.5 rounded-xl bg-slate-900 border border-dashed border-slate-700 hover:border-amber-400 text-slate-300 transition text-xs">
+                            <Upload className="w-4 h-4 text-amber-400 shrink-0" />
+                            <span className="truncate">
+                              {backupFileName ? backupFileName : 'Choose a backup .json file from your device...'}
+                            </span>
+                            <input
+                              type="file"
+                              accept=".json"
+                              onChange={handleBackupFileSelect}
+                              className="hidden"
+                            />
+                          </label>
+                        </div>
+
+                        {/* Parse error if any */}
+                        {restoreErrorMsg && (
+                          <div className="p-3 rounded-xl bg-rose-950/60 border border-rose-500/40 text-rose-300 flex items-center gap-2 text-xs">
+                            <AlertTriangle className="w-4 h-4 shrink-0 text-rose-400" />
+                            <span>{restoreErrorMsg}</span>
+                          </div>
+                        )}
+
+                        {/* Restore status message */}
+                        {restoreStatusMsg && (
+                          <div className="p-3 rounded-xl bg-emerald-950/60 border border-emerald-500/40 text-emerald-300 flex items-center gap-2 text-xs">
+                            <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" />
+                            <span>{restoreStatusMsg}</span>
+                          </div>
+                        )}
+
+                        {/* Backup Preview Card */}
+                        {backupParsed && (
+                          <div className="p-3.5 rounded-xl bg-slate-900 border border-amber-500/40 space-y-3 animate-fade">
+                            <div className="flex items-center justify-between">
+                              <span className="font-bold text-white text-xs flex items-center gap-1.5">
+                                <Check className="w-4 h-4 text-emerald-400" />
+                                <span>Valid Backup Detected</span>
+                              </span>
+                              <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 font-mono font-bold uppercase">
+                                Format: {backupParsed.type}
+                              </span>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-2 text-[11px]">
+                              <div className="p-2 rounded-lg bg-slate-950 border border-slate-800 flex justify-between">
+                                <span className="text-slate-400">Pathogens in File:</span>
+                                <span className="font-mono font-bold text-emerald-400">{backupParsed.stats.microbesCount}</span>
+                              </div>
+                              <div className="p-2 rounded-lg bg-slate-950 border border-slate-800 flex justify-between">
+                                <span className="text-slate-400">Chapter Summaries:</span>
+                                <span className="font-mono font-bold text-cyan-400">{backupParsed.stats.summariesCount}</span>
+                              </div>
+                            </div>
+
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-1">
+                              <span className="text-[10px] text-slate-400">
+                                Syncs to Firestore under verified admin doc & updates live memory.
+                              </span>
+                              <button
+                                type="button"
+                                onClick={handleExecuteRestore}
+                                disabled={isRestoring}
+                                className="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold flex items-center justify-center gap-1.5 transition text-xs shadow-md disabled:opacity-50"
+                              >
+                                {isRestoring ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <HardDrive className="w-3.5 h-3.5" />}
+                                <span>{isRestoring ? 'Restoring...' : 'Confirm Restore & Sync to Cloud'}</span>
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Section 3: Direct GitHub REST Sync */}
                       <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-3">
                         <div className="flex items-center justify-between">
                           <span className="font-bold text-white flex items-center gap-1.5 text-xs">
                             <GitBranch className="w-4 h-4 text-indigo-400" />
-                            <span>Option B: Direct GitHub Commit via REST API</span>
+                            <span>Option 3: Direct GitHub Commit via REST API</span>
                           </span>
                           <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-950 border border-indigo-500/40 text-indigo-300 font-semibold">
-                            Automated Cloud Backup
+                            Automated CI/CD
                           </span>
                         </div>
                         <p className="text-slate-400 text-[11px] leading-relaxed">
-                          Pushes updates directly into <strong className="text-white">DuckCH/microbledle</strong> on branch <code className="text-indigo-300">main</code>. Your Personal Access Token (PAT) is stored securely in this browser's local storage and never leaves your device.
+                          Pushes updates directly into repository <strong className="text-white">DuckCH/microbledle</strong> on branch <code className="text-indigo-300">main</code>. Your Personal Access Token (PAT) is stored securely in this browser's local storage and never leaves your device.
                         </p>
 
                         <div>
@@ -975,15 +1281,67 @@ export default function MicrodexStudioModal({
                           </span>
                         </div>
 
-                        <button
-                          type="button"
-                          onClick={handleCommitToGitHub}
-                          disabled={isCommittingGithub || !githubToken.trim()}
-                          className="px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold flex items-center gap-1.5 transition text-xs shadow-md disabled:opacity-40"
-                        >
-                          {isCommittingGithub ? <RefreshCw className="w-4 h-4 animate-spin" /> : <GitBranch className="w-4 h-4" />}
-                          <span>{isCommittingGithub ? 'Committing to GitHub...' : 'Commit & Push to GitHub Main'}</span>
-                        </button>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                          {/* Push Microbes Button */}
+                          <button
+                            type="button"
+                            onClick={handleCommitToGitHub}
+                            disabled={isCommittingGithub || !githubToken.trim()}
+                            className="p-3 rounded-xl bg-gradient-to-r from-indigo-900/60 to-slate-900 hover:from-indigo-800/70 border border-indigo-500/40 text-white font-bold flex items-center justify-between transition text-xs shadow-md disabled:opacity-40"
+                          >
+                            <div className="flex items-center gap-2">
+                              {isCommittingGithub ? <RefreshCw className="w-4 h-4 animate-spin text-indigo-400" /> : <GitBranch className="w-4 h-4 text-indigo-400" />}
+                              <div className="text-left">
+                                <span>{isCommittingGithub ? 'Pushing Microbes...' : 'Push microbes.json to GitHub'}</span>
+                                <span className="block text-[10px] text-indigo-300 font-normal">Updates src/data/microbes.json</span>
+                              </div>
+                            </div>
+                            <ArrowRight className="w-4 h-4 text-indigo-400" />
+                          </button>
+
+                          {/* Push Chapter Summaries Button */}
+                          <button
+                            type="button"
+                            onClick={handleCommitSummariesToGitHub}
+                            disabled={isCommittingSummaries || !githubToken.trim()}
+                            className="p-3 rounded-xl bg-gradient-to-r from-purple-900/60 to-slate-900 hover:from-purple-800/70 border border-purple-500/40 text-white font-bold flex items-center justify-between transition text-xs shadow-md disabled:opacity-40"
+                          >
+                            <div className="flex items-center gap-2">
+                              {isCommittingSummaries ? <RefreshCw className="w-4 h-4 animate-spin text-purple-400" /> : <BookOpen className="w-4 h-4 text-purple-400" />}
+                              <div className="text-left">
+                                <span>{isCommittingSummaries ? 'Pushing Summaries...' : 'Push bundledSummaries.json'}</span>
+                                <span className="block text-[10px] text-purple-300 font-normal">Updates bundledChapterSummaries.json</span>
+                              </div>
+                            </div>
+                            <ArrowRight className="w-4 h-4 text-purple-400" />
+                          </button>
+                        </div>
+
+                        {/* GitHub commit result banner */}
+                        {(githubCommitResult || summariesCommitResult) && (
+                          <div className="p-3 rounded-xl bg-indigo-950/60 border border-indigo-500/40 text-indigo-200 flex items-center justify-between text-xs animate-fade">
+                            <div className="flex items-center gap-2">
+                              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                              <span>
+                                Commit created:{' '}
+                                <code className="text-indigo-300 font-mono">
+                                  {(githubCommitResult || summariesCommitResult)?.commitSha?.slice(0, 7)}
+                                </code>
+                              </span>
+                            </div>
+                            {(githubCommitResult || summariesCommitResult)?.commitUrl && (
+                              <a
+                                href={(githubCommitResult || summariesCommitResult).commitUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-cyan-400 hover:text-cyan-300 flex items-center gap-1 font-semibold underline"
+                              >
+                                <span>View Commit on GitHub</span>
+                                <ExternalLink className="w-3 h-3" />
+                              </a>
+                            )}
+                          </div>
+                        )}
                       </div>
 
                     </div>

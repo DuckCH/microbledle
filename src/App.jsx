@@ -10,6 +10,7 @@ import {
   Mail, AlertTriangle, Menu, RotateCcw
 } from 'lucide-react';
 import microbes from './data/microbes.json';
+import bundledSummaries from './data/bundledChapterSummaries.json';
 import { playTileSound, playSelectSound, playWinSound, playDefeatSound } from './utils/audio';
 import { calculateUserProgression, calculateRxXp, AVATAR_OPTIONS, generateRandomPlayerName } from './utils/leveling';
 import MicrodexModal from './components/MicrodexModal';
@@ -494,9 +495,9 @@ export default function App() {
   const [chapterSummaries, setChapterSummaries] = useState(() => {
     try {
       const saved = localStorage.getItem('microbledle_cached_chapter_summaries');
-      if (saved) return JSON.parse(saved);
+      if (saved) return { ...bundledSummaries, ...JSON.parse(saved) };
     } catch {}
-    return {};
+    return { ...bundledSummaries };
   });
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
@@ -637,6 +638,32 @@ export default function App() {
         localStorage.setItem('microbledle_cached_chapter_summaries', JSON.stringify(updated));
       } catch {}
       return updated;
+    });
+  };
+
+  const handleBatchUpdateChapterSummaries = (newSummaries) => {
+    setChapterSummaries(prev => {
+      const updated = { ...prev, ...newSummaries };
+      try {
+        localStorage.setItem('microbledle_cached_chapter_summaries', JSON.stringify(updated));
+      } catch {}
+      return updated;
+    });
+  };
+
+  const handleBatchUpdateMicrobes = (newMicrobesList) => {
+    setLiveMicrobes(prev => {
+      const updatedMap = new Map(prev.map(b => [b.id, b]));
+      newMicrobesList.forEach(b => {
+        if (b && b.id) {
+          updatedMap.set(b.id, b);
+        }
+      });
+      const result = Array.from(updatedMap.values());
+      try {
+        localStorage.setItem('microbledle_cached_microbes', JSON.stringify(result));
+      } catch (e) {}
+      return result;
     });
   };
 
@@ -2950,7 +2977,10 @@ export default function App() {
         }}
         initialBugId={studioBugId}
         allMicrobes={liveMicrobes}
+        chapterSummaries={chapterSummaries}
         onUpdateMicrobeInApp={handleUpdateMicrobeInApp}
+        onBatchUpdateMicrobes={handleBatchUpdateMicrobes}
+        onBatchUpdateChapterSummaries={handleBatchUpdateChapterSummaries}
         user={user}
         profile={profile}
       />
