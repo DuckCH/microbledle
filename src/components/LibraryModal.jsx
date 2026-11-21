@@ -52,14 +52,14 @@ export default function LibraryModal({
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-lg sm:text-xl md:text-2xl font-black text-white tracking-tight">
-                  Microbledle Library
+                  WikiMicrobe
                 </h2>
                 <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-indigo-950 border border-indigo-500/40 text-indigo-300">
                   Knowledge Hub
                 </span>
               </div>
               <p className="text-[11px] sm:text-xs text-slate-400 mt-0.5">
-                Microdex Pathogen Compendium & Gold-Standard Medical Reference Bookshelf
+                Medical Microbiology Library (Microdex) & Textbook Wiki Summary
               </p>
             </div>
           </div>

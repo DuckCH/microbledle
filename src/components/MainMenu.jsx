@@ -288,9 +288,6 @@ export default function MainMenu({
                 <Shuffle className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />
                 Endless Mode
               </span>
-              <span className="text-[11px] font-semibold text-cyan-700 dark:text-cyan-400 bg-cyan-100 dark:bg-cyan-950/60 px-2 py-0.5 rounded-full border border-cyan-200 dark:border-cyan-800 shrink-0">
-                {totalBugsCount} Pathogens
-              </span>
             </div>
 
             <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-300 transition">
@@ -322,7 +319,7 @@ export default function MainMenu({
           </div>
         </div>
 
-        {/* CARD 3: LIBRARY HUB */}
+        {/* CARD 3: WIKIMICROBE */}
         <div className="rounded-2xl sm:rounded-3xl border border-indigo-400 dark:border-indigo-500/40 bg-gradient-to-br from-indigo-50/90 via-white to-slate-50 dark:from-indigo-950/30 dark:via-slate-900 dark:to-slate-950 p-4 sm:p-5 lg:p-6 shadow-md dark:shadow-2xl relative overflow-hidden flex flex-col justify-between group hover:border-indigo-400 transition-all duration-300">
           <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none" />
 
@@ -332,16 +329,13 @@ export default function MainMenu({
                 <BookOpen className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
                 Knowledge Hub
               </span>
-              <span className="text-[11px] font-semibold text-indigo-700 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-950/60 px-2 py-0.5 rounded-full border border-indigo-200 dark:border-indigo-800 shrink-0">
-                100 Bugs + 7 Books
-              </span>
             </div>
 
             <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-300 transition">
-              Library
+              WikiMicrobe
             </h3>
             <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
-              Microdex pathogen encyclopaedia & gold-standard textbook wiki summaries.
+              Medical Microbiology Library (Microdex) & Textbook Wiki Summary
             </p>
           </div>
 
@@ -352,7 +346,7 @@ export default function MainMenu({
               className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-black text-sm flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20 dark:shadow-indigo-950/60 active:scale-[0.99] transition"
             >
               <BookOpen className="w-4 h-4" />
-              <span>Open Library</span>
+              <span>Open WikiMicrobe</span>
             </button>
 
             <button
@@ -361,7 +355,7 @@ export default function MainMenu({
               className="mt-2.5 w-full text-center text-xs text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 font-semibold flex items-center justify-center gap-1.5 transition py-1 min-h-[28px]"
             >
               <BookOpen className="w-3.5 h-3.5 text-indigo-400" />
-              <span>Explore Compendium & Textbooks</span>
+              <span>Explore Library & Textbook Summary</span>
             </button>
           </div>
         </div>
