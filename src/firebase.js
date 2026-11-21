@@ -291,3 +291,115 @@ export async function getAllTimeLeaderboard(maxResults = 50) {
   }
 }
 
+// ==========================================
+// MICRODEX STUDIO & PATHOGEN CLOUD DATABASE
+// ==========================================
+
+const ADMIN_EMAILS = ['kaoklong', 'kaokl', 'admin@microbledle.com'];
+const ADMIN_LOCAL_STORAGE_KEY = 'microbledle_admin_token';
+export const ADMIN_PASSPHRASE_KEY = 'microbledle_admin_secret_passphrase';
+
+/**
+ * Check if the current user or device has admin privileges to edit Microdex.
+ * Checks email match, local admin secret key, or Firestore flag.
+ */
+export function checkIsAdmin(user, userProfile = null) {
+  if (typeof window !== 'undefined') {
+    const localToken = localStorage.getItem(ADMIN_LOCAL_STORAGE_KEY);
+    if (localToken === 'admin_authorized_medical_editor') {
+      return true;
+    }
+  }
+
+  if (userProfile?.isAdmin) return true;
+
+  if (user && user.email) {
+    const emailLower = user.email.toLowerCase();
+    if (ADMIN_EMAILS.some(adm => emailLower.includes(adm))) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+/**
+ * Authorize device as admin using secret passphrase
+ */
+export function authorizeAdminWithPassphrase(passphrase) {
+  if (typeof window === 'undefined') return false;
+  const clean = (passphrase || '').trim();
+  if (clean === 'microbledle_med_2026' || clean === 'Kaoklong_MD' || clean === 'murray10ed') {
+    localStorage.setItem(ADMIN_LOCAL_STORAGE_KEY, 'admin_authorized_medical_editor');
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Save or update a single pathogen in Firestore `microbes_v1`
+ */
+export async function savePathogenToCloud(pathogenData) {
+  if (!isFirebaseConfigured || !db || !pathogenData?.id) {
+    return false;
+  }
+  try {
+    const bugDocRef = doc(db, 'microbes_v1', pathogenData.id);
+    const nowIso = new Date().toISOString();
+    await setDoc(bugDocRef, {
+      ...pathogenData,
+      updatedAt: nowIso
+    }, { merge: true });
+
+    // Update global metadata timestamp
+    const metaDocRef = doc(db, 'meta', 'microbes');
+    await setDoc(metaDocRef, {
+      lastUpdatedAt: nowIso,
+      lastUpdatedBugId: pathogenData.id,
+      lastUpdatedBugName: pathogenData.name
+    }, { merge: true });
+
+    return true;
+  } catch (err) {
+    console.warn("Error saving pathogen to Firestore:", err);
+    throw err;
+  }
+}
+
+/**
+ * Fetch all custom/edited pathogens from Firestore `microbes_v1`
+ */
+export async function loadCloudPathogens() {
+  if (!isFirebaseConfigured || !db) return [];
+  try {
+    const colRef = collection(db, 'microbes_v1');
+    const snap = await getDocs(colRef);
+    const pathogens = [];
+    snap.forEach((docSnap) => {
+      pathogens.push({ id: docSnap.id, ...docSnap.data() });
+    });
+    return pathogens;
+  } catch (err) {
+    console.warn("Error loading cloud pathogens:", err);
+    return [];
+  }
+}
+
+/**
+ * Fetch metadata to check if cloud has newer updates
+ */
+export async function getCloudPathogensMetadata() {
+  if (!isFirebaseConfigured || !db) return null;
+  try {
+    const metaDocRef = doc(db, 'meta', 'microbes');
+    const snap = await getDoc(metaDocRef);
+    if (snap.exists()) {
+      return snap.data();
+    }
+  } catch (err) {
+    console.warn("Error fetching cloud pathogens metadata:", err);
+  }
+  return null;
+}
+
+

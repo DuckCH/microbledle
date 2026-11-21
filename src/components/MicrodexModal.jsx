@@ -2,9 +2,10 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { 
   X, Search, BookOpen, CheckCircle2, Lock, Sparkles, 
   Microscope, TestTube2, Stethoscope, Dna, Pill, Eye, EyeOff,
-  Flame, Award, ShieldAlert, ArrowRight
+  Flame, Award, ShieldAlert, ArrowRight, Edit3, Settings
 } from 'lucide-react';
-import microbes from '../data/microbes.json';
+import defaultMicrobes from '../data/microbes.json';
+import { getTextbookById } from '../data/textbooks';
 
 function getGramBadge(gram) {
   const g = gram.toLowerCase();
@@ -35,7 +36,16 @@ function getGramBadge(gram) {
   return { bg: 'bg-slate-800/70 border-slate-700/60 text-slate-300', dot: 'bg-slate-400', label: 'Microbe' };
 }
 
-export default function MicrodexModal({ isOpen, onClose, unlockedBugIds = [], initialBug = null }) {
+export default function MicrodexModal({ 
+  isOpen, 
+  onClose, 
+  unlockedBugIds = [], 
+  initialBug = null,
+  microbesList = null,
+  onOpenStudio = null,
+  isAdmin = false
+}) {
+  const microbes = microbesList || defaultMicrobes;
   const [searchTerm, setSearchTerm] = useState('');
   const [activeFilter, setActiveFilter] = useState('All');
   const [studyMode, setStudyMode] = useState(false);
@@ -43,9 +53,11 @@ export default function MicrodexModal({ isOpen, onClose, unlockedBugIds = [], in
 
   useEffect(() => {
     if (isOpen && initialBug) {
-      setSelectedBug(initialBug);
+      // Find latest version from microbes list in case citations updated
+      const latest = microbes.find(m => m.id === initialBug.id) || initialBug;
+      setSelectedBug(latest);
     }
-  }, [isOpen, initialBug]);
+  }, [isOpen, initialBug, microbes]);
 
   const unlockedSet = useMemo(() => new Set(unlockedBugIds), [unlockedBugIds]);
 
@@ -127,6 +139,19 @@ export default function MicrodexModal({ isOpen, onClose, unlockedBugIds = [], in
           </div>
 
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            {/* Microdex Studio CMS Button */}
+            {onOpenStudio && (
+              <button
+                onClick={() => onOpenStudio(selectedBug?.id || null)}
+                className="px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 border transition whitespace-nowrap shrink-0 bg-indigo-950/80 border-indigo-500/60 text-indigo-300 hover:bg-indigo-900"
+                title="Open Microdex Studio CMS Database Editor"
+              >
+                <Edit3 className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
+                <span className="hidden sm:inline">Studio CMS</span>
+                <span className="sm:hidden">Studio</span>
+              </button>
+            )}
+
             {/* Study Mode Toggle */}
             <button
               onClick={() => setStudyMode(!studyMode)}
@@ -274,19 +299,34 @@ export default function MicrodexModal({ isOpen, onClose, unlockedBugIds = [], in
               </button>
 
               {/* Title & Taxonomy Header */}
-              <div className="mb-4">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${getGramBadge(selectedBug.morphology.gram).bg}`}>
-                    {getGramBadge(selectedBug.morphology.gram).label}
-                  </span>
-                  <span className="text-xs font-semibold text-slate-400">{selectedBug.taxonomy}</span>
+              <div className="mb-4 flex items-start justify-between gap-3">
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${getGramBadge(selectedBug.morphology.gram).bg}`}>
+                      {getGramBadge(selectedBug.morphology.gram).label}
+                    </span>
+                    <span className="text-xs font-semibold text-slate-400">{selectedBug.taxonomy}</span>
+                  </div>
+                  <h2 className="text-2xl md:text-3xl font-black text-emerald-400 italic">
+                    {selectedBug.name}
+                  </h2>
+                  <div className="text-sm text-slate-300 font-medium">
+                    {selectedBug.commonName} • {selectedBug.morphology.shape} • {selectedBug.respiration}
+                  </div>
                 </div>
-                <h2 className="text-2xl md:text-3xl font-black text-emerald-400 italic">
-                  {selectedBug.name}
-                </h2>
-                <div className="text-sm text-slate-300 font-medium">
-                  {selectedBug.commonName} • {selectedBug.morphology.shape} • {selectedBug.respiration}
-                </div>
+
+                {onOpenStudio && (
+                  <button
+                    onClick={() => {
+                      onOpenStudio(selectedBug.id);
+                    }}
+                    className="px-3 py-1.5 rounded-xl bg-indigo-950/80 hover:bg-indigo-900 border border-indigo-500/40 text-indigo-300 text-xs font-semibold flex items-center gap-1.5 transition shrink-0 shadow-sm"
+                    title="Edit textbook references and notes in Microdex Studio"
+                  >
+                    <Edit3 className="w-3.5 h-3.5 text-indigo-400" />
+                    <span>Edit in Studio</span>
+                  </button>
+                )}
               </div>
 
               {/* High-Yield Sections */}
@@ -347,6 +387,55 @@ export default function MicrodexModal({ isOpen, onClose, unlockedBugIds = [], in
                     <p className="leading-relaxed">{selectedBug.transmission}</p>
                   </div>
                 </div>
+
+                {/* 6. Gold-Standard Textbook Citations */}
+                {selectedBug.references && selectedBug.references.length > 0 ? (
+                  <div className="p-3.5 rounded-2xl bg-indigo-950/30 border border-indigo-500/40 text-slate-200 space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold flex items-center gap-1.5 text-indigo-400 text-xs">
+                        <BookOpen className="w-4 h-4" /> Gold-Standard Textbook References ({selectedBug.references.length}):
+                      </span>
+                      <span className="text-[10px] text-indigo-300 font-mono">Peer-Reviewed Citations</span>
+                    </div>
+                    <div className="space-y-2">
+                      {selectedBug.references.map((refItem, rIdx) => {
+                        const tbMeta = getTextbookById(refItem.textbookId);
+                        return (
+                          <div key={rIdx} className="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 text-[11px] space-y-1">
+                            <div className="flex items-center justify-between gap-1 flex-wrap">
+                              <span className={`font-bold px-2 py-0.5 rounded-full border text-[10px] ${tbMeta.badgeColor}`}>
+                                {tbMeta.shortName}
+                              </span>
+                              <span className="text-slate-400 font-medium">
+                                {refItem.chapter ? `Chapter ${refItem.chapter}` : ''}
+                                {refItem.pages ? ` • Pages ${refItem.pages}` : ''}
+                                {refItem.figuresTables ? ` • ${refItem.figuresTables}` : ''}
+                              </span>
+                            </div>
+                            {refItem.chapterTitle && (
+                              <div className="text-white font-semibold text-xs">{refItem.chapterTitle}</div>
+                            )}
+                            {refItem.highYieldPearls && (
+                              <p className="text-slate-300 italic pt-0.5 leading-relaxed">"{refItem.highYieldPearls}"</p>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ) : (
+                  onOpenStudio && (
+                    <div className="p-3 rounded-2xl bg-slate-950/40 border border-slate-800/80 text-center">
+                      <button
+                        onClick={() => onOpenStudio(selectedBug.id)}
+                        className="text-xs text-indigo-400 hover:text-indigo-300 font-semibold inline-flex items-center gap-1"
+                      >
+                        <BookOpen className="w-3.5 h-3.5" />
+                        <span>+ Add Murray / Garcia / Mandell Textbook Citations in Studio</span>
+                      </button>
+                    </div>
+                  )
+                )}
 
               </div>
             </div>

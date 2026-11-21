@@ -16,9 +16,10 @@ export const POOL_SIZE_V2 = 100;
  * Deterministic daily target pathogen for any date in UTC.
  * @param {string|Date} [specificDate] Optional date string (YYYY-MM-DD) or Date object. Defaults to current UTC date.
  * @param {object} [historyMap] Optional map of historical plays to respect finalized pathogen IDs.
+ * @param {Array} [microbesList] Optional live microbes array (e.g. from cloud sync). Falls back to bundled microbes.json.
  * @returns {{ target: object, dateStr: string }}
  */
-export function getDailyTarget(specificDate, historyMap = null) {
+export function getDailyTarget(specificDate, historyMap = null, microbesList = null) {
   let dateStr;
   if (typeof specificDate === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(specificDate)) {
     dateStr = specificDate;
@@ -27,9 +28,11 @@ export function getDailyTarget(specificDate, historyMap = null) {
     dateStr = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, '0')}-${String(now.getUTCDate()).padStart(2, '0')}`;
   }
 
+  const pool = Array.isArray(microbesList) && microbesList.length > 0 ? microbesList : microbes;
+
   // 1. If player has already played and recorded this date in history, lock to that exact pathogen
   if (historyMap && historyMap[dateStr]?.bugId) {
-    const recordedBug = microbes.find(m => m.id === historyMap[dateStr].bugId);
+    const recordedBug = pool.find(m => m.id === historyMap[dateStr].bugId);
     if (recordedBug) {
       return { target: recordedBug, dateStr };
     }
@@ -45,7 +48,7 @@ export function getDailyTarget(specificDate, historyMap = null) {
   }
 
   const index = Math.abs(hash) % poolSize;
-  const target = microbes[index] || microbes[0];
+  const target = pool[index] || pool[0];
   return { target, dateStr };
 }
 

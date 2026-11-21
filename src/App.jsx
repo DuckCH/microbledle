@@ -13,6 +13,7 @@ import microbes from './data/microbes.json';
 import { playTileSound, playSelectSound, playWinSound, playDefeatSound } from './utils/audio';
 import { calculateUserProgression, calculateRxXp, AVATAR_OPTIONS, generateRandomPlayerName } from './utils/leveling';
 import MicrodexModal from './components/MicrodexModal';
+import MicrodexStudioModal from './components/MicrodexStudioModal';
 import AuthModal from './components/AuthModal';
 import ProfileModal from './components/ProfileModal';
 import LeaderboardModal from './components/LeaderboardModal';
@@ -37,7 +38,9 @@ import {
   isFirebaseConfigured,
   submitDailyScore,
   updateDailyScoreProfile,
-  logAnalyticsEvent
+  logAnalyticsEvent,
+  checkIsAdmin,
+  loadCloudPathogens
 } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 
@@ -223,7 +226,20 @@ function evaluateGuess(guess, target) {
 }
 
 export default function App() {
-  const dailyInfo = useMemo(() => getDailyTarget(), []);
+  const [liveMicrobes, setLiveMicrobes] = useState(() => {
+    try {
+      const cached = localStorage.getItem('microbledle_cached_microbes');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length >= 100) return parsed;
+      }
+    } catch (e) {
+      console.warn('Failed to parse cached microbes', e);
+    }
+    return microbes;
+  });
+
+  const dailyInfo = useMemo(() => getDailyTarget(undefined, null, liveMicrobes), [liveMicrobes]);
   const countdown = useUtcCountdown();
 
   const [currentScreen, setCurrentScreen] = useState(() => {
@@ -300,6 +316,8 @@ export default function App() {
   const [showHelpModal, setShowHelpModal] = useState(false);
   const [showMicrodexModal, setShowMicrodexModal] = useState(false);
   const [microdexInitialBug, setMicrodexInitialBug] = useState(null);
+  const [showMicrodexStudioModal, setShowMicrodexStudioModal] = useState(false);
+  const [studioBugId, setStudioBugId] = useState(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showLeaderboardModal, setShowLeaderboardModal] = useState(false);
@@ -382,6 +400,49 @@ export default function App() {
       };
     }
   });
+
+  // Admin status check (Kaoklong, authorized emails, or admin passphrase)
+  const isAdmin = useMemo(() => checkIsAdmin(user, profile), [user, profile]);
+
+  // Background sync of peer-reviewed updates and textbook references from Firestore
+  useEffect(() => {
+    let isMounted = true;
+    loadCloudPathogens().then(cloudMap => {
+      if (!isMounted || !cloudMap || Object.keys(cloudMap).length === 0) return;
+      setLiveMicrobes(prev => {
+        let hasChanges = false;
+        const merged = prev.map(m => {
+          if (cloudMap[m.id]) {
+            hasChanges = true;
+            return { ...m, ...cloudMap[m.id] };
+          }
+          return m;
+        });
+        if (hasChanges) {
+          try {
+            localStorage.setItem('microbledle_cached_microbes', JSON.stringify(merged));
+          } catch (e) {}
+        }
+        return merged;
+      });
+    }).catch(err => {
+      console.warn('Background cloud microbes sync skipped/failed:', err);
+    });
+    return () => { isMounted = false; };
+  }, []);
+
+  const handleUpdateMicrobeInApp = (updatedBug) => {
+    setLiveMicrobes(prev => {
+      const updated = prev.map(b => b.id === updatedBug.id ? updatedBug : b);
+      try {
+        localStorage.setItem('microbledle_cached_microbes', JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
+    if (target && target.id === updatedBug.id) {
+      setTarget(updatedBug);
+    }
+  };
 
   // Microdex unlocked organisms
   const [unlockedBugIds, setUnlockedBugIds] = useState(() => {
@@ -879,7 +940,7 @@ export default function App() {
   // Typing filters the A to Z list by their 1st letter / prefix
   const availableMicrobes = useMemo(() => {
     const guessedIds = new Set(guesses.map(g => g.guess.id));
-    const unguesseds = microbes.filter(m => !guessedIds.has(m.id));
+    const unguesseds = liveMicrobes.filter(m => !guessedIds.has(m.id));
     
     // Sort all remaining pathogens from A to Z by scientific name
     const sorted = [...unguesseds].sort((a, b) => a.name.localeCompare(b.name));
@@ -913,7 +974,7 @@ export default function App() {
 
       return false;
     });
-  }, [searchTerm, guesses]);
+  }, [searchTerm, guesses, liveMicrobes]);
 
   const handleKeyDown = (e) => {
     if (!isSearchOpen || availableMicrobes.length === 0) return;
@@ -1169,8 +1230,8 @@ export default function App() {
     isArchiveRef.current = false;
     setIsArchive(false);
     dateStrRef.current = 'practice';
-    const randomIndex = Math.floor(Math.random() * microbes.length);
-    setTarget(microbes[randomIndex]);
+    const randomIndex = Math.floor(Math.random() * liveMicrobes.length);
+    setTarget(liveMicrobes[randomIndex]);
     setGuesses([]);
     setGameOver(false);
     setWon(false);
@@ -1203,7 +1264,7 @@ export default function App() {
     isArchiveRef.current = isPastArchive;
 
     // Resolve info for targetDateStr (if archive date clicked from calendar) or today
-    const resolvedInfo = targetDateStr ? getDailyTarget(targetDateStr, dailyHistory) : dailyInfo;
+    const resolvedInfo = targetDateStr ? getDailyTarget(targetDateStr, dailyHistory, liveMicrobes) : dailyInfo;
     setTarget(resolvedInfo.target);
     setDateStr(resolvedInfo.dateStr);
     dateStrRef.current = resolvedInfo.dateStr;
@@ -1353,7 +1414,7 @@ export default function App() {
           currentAvatarObj={currentAvatarObj}
           stats={stats}
           unlockedBugIds={unlockedBugIds}
-          totalBugsCount={microbes.length}
+          totalBugsCount={liveMicrobes.length}
           dailyInfo={dailyInfo}
           countdown={countdown}
           dailyGameState={dailyGameState}
@@ -1422,7 +1483,7 @@ export default function App() {
               >
                 <BookOpen className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" />
                 <span className="text-[10px] px-1 py-0.2 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 font-mono font-bold">
-                  {unlockedBugIds.length}/{microbes.length}
+                  {unlockedBugIds.length}/{liveMicrobes.length}
                 </span>
               </button>
 
@@ -1598,7 +1659,7 @@ export default function App() {
             <BookOpen className="w-4 h-4 text-emerald-400" />
             <span>Microdex</span>
             <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800 font-mono">
-              {unlockedBugIds.length}/{microbes.length}
+              {unlockedBugIds.length}/{liveMicrobes.length}
             </span>
           </button>
 
@@ -2576,6 +2637,23 @@ export default function App() {
         }}
         unlockedBugIds={unlockedBugIds}
         initialBug={microdexInitialBug}
+        microbesList={liveMicrobes}
+        isAdmin={isAdmin}
+        onOpenStudio={(bugId) => {
+          setStudioBugId(bugId);
+          setShowMicrodexStudioModal(true);
+        }}
+      />
+
+      {/* Microdex Studio CMS & Database Modal */}
+      <MicrodexStudioModal
+        isOpen={showMicrodexStudioModal}
+        onClose={() => setShowMicrodexStudioModal(false)}
+        initialBugId={studioBugId}
+        allMicrobes={liveMicrobes}
+        onUpdateMicrobeInApp={handleUpdateMicrobeInApp}
+        user={user}
+        profile={profile}
       />
 
       {/* Auth & Registration Modal */}
