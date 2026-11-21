@@ -112,7 +112,7 @@ export default function MainMenu({
           <div className="absolute -inset-1.5 bg-gradient-to-r from-emerald-500/30 to-cyan-500/30 rounded-3xl blur-lg group-hover:blur-xl transition duration-500" />
           <div className="relative w-14 h-14 sm:w-20 md:w-24 sm:h-20 md:h-24 rounded-2xl sm:rounded-3xl overflow-hidden border-2 border-emerald-500/50 shadow-2xl shadow-emerald-950/80 bg-slate-950 ring-2 sm:ring-4 ring-emerald-500/20 flex items-center justify-center transform group-hover:scale-105 transition duration-300">
             <img 
-              src="./apple-touch-icon.png" 
+              src="./apple-touch-icon.png?v=2" 
               alt="Microbledle Logo" 
               className="w-full h-full object-cover rounded-xl sm:rounded-2xl" 
             />

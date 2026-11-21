@@ -26,7 +26,7 @@ export default function InstallModal({
         <div className="flex items-center gap-4 mb-5">
           <div className="w-14 h-14 rounded-2xl overflow-hidden border border-emerald-500/40 shadow-lg shadow-emerald-950/50 shrink-0 bg-slate-900 ring-2 ring-emerald-500/20">
             <img 
-              src="./apple-touch-icon.png" 
+              src="./apple-touch-icon.png?v=2" 
               alt="Microbledle" 
               className="w-full h-full object-cover" 
             />

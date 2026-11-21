@@ -1491,7 +1491,7 @@ export default function App() {
               >
                 <div className="w-8 h-8 rounded-xl overflow-hidden border border-emerald-500/40 shadow-sm shrink-0 bg-slate-950 flex items-center justify-center">
                   <img 
-                    src="./apple-touch-icon.png" 
+                    src="./apple-touch-icon.png?v=2" 
                     alt="Microbledle" 
                     className="w-full h-full object-cover rounded-xl" 
                   />
@@ -1600,7 +1600,7 @@ export default function App() {
               >
                 <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl overflow-hidden border border-emerald-500/40 shadow-lg shadow-emerald-500/10 dark:shadow-emerald-950/50 shrink-0 bg-slate-950 group-hover:border-emerald-400 transition-all duration-300 group-hover:scale-105 ring-2 ring-emerald-500/20 flex items-center justify-center">
                   <img 
-                    src="./apple-touch-icon.png" 
+                    src="./apple-touch-icon.png?v=2" 
                     alt="Microbledle Logo" 
                     className="w-full h-full object-cover rounded-2xl" 
                   />

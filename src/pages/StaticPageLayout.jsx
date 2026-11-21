@@ -43,7 +43,7 @@ export default function StaticPageLayout({
           >
             <div className="w-10 h-10 md:w-12 md:h-12 rounded-2xl overflow-hidden border border-emerald-500/40 shadow-md shrink-0 bg-slate-950 group-hover:scale-105 transition-all duration-300 flex items-center justify-center">
               <img 
-                src="./apple-touch-icon.png" 
+                src="./apple-touch-icon.png?v=2" 
                 alt="Microbledle Logo" 
                 className="w-full h-full object-cover rounded-2xl" 
               />
