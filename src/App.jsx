@@ -2769,6 +2769,20 @@ export default function App() {
                 <span>View Global Leaderboard</span>
               </button>
 
+              {/* Study on WikiMicrobe Button */}
+              <button
+                onClick={() => {
+                  setShowCaseResultModal(false);
+                  setReturnScreen('game');
+                  window.location.hash = 'wikimicrobe';
+                }}
+                className="w-full py-3 bg-gradient-to-r from-indigo-950/80 via-slate-900 to-purple-950/80 hover:from-indigo-900/80 hover:to-purple-900/80 border border-indigo-500/40 hover:border-indigo-400 text-indigo-300 font-bold rounded-2xl flex items-center justify-center gap-2 transition text-xs sm:text-sm shadow-sm group"
+              >
+                <BookOpen className="w-4 h-4 text-indigo-400 group-hover:scale-110 transition" />
+                <span>Read Textbook Summaries on WikiMicrobe</span>
+                <ChevronRight className="w-3.5 h-3.5 text-indigo-400" />
+              </button>
+
               {isPractice && (
                 <button
                   onClick={startNewPractice}
@@ -2955,6 +2969,9 @@ export default function App() {
         }}
         onSelectTextbook={(tbId) => {
           window.location.hash = `textbook?id=${tbId}`;
+        }}
+        onPlayDaily={() => {
+          window.location.hash = 'daily';
         }}
       />
 

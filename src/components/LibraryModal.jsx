@@ -11,7 +11,8 @@ export default function LibraryModal({
   unlockedBugsCount = 0,
   totalBugsCount = 100,
   onOpenMicrodex,
-  onSelectTextbook
+  onSelectTextbook,
+  onPlayDaily = null
 }) {
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -95,6 +96,24 @@ export default function LibraryModal({
               7 Reference Textbooks
             </span>
           </div>
+        </div>
+
+        {/* Cross-Promotion Flywheel: Link to Microbledle Game */}
+        <div className="bg-gradient-to-r from-emerald-950/70 via-slate-900 to-teal-950/70 border-b border-emerald-500/25 px-4 sm:px-6 py-2.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs shrink-0">
+          <div className="flex items-center gap-2 text-emerald-300 font-medium">
+            <Sparkles className="w-4 h-4 text-emerald-400 shrink-0" />
+            <span>Test your clinical microbiology knowledge on today's mystery case!</span>
+          </div>
+          <button
+            onClick={() => {
+              if (onPlayDaily) onPlayDaily();
+              else window.location.hash = 'daily';
+            }}
+            className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-[11px] flex items-center gap-1.5 transition shrink-0 shadow-sm"
+          >
+            <span>Play Microbledle Daily Case</span>
+            <ChevronRight className="w-3.5 h-3.5" />
+          </button>
         </div>
 
         {/* Bookshelf Grid */}
