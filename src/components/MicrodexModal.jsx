@@ -139,16 +139,15 @@ export default function MicrodexModal({
           </div>
 
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-            {/* Microdex Studio CMS Button */}
+            {/* Microdex Studio Editor Button */}
             {onOpenStudio && (
               <button
                 onClick={() => onOpenStudio(selectedBug?.id || null)}
-                className="px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 border transition whitespace-nowrap shrink-0 bg-indigo-950/80 border-indigo-500/60 text-indigo-300 hover:bg-indigo-900"
-                title="Open Microdex Studio CMS Database Editor"
+                className="p-2 sm:p-2.5 rounded-xl text-xs font-semibold flex items-center justify-center border transition whitespace-nowrap shrink-0 bg-indigo-950/80 border-indigo-500/60 text-indigo-300 hover:bg-indigo-900 hover:text-white"
+                title="Microdex Studio Database Editor"
+                aria-label="Open Microdex Studio"
               >
-                <Edit3 className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
-                <span className="hidden sm:inline">Studio CMS</span>
-                <span className="sm:hidden">Studio</span>
+                <Edit3 className="w-4 h-4 text-indigo-400 shrink-0" />
               </button>
             )}
 
@@ -289,7 +288,7 @@ export default function MicrodexModal({
 
         {/* Detailed Pathogen Flashcard Modal */}
         {selectedBug && (
-          <div className="fixed inset-0 z-60 flex items-center justify-center p-3 md:p-6 bg-black/85 backdrop-blur-md animate-fade">
+          <div className="fixed inset-0 z-[55] flex items-center justify-center p-3 md:p-6 bg-black/85 backdrop-blur-md animate-fade">
             <div className="bg-slate-900 border border-emerald-500/40 rounded-3xl p-5 md:p-7 max-w-2xl w-full shadow-2xl relative max-h-[90vh] overflow-y-auto text-left">
               <button 
                 onClick={() => setSelectedBug(null)}

@@ -295,7 +295,14 @@ export async function getAllTimeLeaderboard(maxResults = 50) {
 // MICRODEX STUDIO & PATHOGEN CLOUD DATABASE
 // ==========================================
 
-const ADMIN_EMAILS = ['kaoklong', 'kaokl', 'admin@microbledle.com'];
+const ADMIN_EMAILS = [
+  'duckch47@gmail.com',
+  'duckch47',
+  'duckch',
+  'kaoklong',
+  'kaokl',
+  'admin@microbledle.com'
+];
 const ADMIN_LOCAL_STORAGE_KEY = 'microbledle_admin_token';
 export const ADMIN_PASSPHRASE_KEY = 'microbledle_admin_secret_passphrase';
 
@@ -314,8 +321,15 @@ export function checkIsAdmin(user, userProfile = null) {
   if (userProfile?.isAdmin) return true;
 
   if (user && user.email) {
-    const emailLower = user.email.toLowerCase();
-    if (ADMIN_EMAILS.some(adm => emailLower.includes(adm))) {
+    const emailLower = user.email.toLowerCase().trim();
+    if (ADMIN_EMAILS.some(adm => emailLower === adm || emailLower.includes(adm))) {
+      return true;
+    }
+  }
+
+  if (userProfile?.email) {
+    const profileEmailLower = userProfile.email.toLowerCase().trim();
+    if (ADMIN_EMAILS.some(adm => profileEmailLower === adm || profileEmailLower.includes(adm))) {
       return true;
     }
   }

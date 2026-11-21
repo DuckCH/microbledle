@@ -215,7 +215,10 @@ export default function MicrodexStudioModal({
   };
 
   return (
-    <div className="fixed inset-0 z-70 flex items-center justify-center p-2 sm:p-4 bg-black/90 backdrop-blur-md animate-fade">
+    <div 
+      className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4 bg-black/90 backdrop-blur-md animate-fade"
+      style={{ zIndex: 100 }}
+    >
       <div className="bg-slate-900 border border-slate-700 rounded-3xl w-full max-w-4xl max-h-[95vh] flex flex-col shadow-2xl overflow-hidden text-left">
         
         {/* Studio Top Navbar */}
@@ -234,7 +237,7 @@ export default function MicrodexStudioModal({
                 </span>
               </div>
               <p className="text-xs text-slate-400 mt-0.5">
-                Medical Microbiology & Clinical Citations Database Editor
+                Microbledle Database Editor
               </p>
             </div>
           </div>
@@ -254,9 +257,9 @@ export default function MicrodexStudioModal({
               <Key className="w-7 h-7" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-white">Medical Director Access</h3>
+              <h3 className="text-lg font-bold text-white">Admin Access</h3>
               <p className="text-xs text-slate-400 mt-1">
-                Enter your administrative passphrase or sign in with an authorized editor email to unlock the Microdex Studio.
+                Enter your administrative password or sign in with an authorized editor email to unlock the Microdex Studio.
               </p>
             </div>
 
@@ -265,7 +268,7 @@ export default function MicrodexStudioModal({
                 type="password"
                 value={passphraseInput}
                 onChange={(e) => setPassphraseInput(e.target.value)}
-                placeholder="Enter admin passphrase (e.g. Kaoklong_MD)"
+                placeholder="Enter admin password"
                 className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-sm text-white focus:outline-none focus:border-emerald-500 transition"
               />
 
