@@ -18,7 +18,8 @@
     "virulence": "Protein A binds IgG Fc region preventing opsonization; TSST-1 superantigen causes massive cytokine release (IL-1, IL-2, TNF-α); Exfoliatin A & B cause Scalded Skin Syndrome.",
     "transmission": "Direct contact, colonized anterior nares, IV catheter inoculation, surgical wounds.",
     "buzzwords": "Golden pigment, Janeway lesions & Osler nodes, Tricuspid endocarditis in IVDU, mecA gene encoding PBP2a.",
-    "chiefComplaint": "A 28-year-old male presents with persistent high fever."
+    "chiefComplaint": "A 28-year-old male presents with persistent high fever.",
+    "references": []
   },
   {
     "id": "spneumoniae",
