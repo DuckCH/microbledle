@@ -49,16 +49,16 @@ Official product roadmap, architectural milestones, and ecosystem expansion plan
 
 ---
 
-## 🌐 Milestone 2: WikiMicrobe Domain & Ecosystem Gateway
-- [ ] **Domain Acquisition**: Purchase and secure `wikimicrobe.com` (via Cloudflare/Porkbun with WHOIS privacy).
-- [ ] **Firebase Cross-Domain Authorization**:
-  - Add `wikimicrobe.com` to Firebase Authentication Authorized Domains.
-  - Configure CORS and security headers for shared Firestore reads/writes.
-- [ ] **DNS & Gateway Routing**:
-  - Point `wikimicrobe.com` to direct library gateway `https://microbledle.com/#wikimicrobe`.
-- [ ] **Hub & Spoke Traffic Loop**:
-  - In-game post-diagnosis buttons: *"Read Murray Chapter & Microbiology Notes on WikiMicrobe →"*.
-  - Library header banner: *"Test your diagnosis skills on today's mystery case on Microbledle 🎮"*.
+## 🌐 Milestone 2: WikiMicrobe Domain & Ecosystem Gateway *(Completed)*
+- [x] **Domain Acquisition**: Secured `wikimicrobe.com` via Cloudflare Registrar (active through October 2027 with free WHOIS privacy).
+- [x] **Firebase Cross-Domain Authorization**:
+  - Added `wikimicrobe.com` and `www.wikimicrobe.com` to Firebase Authentication Authorized Domains.
+  - Enabled cross-domain authenticated admin writes and real-time cloud sync.
+- [x] **DNS & Gateway Routing**:
+  - Configured Cloudflare Edge Proxy and 301 Redirect Rule forwarding `https://wikimicrobe.com` ➔ `https://microbledle.com/#wikimicrobe`.
+- [x] **Hub & Spoke Traffic Loop**:
+  - In-game post-diagnosis action: *"Read Textbook Summaries on WikiMicrobe →"*.
+  - Library header banner: *"Test your clinical microbiology knowledge on today's mystery case! ➔ Play Microbledle Daily Case"*.
 
 ---
 
