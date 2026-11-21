@@ -12,7 +12,7 @@ export const TEXTBOOK_COVERS = {
     edition: '100 Organisms • 2026 Edition',
     authors: 'Microbledle Medical Editorial Board',
     publisher: 'Microbledle Press',
-    coverImage: './assets/covers/microdex_cover.jpg',
+    coverImage: './assets/covers/microdex_cover_v2.jpg?v=20261121_3',
     colorTheme: {
       gradient: 'from-emerald-950 via-slate-900 to-cyan-950',
       border: 'border-emerald-500/50 hover:border-emerald-400',
