@@ -7,8 +7,8 @@ export const TEXTBOOK_COVERS = {
   microdex: {
     id: 'microdex',
     isMicrodex: true,
-    title: 'Microdex Compendium',
-    subtitle: 'THE USMLE PATHOGEN COMPENDIUM',
+    title: 'Microdex',
+    subtitle: 'THE MEDICAL MICROBIOLOGY LIBRARY',
     edition: '100 Organisms • 2026 Edition',
     authors: 'Microbledle Medical Editorial Board',
     publisher: 'Microbledle Press',
@@ -20,7 +20,7 @@ export const TEXTBOOK_COVERS = {
       accent: 'emerald',
       glow: 'shadow-emerald-500/20'
     },
-    primaryFocus: 'USMLE Step 1 Buzzwords, Biochemical Flowcharts, First-Line Antimicrobials & Morphology'
+    primaryFocus: 'Clinical Cases • Morphology • Antibiotics • Keywords'
   },
 
   murray_10ed: {
