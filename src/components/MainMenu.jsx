@@ -10,6 +10,7 @@ export default function MainMenu({
   onStartDaily,
   onStartPractice,
   onOpenMicrodex,
+  onOpenLibrary,
   onOpenLeaderboard,
   onOpenStats,
   onOpenCalendar,
@@ -207,8 +208,8 @@ export default function MainMenu({
         </div>
       </div>
 
-      {/* Main Game Mode Cards (Daily vs Practice) */}
-      <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+      {/* Main Game Mode Cards (Daily vs Practice vs Library) */}
+      <div className="w-full grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4">
         
         {/* CARD 1: DAILY CASE */}
         <div className="rounded-2xl sm:rounded-3xl border-2 border-emerald-500/50 bg-gradient-to-br from-emerald-50/90 via-white to-slate-50 dark:from-emerald-950/40 dark:via-slate-900 dark:to-slate-950 p-4 sm:p-6 shadow-md dark:shadow-2xl relative overflow-hidden flex flex-col justify-between group hover:border-emerald-400 transition-all duration-300">
@@ -276,7 +277,7 @@ export default function MainMenu({
         </div>
 
         {/* CARD 2: PRACTICE MODE */}
-        <div className="rounded-3xl border border-cyan-400 dark:border-cyan-500/40 bg-gradient-to-br from-cyan-50/90 via-white to-slate-50 dark:from-cyan-950/30 dark:via-slate-900 dark:to-slate-950 p-5 sm:p-6 shadow-md dark:shadow-2xl relative overflow-hidden flex flex-col justify-between group hover:border-cyan-500 transition-all duration-300">
+        <div className="rounded-3xl border border-cyan-400 dark:border-cyan-500/40 bg-gradient-to-br from-cyan-50/90 via-white to-slate-50 dark:from-cyan-950/30 dark:via-slate-900 dark:to-slate-950 p-4 sm:p-6 shadow-md dark:shadow-2xl relative overflow-hidden flex flex-col justify-between group hover:border-cyan-500 transition-all duration-300">
           <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 rounded-full blur-2xl pointer-events-none" />
 
           <div>
@@ -305,6 +306,39 @@ export default function MainMenu({
           >
             <Shuffle className="w-4 h-4" />
             <span>Start Practice</span>
+          </button>
+        </div>
+
+        {/* CARD 3: LIBRARY HUB */}
+        <div className="rounded-3xl border border-indigo-400 dark:border-indigo-500/40 bg-gradient-to-br from-indigo-50/90 via-white to-slate-50 dark:from-indigo-950/30 dark:via-slate-900 dark:to-slate-950 p-4 sm:p-6 shadow-md dark:shadow-2xl relative overflow-hidden flex flex-col justify-between group hover:border-indigo-400 transition-all duration-300">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none" />
+
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <span className="px-2.5 py-1 rounded-full text-[11px] font-black uppercase tracking-wider bg-indigo-500/20 text-indigo-800 dark:text-indigo-300 border border-indigo-500/40 flex items-center gap-1.5 shadow-sm">
+                <BookOpen className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+                Knowledge Hub
+              </span>
+              <span className="text-[11px] font-semibold text-indigo-700 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-950/60 px-2 py-0.5 rounded-full border border-indigo-200 dark:border-indigo-800">
+                100 Bugs + 7 Books
+              </span>
+            </div>
+
+            <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-300 transition">
+              Library
+            </h3>
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
+              Microdex pathogen encyclopaedia & gold-standard textbook wiki summaries.
+            </p>
+          </div>
+
+          {/* Action Button */}
+          <button
+            onClick={onOpenLibrary}
+            className="mt-6 w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-black text-sm flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20 dark:shadow-indigo-950/60 active:scale-[0.99] transition"
+          >
+            <BookOpen className="w-4 h-4" />
+            <span>Open Library</span>
           </button>
         </div>
 

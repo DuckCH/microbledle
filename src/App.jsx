@@ -14,6 +14,10 @@ import { playTileSound, playSelectSound, playWinSound, playDefeatSound } from '.
 import { calculateUserProgression, calculateRxXp, AVATAR_OPTIONS, generateRandomPlayerName } from './utils/leveling';
 import MicrodexModal from './components/MicrodexModal';
 import MicrodexStudioModal from './components/MicrodexStudioModal';
+import LibraryModal from './components/LibraryModal';
+import TextbookWikiModal from './components/TextbookWikiModal';
+import ChapterWikiModal from './components/ChapterWikiModal';
+import { getCoverMeta } from './data/textbookCovers';
 import AuthModal from './components/AuthModal';
 import ProfileModal from './components/ProfileModal';
 import LeaderboardModal from './components/LeaderboardModal';
@@ -40,7 +44,9 @@ import {
   updateDailyScoreProfile,
   logAnalyticsEvent,
   checkIsAdmin,
-  loadCloudPathogens
+  loadCloudPathogens,
+  saveChapterSummaryToCloud,
+  loadCloudChapterSummaries
 } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 
@@ -318,6 +324,16 @@ export default function App() {
   const [microdexInitialBug, setMicrodexInitialBug] = useState(null);
   const [showMicrodexStudioModal, setShowMicrodexStudioModal] = useState(false);
   const [studioBugId, setStudioBugId] = useState(null);
+  const [showLibraryModal, setShowLibraryModal] = useState(false);
+  const [selectedTextbookId, setSelectedTextbookId] = useState(null);
+  const [selectedChapter, setSelectedChapter] = useState(null);
+  const [chapterSummaries, setChapterSummaries] = useState(() => {
+    try {
+      const saved = localStorage.getItem('microbledle_cached_chapter_summaries');
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return {};
+  });
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showLeaderboardModal, setShowLeaderboardModal] = useState(false);
@@ -430,6 +446,35 @@ export default function App() {
     });
     return () => { isMounted = false; };
   }, []);
+
+  // Background sync of textbook chapter summaries from Firestore
+  useEffect(() => {
+    let isMounted = true;
+    loadCloudChapterSummaries().then(cloudSummaries => {
+      if (!isMounted || !cloudSummaries || Object.keys(cloudSummaries).length === 0) return;
+      setChapterSummaries(prev => {
+        const merged = { ...prev, ...cloudSummaries };
+        try {
+          localStorage.setItem('microbledle_cached_chapter_summaries', JSON.stringify(merged));
+        } catch {}
+        return merged;
+      });
+    }).catch(err => {
+      console.warn('Background cloud chapter summaries sync skipped/failed:', err);
+    });
+    return () => { isMounted = false; };
+  }, []);
+
+  const handleSaveChapterSummary = (textbookId, chapterNumber, updatedData) => {
+    const summaryKey = `${textbookId}_ch${chapterNumber}`;
+    setChapterSummaries(prev => {
+      const updated = { ...prev, [summaryKey]: updatedData };
+      try {
+        localStorage.setItem('microbledle_cached_chapter_summaries', JSON.stringify(updated));
+      } catch {}
+      return updated;
+    });
+  };
 
   const handleUpdateMicrobeInApp = (updatedBug) => {
     setLiveMicrobes(prev => {
@@ -1395,6 +1440,7 @@ export default function App() {
           onStartDaily={handleStartDaily}
           onStartPractice={handleStartPractice}
           onOpenMicrodex={() => setShowMicrodexModal(true)}
+          onOpenLibrary={() => setShowLibraryModal(true)}
           onOpenLeaderboard={() => setShowLeaderboardModal(true)}
           onOpenStats={() => {
             setCalendarInitialTab('stats');
@@ -2654,6 +2700,51 @@ export default function App() {
         onUpdateMicrobeInApp={handleUpdateMicrobeInApp}
         user={user}
         profile={profile}
+      />
+
+      {/* Library Bookshelf Hub Modal */}
+      <LibraryModal
+        isOpen={showLibraryModal}
+        onClose={() => setShowLibraryModal(false)}
+        unlockedBugsCount={unlockedBugIds.length}
+        totalBugsCount={liveMicrobes.length}
+        onOpenMicrodex={() => {
+          setShowLibraryModal(false);
+          setShowMicrodexModal(true);
+        }}
+        onSelectTextbook={(tbId) => {
+          setSelectedTextbookId(tbId);
+        }}
+      />
+
+      {/* Textbook Wiki Page Modal */}
+      <TextbookWikiModal
+        isOpen={Boolean(selectedTextbookId)}
+        onClose={() => setSelectedTextbookId(null)}
+        textbookId={selectedTextbookId}
+        allSummaries={chapterSummaries}
+        onSelectChapter={(ch) => setSelectedChapter(ch)}
+        onBackToLibrary={() => {
+          setSelectedTextbookId(null);
+          setShowLibraryModal(true);
+        }}
+      />
+
+      {/* Chapter Wiki Reader & Editor Modal */}
+      <ChapterWikiModal
+        isOpen={Boolean(selectedChapter && selectedTextbookId)}
+        onClose={() => setSelectedChapter(null)}
+        textbook={selectedTextbookId ? getCoverMeta(selectedTextbookId) : null}
+        chapter={selectedChapter}
+        summaryData={selectedChapter && selectedTextbookId ? chapterSummaries[`${selectedTextbookId}_ch${selectedChapter.chapterNumber}`] : null}
+        onSaveSummary={handleSaveChapterSummary}
+        allMicrobes={liveMicrobes}
+        onOpenPathogen={(bugId) => {
+          const foundBug = liveMicrobes.find(b => b.id === bugId);
+          setMicrodexInitialBug(foundBug || { id: bugId });
+          setShowMicrodexModal(true);
+        }}
+        isAdmin={isAdmin}
       />
 
       {/* Auth & Registration Modal */}

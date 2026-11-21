@@ -470,4 +470,54 @@ export async function getCloudPathogensMetadata() {
   return null;
 }
 
+/**
+ * Save a textbook chapter summary to Firestore under the verified admin document
+ */
+export async function saveChapterSummaryToCloud(textbookId, chapterNumber, chapterData) {
+  if (!isFirebaseConfigured || !db || !textbookId || !chapterNumber) {
+    return false;
+  }
+  try {
+    const nowIso = new Date().toISOString();
+    const summaryKey = `${textbookId}_ch${chapterNumber}`;
+    const adminDocRef = doc(db, 'users', ADMIN_UID);
+    await setDoc(adminDocRef, {
+      lastUpdatedAt: nowIso,
+      textbookSummaries: {
+        [summaryKey]: {
+          ...chapterData,
+          textbookId,
+          chapterNumber: Number(chapterNumber),
+          updatedAt: nowIso
+        }
+      }
+    }, { merge: true });
+    return true;
+  } catch (err) {
+    console.warn("Error saving chapter summary to Firestore:", err);
+    throw err;
+  }
+}
+
+/**
+ * Load all chapter summaries from Firestore
+ * Returns map: { [`${textbookId}_ch${chapterNumber}`]: summaryData }
+ */
+export async function loadCloudChapterSummaries() {
+  if (!isFirebaseConfigured || !db) return {};
+  try {
+    const adminDocRef = doc(db, 'users', ADMIN_UID);
+    const snap = await getDoc(adminDocRef);
+    if (snap.exists()) {
+      const data = snap.data();
+      if (data.textbookSummaries) {
+        return data.textbookSummaries;
+      }
+    }
+  } catch (err) {
+    console.warn("Error loading cloud chapter summaries:", err);
+  }
+  return {};
+}
+
 
