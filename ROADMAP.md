@@ -63,7 +63,18 @@ Official product roadmap, architectural milestones, and ecosystem expansion plan
 ---
 
 ## 📖 Milestone 3: Comprehensive Reference Textbook Catalog
-- [ ] **Chapter Summary & Board Pearls Authoring**:
+- [x] **Phase 3.1: Studio CMS Safety & 1-Click Backups** (Completed Nov 2026):
+  - [x] **Unified 1-Click Ecosystem Backup**: Downloads single timestamped JSON file (`microbledle-ecosystem-backup-YYYY-MM-DD.json`) bundling all 100 pathogens and all authored textbook chapter summaries.
+  - [x] **Granular 1-Click Exports**: Separate downloads for `microbes.json` (pathogen database) and `chapter-summaries.json` (WikiMicrobe textbook notes).
+  - [x] **Disaster Recovery & Restore**: Automatic format detector and schema validator (`parseBackupJson()`) with item count preview.
+  - [x] **Live Firestore Cloud & Local Sync**: 1-Click restore updates Firestore under authenticated admin account (`users/ADMIN_UID`) and local app state simultaneously.
+  - [x] **Direct GitHub REST Sync**: Automated push to `main` branch for both `src/data/microbes.json` and `src/data/bundledChapterSummaries.json` via GitHub PAT.
+- [ ] **Phase 3.2: Flagship Reference Content Authoring & Seeding (Murray 10th Ed)**:
+  - [ ] Semi-automated textbook ingestion pipeline (AI extraction + Human medical review).
+  - [ ] Key Chapters: *Staphylococcus* (Ch 18), *Streptococcus* (Ch 19), *Enterobacteriaceae* (Ch 27), *Pseudomonas* (Ch 30), etc.
+  - [ ] Markdown tables for diagnostic tests, virulence factors, and treatment regimens.
+  - [ ] Bidirectional deep linking to Microdex pathogen IDs.
+- [ ] **Phase 3.3: Multi-Textbook Expansion**:
   - **Patrick R. Murray (10th Ed)**: 84 Chapters (Bacteriology, Virology, Mycology, Parasitology).
   - **Jawetz, Melnick & Adelberg (29th Ed)**: 48 Chapters.
   - **Lynne Shore Garcia (6th Ed)**: 40 Chapters (Diagnostic Medical Parasitology).
@@ -71,9 +82,6 @@ Official product roadmap, architectural milestones, and ecosystem expansion plan
   - **Mandell, Douglas, and Bennett (10th Ed 2026)**: Principles & Practice of Infectious Diseases.
   - **Abul K. Abbas (11th Ed)**: Cellular and Molecular Immunology.
   - **IDSA / CDC / Sanford Guidelines**: Clinical Antibiograms & Stewardship.
-- [ ] **Microdex Studio Enhancements**:
-  - Markdown editor with table, bold, and callout rendering.
-  - Batch import & export syncing with GitHub.
 
 ---
 
