@@ -2687,6 +2687,7 @@ export default function App() {
         isAdmin={isAdmin}
         onOpenStudio={(bugId) => {
           setStudioBugId(bugId);
+          setShowMicrodexModal(false);
           setShowMicrodexStudioModal(true);
         }}
       />
@@ -2694,7 +2695,10 @@ export default function App() {
       {/* Microdex Studio CMS & Database Modal */}
       <MicrodexStudioModal
         isOpen={showMicrodexStudioModal}
-        onClose={() => setShowMicrodexStudioModal(false)}
+        onClose={() => {
+          setShowMicrodexStudioModal(false);
+          setShowMicrodexModal(true);
+        }}
         initialBugId={studioBugId}
         allMicrobes={liveMicrobes}
         onUpdateMicrobeInApp={handleUpdateMicrobeInApp}

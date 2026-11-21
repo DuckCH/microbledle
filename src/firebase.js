@@ -304,19 +304,21 @@ const ADMIN_LOCAL_STORAGE_KEY = 'microbledle_admin_token';
  * Validates either active admin Firebase Auth session or saved admin authorization token.
  */
 export function checkIsAdmin(user = null, userProfile = null) {
-  if (typeof window !== 'undefined') {
-    const localToken = localStorage.getItem(ADMIN_LOCAL_STORAGE_KEY);
-    if (localToken === 'admin_authorized_medical_editor') {
-      return true;
-    }
-  }
-
+  // Validate active Firebase Auth admin session
   if (auth?.currentUser && (auth.currentUser.uid === ADMIN_UID || auth.currentUser.email === ADMIN_AUTH_EMAIL)) {
     return true;
   }
 
   if (user && (user.uid === ADMIN_UID || user.email === ADMIN_AUTH_EMAIL)) {
     return true;
+  }
+
+  // Purge any stale localStorage token if auth session is not active
+  if (typeof window !== 'undefined') {
+    const localToken = localStorage.getItem(ADMIN_LOCAL_STORAGE_KEY);
+    if (localToken && (!auth?.currentUser || auth.currentUser.uid !== ADMIN_UID)) {
+      localStorage.removeItem(ADMIN_LOCAL_STORAGE_KEY);
+    }
   }
 
   return false;
@@ -367,6 +369,10 @@ export async function verifyAndAuthorizeAdmin(enteredPassword) {
 export async function savePathogenToCloud(pathogenData) {
   if (!isFirebaseConfigured || !db || !pathogenData?.id) {
     return false;
+  }
+  // Check active admin auth session
+  if (!auth?.currentUser || auth.currentUser.uid !== ADMIN_UID) {
+    throw new Error('Admin authentication required. Please unlock with admin password.');
   }
   try {
     const nowIso = new Date().toISOString();
@@ -476,6 +482,10 @@ export async function getCloudPathogensMetadata() {
 export async function saveChapterSummaryToCloud(textbookId, chapterNumber, chapterData) {
   if (!isFirebaseConfigured || !db || !textbookId || !chapterNumber) {
     return false;
+  }
+  // Check active admin auth session
+  if (!auth?.currentUser || auth.currentUser.uid !== ADMIN_UID) {
+    throw new Error('Admin authentication required. Please unlock with admin password.');
   }
   try {
     const nowIso = new Date().toISOString();

@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import { TEXTBOOK_REGISTRY, getTextbookById } from '../data/textbooks';
 import { downloadPathogensJson, commitPathogensToGitHub } from '../utils/githubSync';
-import { savePathogenToCloud, checkIsAdmin, verifyAndAuthorizeAdmin } from '../firebase';
+import { savePathogenToCloud, checkIsAdmin, verifyAndAuthorizeAdmin, auth, ADMIN_UID } from '../firebase';
 
 export default function MicrodexStudioModal({
   isOpen,
@@ -154,6 +154,14 @@ export default function MicrodexStudioModal({
   // 1. SAVE TO FIREBASE CLOUD (Live push to all active players)
   const handleSaveToCloud = async () => {
     if (!formData) return;
+
+    if (!auth?.currentUser || auth.currentUser.uid !== ADMIN_UID) {
+      setIsAdminState(false);
+      setAuthError('Admin authentication required. Please enter admin password.');
+      setSaveErrorMsg('Admin authentication required. Please unlock with password.');
+      return;
+    }
+
     setIsSavingCloud(true);
     setSaveSuccessMsg('');
     setSaveErrorMsg('');

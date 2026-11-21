@@ -3,7 +3,7 @@ import {
   X, ArrowLeft, BookOpen, Edit3, Save, Sparkles, Check, AlertCircle, 
   Tag, ExternalLink, RefreshCw, Key, ShieldCheck, FileText, ChevronRight
 } from 'lucide-react';
-import { verifyAndAuthorizeAdmin, saveChapterSummaryToCloud } from '../firebase';
+import { verifyAndAuthorizeAdmin, saveChapterSummaryToCloud, auth, ADMIN_UID } from '../firebase';
 
 export default function ChapterWikiModal({
   isOpen,
@@ -51,7 +51,8 @@ export default function ChapterWikiModal({
   if (!isOpen || !chapter || !textbook) return null;
 
   const handleStartEdit = () => {
-    if (isAdmin) {
+    const hasAdminAuth = Boolean(auth?.currentUser && auth.currentUser.uid === ADMIN_UID);
+    if (hasAdminAuth) {
       setIsEditing(true);
     } else {
       setShowPasswordPrompt(true);
@@ -67,6 +68,7 @@ export default function ChapterWikiModal({
       setIsEditing(true);
       setShowPasswordPrompt(false);
       setPasswordInput('');
+      setSaveError('');
     } catch (err) {
       setPasswordError(err.message || 'Incorrect admin password.');
     } finally {
@@ -81,6 +83,13 @@ export default function ChapterWikiModal({
   };
 
   const handleSave = async () => {
+    const hasAdminAuth = Boolean(auth?.currentUser && auth.currentUser.uid === ADMIN_UID);
+    if (!hasAdminAuth) {
+      setShowPasswordPrompt(true);
+      setSaveError('Admin password required to publish live. Please unlock below.');
+      return;
+    }
+
     setIsSaving(true);
     setSaveError('');
     const updatedPayload = {
