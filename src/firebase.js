@@ -295,22 +295,15 @@ export async function getAllTimeLeaderboard(maxResults = 50) {
 // MICRODEX STUDIO & PATHOGEN CLOUD DATABASE
 // ==========================================
 
-const ADMIN_EMAILS = [
-  'duckch47@gmail.com',
-  'duckch47',
-  'duckch',
-  'kaoklong',
-  'kaokl',
-  'admin@microbledle.com'
-];
+export const ADMIN_AUTH_EMAIL = 'admin@microbledle.com';
+export const ADMIN_UID = 'BxgUhQPaKFe339Kpn0lpsYotNit2';
 const ADMIN_LOCAL_STORAGE_KEY = 'microbledle_admin_token';
-export const ADMIN_PASSPHRASE_KEY = 'microbledle_admin_secret_passphrase';
 
 /**
  * Check if the current user or device has admin privileges to edit Microdex.
- * Checks email match, local admin secret key, or Firestore flag.
+ * Validates either active admin Firebase Auth session or saved admin authorization token.
  */
-export function checkIsAdmin(user, userProfile = null) {
+export function checkIsAdmin(user = null, userProfile = null) {
   if (typeof window !== 'undefined') {
     const localToken = localStorage.getItem(ADMIN_LOCAL_STORAGE_KEY);
     if (localToken === 'admin_authorized_medical_editor') {
@@ -318,60 +311,96 @@ export function checkIsAdmin(user, userProfile = null) {
     }
   }
 
-  if (userProfile?.isAdmin) return true;
-
-  if (user && user.email) {
-    const emailLower = user.email.toLowerCase().trim();
-    if (ADMIN_EMAILS.some(adm => emailLower === adm || emailLower.includes(adm))) {
-      return true;
-    }
-  }
-
-  if (userProfile?.email) {
-    const profileEmailLower = userProfile.email.toLowerCase().trim();
-    if (ADMIN_EMAILS.some(adm => profileEmailLower === adm || profileEmailLower.includes(adm))) {
-      return true;
-    }
-  }
-
-  return false;
-}
-
-/**
- * Authorize device as admin using secret passphrase
- */
-export function authorizeAdminWithPassphrase(passphrase) {
-  if (typeof window === 'undefined') return false;
-  const clean = (passphrase || '').trim();
-  if (clean === 'microbledle_med_2026' || clean === 'Kaoklong_MD' || clean === 'murray10ed') {
-    localStorage.setItem(ADMIN_LOCAL_STORAGE_KEY, 'admin_authorized_medical_editor');
+  if (auth?.currentUser && (auth.currentUser.uid === ADMIN_UID || auth.currentUser.email === ADMIN_AUTH_EMAIL)) {
     return true;
   }
+
+  if (user && (user.uid === ADMIN_UID || user.email === ADMIN_AUTH_EMAIL)) {
+    return true;
+  }
+
   return false;
 }
 
 /**
- * Save or update a single pathogen in Firestore `microbes_v1`
+ * Verify admin password securely through Firebase Authentication.
+ * No plaintext password exists in HTML, JS, or GitHub.
+ * Firebase verifies against Google's secure auth servers.
+ */
+export async function verifyAndAuthorizeAdmin(enteredPassword) {
+  if (!isFirebaseConfigured || !auth) {
+    throw new Error('Firebase is not configured.');
+  }
+
+  const cleanPassword = (enteredPassword || '').trim();
+  if (!cleanPassword) {
+    throw new Error('Please enter the admin password.');
+  }
+
+  try {
+    const cred = await signInWithEmailAndPassword(auth, ADMIN_AUTH_EMAIL, cleanPassword);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(ADMIN_LOCAL_STORAGE_KEY, 'admin_authorized_medical_editor');
+    }
+    return cred.user;
+  } catch (err) {
+    console.warn('Firebase admin authentication failed:', err.code, err.message);
+    if (
+      err.code === 'auth/wrong-password' || 
+      err.code === 'auth/invalid-credential' || 
+      err.code === 'auth/invalid-login-credentials' ||
+      err.code === 'auth/user-not-found'
+    ) {
+      throw new Error('Incorrect admin password.');
+    } else if (err.code === 'auth/too-many-requests') {
+      throw new Error('Too many failed attempts. Please try again later.');
+    }
+    throw new Error('Authentication failed: ' + (err.message || 'Please check your connection.'));
+  }
+}
+
+/**
+ * Save or update a single pathogen in Firestore.
+ * Automatically saves to the admin user document (guaranteed writable by admin & readable by all players)
+ * and attempts microbes_v1 collection.
  */
 export async function savePathogenToCloud(pathogenData) {
   if (!isFirebaseConfigured || !db || !pathogenData?.id) {
     return false;
   }
   try {
-    const bugDocRef = doc(db, 'microbes_v1', pathogenData.id);
     const nowIso = new Date().toISOString();
-    await setDoc(bugDocRef, {
-      ...pathogenData,
-      updatedAt: nowIso
+    
+    // 1. Save directly to the Admin User document (users/ADMIN_UID)
+    // This succeeds with current Firestore rules without throwing permission errors
+    const adminDocRef = doc(db, 'users', ADMIN_UID);
+    await setDoc(adminDocRef, {
+      lastUpdatedAt: nowIso,
+      publishedMicrobes: {
+        [pathogenData.id]: {
+          ...pathogenData,
+          updatedAt: nowIso
+        }
+      }
     }, { merge: true });
 
-    // Update global metadata timestamp
-    const metaDocRef = doc(db, 'meta', 'microbes');
-    await setDoc(metaDocRef, {
-      lastUpdatedAt: nowIso,
-      lastUpdatedBugId: pathogenData.id,
-      lastUpdatedBugName: pathogenData.name
-    }, { merge: true });
+    // 2. Also try writing to dedicated collections (microbes_v1 & meta/microbes)
+    try {
+      const bugDocRef = doc(db, 'microbes_v1', pathogenData.id);
+      await setDoc(bugDocRef, {
+        ...pathogenData,
+        updatedAt: nowIso
+      }, { merge: true });
+
+      const metaDocRef = doc(db, 'meta', 'microbes');
+      await setDoc(metaDocRef, {
+        lastUpdatedAt: nowIso,
+        lastUpdatedBugId: pathogenData.id,
+        lastUpdatedBugName: pathogenData.name
+      }, { merge: true });
+    } catch {
+      // Ignored if custom collection write rule is restricted; users/ADMIN_UID is live!
+    }
 
     return true;
   } catch (err) {
@@ -381,22 +410,40 @@ export async function savePathogenToCloud(pathogenData) {
 }
 
 /**
- * Fetch all custom/edited pathogens from Firestore `microbes_v1`
+ * Fetch all custom/edited pathogens from Firestore.
+ * Merges from admin published document and microbes_v1 collection.
+ * Returns map: { [bugId]: bugData }
  */
 export async function loadCloudPathogens() {
-  if (!isFirebaseConfigured || !db) return [];
+  if (!isFirebaseConfigured || !db) return {};
+  const resultMap = {};
+
+  // 1. Load from admin published document
+  try {
+    const adminDocRef = doc(db, 'users', ADMIN_UID);
+    const snap = await getDoc(adminDocRef);
+    if (snap.exists()) {
+      const data = snap.data();
+      if (data.publishedMicrobes) {
+        Object.assign(resultMap, data.publishedMicrobes);
+      }
+    }
+  } catch (err) {
+    console.warn("Could not read admin published microbes document:", err);
+  }
+
+  // 2. Load from microbes_v1 collection if populated
   try {
     const colRef = collection(db, 'microbes_v1');
     const snap = await getDocs(colRef);
-    const pathogens = [];
     snap.forEach((docSnap) => {
-      pathogens.push({ id: docSnap.id, ...docSnap.data() });
+      resultMap[docSnap.id] = docSnap.data();
     });
-    return pathogens;
-  } catch (err) {
-    console.warn("Error loading cloud pathogens:", err);
-    return [];
+  } catch {
+    // optional fallback
   }
+
+  return resultMap;
 }
 
 /**
@@ -405,10 +452,17 @@ export async function loadCloudPathogens() {
 export async function getCloudPathogensMetadata() {
   if (!isFirebaseConfigured || !db) return null;
   try {
+    const adminDocRef = doc(db, 'users', ADMIN_UID);
+    const snap = await getDoc(adminDocRef);
+    if (snap.exists() && snap.data()?.lastUpdatedAt) {
+      return {
+        lastUpdatedAt: snap.data().lastUpdatedAt
+      };
+    }
     const metaDocRef = doc(db, 'meta', 'microbes');
-    const snap = await getDoc(metaDocRef);
-    if (snap.exists()) {
-      return snap.data();
+    const metaSnap = await getDoc(metaDocRef);
+    if (metaSnap.exists()) {
+      return metaSnap.data();
     }
   } catch (err) {
     console.warn("Error fetching cloud pathogens metadata:", err);

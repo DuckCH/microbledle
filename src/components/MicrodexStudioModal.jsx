@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import { TEXTBOOK_REGISTRY, getTextbookById } from '../data/textbooks';
 import { downloadPathogensJson, commitPathogensToGitHub } from '../utils/githubSync';
-import { savePathogenToCloud, checkIsAdmin, authorizeAdminWithPassphrase } from '../firebase';
+import { savePathogenToCloud, checkIsAdmin, verifyAndAuthorizeAdmin } from '../firebase';
 
 export default function MicrodexStudioModal({
   isOpen,
@@ -19,6 +19,7 @@ export default function MicrodexStudioModal({
 }) {
   const [isAdminState, setIsAdminState] = useState(false);
   const [passphraseInput, setPassphraseInput] = useState('');
+  const [isVerifyingPassword, setIsVerifyingPassword] = useState(false);
   const [authError, setAuthError] = useState('');
 
   // Selected pathogen in studio
@@ -70,16 +71,19 @@ export default function MicrodexStudioModal({
 
   if (!isOpen) return null;
 
-  // Handle Passphrase Unlock
-  const handleUnlockAdmin = (e) => {
+  // Handle Password Unlock through Firebase Auth
+  const handleUnlockAdmin = async (e) => {
     e.preventDefault();
     setAuthError('');
-    const ok = authorizeAdminWithPassphrase(passphraseInput);
-    if (ok) {
+    setIsVerifyingPassword(true);
+    try {
+      await verifyAndAuthorizeAdmin(passphraseInput);
       setIsAdminState(true);
       setPassphraseInput('');
-    } else {
-      setAuthError('Incorrect Medical Director passphrase. Check your credentials.');
+    } catch (err) {
+      setAuthError(err.message || 'Incorrect admin password.');
+    } finally {
+      setIsVerifyingPassword(false);
     }
   };
 
@@ -259,7 +263,7 @@ export default function MicrodexStudioModal({
             <div>
               <h3 className="text-lg font-bold text-white">Admin Access</h3>
               <p className="text-xs text-slate-400 mt-1">
-                Enter your administrative password or sign in with an authorized editor email to unlock the Microdex Studio.
+                Enter your administrative password to unlock the Microdex Studio.
               </p>
             </div>
 
@@ -269,21 +273,30 @@ export default function MicrodexStudioModal({
                 value={passphraseInput}
                 onChange={(e) => setPassphraseInput(e.target.value)}
                 placeholder="Enter admin password"
-                className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-sm text-white focus:outline-none focus:border-emerald-500 transition"
+                disabled={isVerifyingPassword}
+                className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-sm text-white focus:outline-none focus:border-emerald-500 transition disabled:opacity-60"
               />
 
               {authError && (
                 <div className="text-xs text-rose-400 flex items-center gap-1.5 justify-center">
-                  <AlertCircle className="w-4 h-4" />
+                  <AlertCircle className="w-4 h-4 shrink-0" />
                   <span>{authError}</span>
                 </div>
               )}
 
               <button
                 type="submit"
-                className="w-full py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-xl text-xs shadow-md transition"
+                disabled={isVerifyingPassword || !passphraseInput.trim()}
+                className="w-full py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-xl text-xs shadow-md transition disabled:opacity-50 flex items-center justify-center gap-2"
               >
-                Unlock Microdex Studio
+                {isVerifyingPassword ? (
+                  <>
+                    <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                    <span>Verifying with Firebase...</span>
+                  </>
+                ) : (
+                  <span>Unlock Microdex Studio</span>
+                )}
               </button>
             </form>
           </div>
