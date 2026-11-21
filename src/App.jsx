@@ -18,6 +18,8 @@ import LibraryModal from './components/LibraryModal';
 import TextbookWikiModal from './components/TextbookWikiModal';
 import ChapterWikiModal from './components/ChapterWikiModal';
 import { getCoverMeta } from './data/textbookCovers';
+import { getChaptersForTextbook } from './data/textbookIndex';
+import { parseHashRoute, buildHash, navigateToHash } from './utils/navigation';
 import AuthModal from './components/AuthModal';
 import ProfileModal from './components/ProfileModal';
 import LeaderboardModal from './components/LeaderboardModal';
@@ -250,27 +252,212 @@ export default function App() {
 
   const [currentScreen, setCurrentScreen] = useState(() => {
     if (typeof window !== 'undefined') {
-      const hash = window.location.hash.replace('#', '').toLowerCase();
-      if (['about', 'contact', 'privacy', 'terms', 'references'].includes(hash)) {
-        return hash;
+      const parsed = parseHashRoute(window.location.hash);
+      if (['about', 'contact', 'privacy', 'terms', 'references'].includes(parsed.route)) {
+        return parsed.route;
+      }
+      if (['daily', 'practice'].includes(parsed.route)) {
+        return 'game';
       }
     }
     return 'menu';
   });
   const [returnScreen, setReturnScreen] = useState('menu');
 
+  const [isPractice, setIsPractice] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const parsed = parseHashRoute(window.location.hash);
+      return parsed.route === 'practice';
+    }
+    return false;
+  });
+  const isPracticeRef = useRef(isPractice);
+  useEffect(() => {
+    isPracticeRef.current = isPractice;
+  }, [isPractice]);
+
+  const [isArchive, setIsArchive] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const parsed = parseHashRoute(window.location.hash);
+      return Boolean(parsed.route === 'daily' && parsed.date && parsed.date !== dailyInfo.dateStr);
+    }
+    return false;
+  });
+  const isArchiveRef = useRef(isArchive);
+  useEffect(() => {
+    isArchiveRef.current = isArchive;
+  }, [isArchive]);
+
+  const [dateStr, setDateStr] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const parsed = parseHashRoute(window.location.hash);
+      if (parsed.route === 'daily' && parsed.date) {
+        return parsed.date;
+      }
+    }
+    return dailyInfo.dateStr;
+  });
+  const dateStrRef = useRef(dateStr);
+  useEffect(() => {
+    dateStrRef.current = dateStr;
+  }, [dateStr]);
+
+  const [target, setTarget] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const parsed = parseHashRoute(window.location.hash);
+      if (parsed.route === 'daily' && parsed.date) {
+        const resolved = getDailyTarget(parsed.date, loadDailyHistory(), liveMicrobes);
+        return resolved.target;
+      }
+    }
+    return dailyInfo.target;
+  });
+
+  const [showMicrodexModal, setShowMicrodexModal] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const parsed = parseHashRoute(window.location.hash);
+      return parsed.route === 'microdex';
+    }
+    return false;
+  });
+  const [microdexInitialBug, setMicrodexInitialBug] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const parsed = parseHashRoute(window.location.hash);
+      if (parsed.route === 'microdex' && parsed.id) {
+        return liveMicrobes.find(m => m.id.toLowerCase() === parsed.id.toLowerCase()) || { id: parsed.id };
+      }
+    }
+    return null;
+  });
+  const [showMicrodexStudioModal, setShowMicrodexStudioModal] = useState(false);
+  const [studioBugId, setStudioBugId] = useState(null);
+  const [showLibraryModal, setShowLibraryModal] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const parsed = parseHashRoute(window.location.hash);
+      return parsed.route === 'wikimicrobe';
+    }
+    return false;
+  });
+  const [selectedTextbookId, setSelectedTextbookId] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const parsed = parseHashRoute(window.location.hash);
+      if (parsed.route === 'textbook' && parsed.id) {
+        return parsed.id;
+      }
+    }
+    return null;
+  });
+  const [selectedChapter, setSelectedChapter] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const parsed = parseHashRoute(window.location.hash);
+      if (parsed.route === 'textbook' && parsed.id && parsed.chapter) {
+        const chs = getChaptersForTextbook(parsed.id);
+        return chs.find(c => c.chapterNumber === parsed.chapter) || null;
+      }
+    }
+    return null;
+  });
+
   useEffect(() => {
     const handleHash = () => {
-      const hash = window.location.hash.replace('#', '').toLowerCase();
-      if (['about', 'contact', 'privacy', 'terms', 'references'].includes(hash)) {
-        setCurrentScreen(hash);
-      } else if (!hash && ['about', 'contact', 'privacy', 'terms', 'references'].includes(currentScreen)) {
+      const parsed = parseHashRoute(window.location.hash);
+      
+      // 1. Static Pages
+      if (['about', 'contact', 'privacy', 'terms', 'references'].includes(parsed.route)) {
+        setCurrentScreen(parsed.route);
+        setShowMicrodexModal(false);
+        setShowLibraryModal(false);
+        setSelectedTextbookId(null);
+        setSelectedChapter(null);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+
+      // 2. Main Menu
+      if (parsed.route === 'menu') {
         setCurrentScreen('menu');
+        setShowMicrodexModal(false);
+        setShowLibraryModal(false);
+        setSelectedTextbookId(null);
+        setSelectedChapter(null);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+
+      // 3. Daily Case (Today or Archive)
+      if (parsed.route === 'daily') {
+        setCurrentScreen('game');
+        setShowMicrodexModal(false);
+        setShowLibraryModal(false);
+        setSelectedTextbookId(null);
+        setSelectedChapter(null);
+
+        const targetDate = parsed.date || dailyInfo.dateStr;
+        const isPastArchive = Boolean(parsed.date && parsed.date !== dailyInfo.dateStr);
+
+        if (isPracticeRef.current || dateStrRef.current !== targetDate || isArchiveRef.current !== isPastArchive) {
+          handleStartDaily(parsed.date, false);
+        }
+        return;
+      }
+
+      // 4. Practice Endless Mode
+      if (parsed.route === 'practice') {
+        setCurrentScreen('game');
+        setShowMicrodexModal(false);
+        setShowLibraryModal(false);
+        setSelectedTextbookId(null);
+        setSelectedChapter(null);
+
+        if (!isPracticeRef.current || currentScreen !== 'game') {
+          handleStartPractice(false);
+        }
+        return;
+      }
+
+      // 5. WikiMicrobe Hub
+      if (parsed.route === 'wikimicrobe') {
+        setShowLibraryModal(true);
+        setShowMicrodexModal(false);
+        setSelectedTextbookId(null);
+        setSelectedChapter(null);
+        return;
+      }
+
+      // 6. Microdex Pathogen Compendium
+      if (parsed.route === 'microdex') {
+        setShowMicrodexModal(true);
+        setShowLibraryModal(false);
+        if (parsed.id) {
+          const found = liveMicrobes.find(m => m.id.toLowerCase() === parsed.id.toLowerCase());
+          setMicrodexInitialBug(found || { id: parsed.id });
+        } else {
+          setMicrodexInitialBug(null);
+        }
+        return;
+      }
+
+      // 7. Textbook & Chapter Wiki
+      if (parsed.route === 'textbook') {
+        setShowLibraryModal(false);
+        setShowMicrodexModal(false);
+        if (parsed.id) {
+          setSelectedTextbookId(parsed.id);
+          if (parsed.chapter) {
+            const chs = getChaptersForTextbook(parsed.id);
+            const foundCh = chs.find(c => c.chapterNumber === parsed.chapter);
+            setSelectedChapter(foundCh || null);
+          } else {
+            setSelectedChapter(null);
+          }
+        }
+        return;
       }
     };
+
     window.addEventListener('hashchange', handleHash);
     return () => window.removeEventListener('hashchange', handleHash);
-  }, [currentScreen]);
+  }, [dailyInfo, liveMicrobes, currentScreen]);
 
   const navigateToPage = (pageId) => {
     if (['menu', 'game'].includes(currentScreen)) {
@@ -285,28 +472,12 @@ export default function App() {
 
   const handleBackFromPage = () => {
     if (typeof window !== 'undefined') {
-      window.location.hash = '';
+      window.location.hash = returnScreen === 'game' 
+        ? (isPracticeRef.current ? 'practice' : (isArchiveRef.current ? `daily?date=${dateStrRef.current}` : 'daily'))
+        : 'menu';
     }
     setCurrentScreen(returnScreen || 'menu');
   };
-
-  const [isPractice, setIsPractice] = useState(false);
-  const isPracticeRef = useRef(isPractice);
-  useEffect(() => {
-    isPracticeRef.current = isPractice;
-  }, [isPractice]);
-
-  const [isArchive, setIsArchive] = useState(false);
-  const isArchiveRef = useRef(isArchive);
-  useEffect(() => {
-    isArchiveRef.current = isArchive;
-  }, [isArchive]);
-  const [target, setTarget] = useState(dailyInfo.target);
-  const [dateStr, setDateStr] = useState(dailyInfo.dateStr);
-  const dateStrRef = useRef(dateStr);
-  useEffect(() => {
-    dateStrRef.current = dateStr;
-  }, [dateStr]);
 
   const [guesses, setGuesses] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -320,13 +491,6 @@ export default function App() {
   const [showCaseResultModal, setShowCaseResultModal] = useState(false);
   const [showDischargeModal, setShowDischargeModal] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
-  const [showMicrodexModal, setShowMicrodexModal] = useState(false);
-  const [microdexInitialBug, setMicrodexInitialBug] = useState(null);
-  const [showMicrodexStudioModal, setShowMicrodexStudioModal] = useState(false);
-  const [studioBugId, setStudioBugId] = useState(null);
-  const [showLibraryModal, setShowLibraryModal] = useState(false);
-  const [selectedTextbookId, setSelectedTextbookId] = useState(null);
-  const [selectedChapter, setSelectedChapter] = useState(null);
   const [chapterSummaries, setChapterSummaries] = useState(() => {
     try {
       const saved = localStorage.getItem('microbledle_cached_chapter_summaries');
@@ -955,6 +1119,8 @@ export default function App() {
       setWon(false);
       setShowStatsModal(false);
       setShowCaseResultModal(false);
+    } else if (isArchive) {
+      // In Archive mode, target and dateStr are handled explicitly by handleStartDaily
     } else {
       setTarget(dailyInfo.target);
       setDateStr(dailyInfo.dateStr);
@@ -1299,7 +1465,7 @@ export default function App() {
     return { gameOver: false, won: false, guesses: [] };
   }, [dailyInfo.dateStr, isPractice, isArchive, gameOver, won, guesses]);
 
-  const handleStartDaily = (targetDateStr) => {
+  const handleStartDaily = (targetDateStr, updateHash = true) => {
     isPracticeRef.current = false;
     setIsPractice(false);
     
@@ -1317,6 +1483,13 @@ export default function App() {
       mode: isPastArchive ? 'archive' : 'daily', 
       date: resolvedInfo.dateStr 
     });
+
+    if (updateHash && typeof window !== 'undefined') {
+      const desiredHash = isPastArchive ? `#daily?date=${resolvedInfo.dateStr}` : '#daily';
+      if (window.location.hash !== desiredHash) {
+        window.location.hash = desiredHash;
+      }
+    }
 
     const savedGame = localStorage.getItem(`microbledle_game_${resolvedInfo.dateStr}`);
     if (savedGame) {
@@ -1366,20 +1539,28 @@ export default function App() {
     setShowCaseResultModal(false);
   };
 
-  const handleStartPractice = () => {
+  const handleStartPractice = (updateHash = true) => {
     setIsPractice(true);
     isPracticeRef.current = true;
     setIsArchive(false);
     isArchiveRef.current = false;
     startNewPractice();
     logAnalyticsEvent('game_start', { mode: 'practice' });
+    if (updateHash && typeof window !== 'undefined' && window.location.hash !== '#practice') {
+      window.location.hash = '#practice';
+    }
     setCurrentScreen('game');
   };
 
   const handleOpenMicrodex = (bug = null) => {
-    setMicrodexInitialBug(bug || target);
+    if (['menu', 'game'].includes(currentScreen)) {
+      setReturnScreen(currentScreen);
+    }
+    const bugId = bug?.id || target?.id;
     setShowCaseResultModal(false);
-    setShowMicrodexModal(true);
+    if (typeof window !== 'undefined') {
+      window.location.hash = bugId ? `microdex?id=${bugId}` : 'microdex';
+    }
   };
 
   const copyEmojiGrid = () => {
@@ -1413,6 +1594,8 @@ export default function App() {
     }
   };
 
+  const isDedicatedModalOpen = showMicrodexModal || showLibraryModal || Boolean(selectedTextbookId) || showMicrodexStudioModal;
+
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col items-center p-3 md:p-6 selection:bg-emerald-500 selection:text-white transition-colors duration-200">
       {['about', 'contact', 'privacy', 'terms', 'references'].includes(currentScreen) ? (
@@ -1435,12 +1618,26 @@ export default function App() {
           {currentScreen === 'terms' && <TermsPage />}
           {currentScreen === 'references' && <ReferencesPage />}
         </StaticPageLayout>
-      ) : currentScreen === 'menu' ? (
-        <MainMenu
-          onStartDaily={handleStartDaily}
-          onStartPractice={handleStartPractice}
-          onOpenMicrodex={() => setShowMicrodexModal(true)}
-          onOpenLibrary={() => setShowLibraryModal(true)}
+      ) : (
+        <div 
+          className="w-full flex flex-col items-center flex-1"
+          style={isDedicatedModalOpen ? { display: 'none' } : undefined}
+        >
+          {currentScreen === 'menu' ? (
+            <MainMenu
+              onStartDaily={() => {
+                window.location.hash = 'daily';
+              }}
+              onStartPractice={() => {
+                window.location.hash = 'practice';
+              }}
+              onOpenMicrodex={() => {
+                setReturnScreen('menu');
+                window.location.hash = 'microdex';
+              }}
+              onOpenLibrary={() => {
+                window.location.hash = 'wikimicrobe';
+              }}
           onOpenLeaderboard={() => setShowLeaderboardModal(true)}
           onOpenStats={() => {
             setCalendarInitialTab('stats');
@@ -1477,7 +1674,9 @@ export default function App() {
             <div className="flex items-center gap-2">
               {/* Back to Menu Button */}
               <button
-                onClick={() => setCurrentScreen('menu')}
+                onClick={() => {
+                  window.location.hash = 'menu';
+                }}
                 className="p-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:text-emerald-500 transition shadow-sm shrink-0"
                 title="Return to Main Menu"
               >
@@ -1485,7 +1684,9 @@ export default function App() {
               </button>
 
               <div 
-                onClick={() => setCurrentScreen('menu')}
+                onClick={() => {
+                  window.location.hash = 'menu';
+                }}
                 className="flex items-center gap-2 cursor-pointer"
                 title="Return to Main Menu"
               >
@@ -1523,7 +1724,10 @@ export default function App() {
             <div className="flex items-center gap-1.5">
               {/* Microdex Compendium Pill */}
               <button
-                onClick={() => setShowMicrodexModal(true)}
+                onClick={() => {
+                  setReturnScreen('game');
+                  window.location.hash = 'microdex';
+                }}
                 className="px-2 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:text-emerald-500 transition flex items-center gap-1 text-[11px] font-semibold shadow-sm"
                 title="Microdex Compendium"
               >
@@ -1560,7 +1764,9 @@ export default function App() {
               {/* Archive return to today button if in archive */}
               {isArchive && (
                 <button
-                  onClick={() => handleStartDaily(dailyInfo.dateStr)}
+                  onClick={() => {
+                    window.location.hash = 'daily';
+                  }}
                   className="px-2 py-1.5 rounded-xl bg-purple-100 dark:bg-purple-950 border border-purple-200 dark:border-purple-800 text-purple-700 dark:text-purple-300 transition flex items-center gap-1 text-[11px] font-semibold shadow-sm"
                   title="Return to Today's Daily Case"
                 >
@@ -1585,7 +1791,9 @@ export default function App() {
             <div className="flex items-center gap-3">
               {/* Back to Menu Button */}
               <button
-                onClick={() => setCurrentScreen('menu')}
+                onClick={() => {
+                  window.location.hash = 'menu';
+                }}
                 className="p-2 md:px-3 md:py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500/50 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-white transition flex items-center gap-1.5 text-xs font-semibold shadow-sm shrink-0"
                 title="Return to Main Menu"
               >
@@ -1594,7 +1802,9 @@ export default function App() {
               </button>
 
               <div 
-                onClick={() => setCurrentScreen('menu')}
+                onClick={() => {
+                  window.location.hash = 'menu';
+                }}
                 className="flex items-center gap-3 cursor-pointer group"
                 title="Return to Main Menu"
               >
@@ -1698,7 +1908,10 @@ export default function App() {
 
           {/* Microdex Compendium Button */}
           <button
-            onClick={() => setShowMicrodexModal(true)}
+            onClick={() => {
+              setReturnScreen('game');
+              window.location.hash = 'microdex';
+            }}
             className="px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-300 hover:text-emerald-400 transition flex items-center gap-1.5 text-xs font-semibold"
             title="Microdex USMLE Compendium"
           >
@@ -1725,7 +1938,9 @@ export default function App() {
           {/* If in Archive Mode, button to switch back to Today's Case */}
           {isArchive && (
             <button
-              onClick={() => handleStartDaily(dailyInfo.dateStr)}
+              onClick={() => {
+                window.location.hash = 'daily';
+              }}
               className="px-3 py-2 rounded-xl bg-purple-950/60 border border-purple-500/40 hover:bg-purple-900/60 text-purple-300 transition flex items-center gap-1.5 text-xs font-semibold shadow-sm"
               title="Return to Today's Live Daily Case"
             >
@@ -1738,11 +1953,9 @@ export default function App() {
           <button
             onClick={() => {
               if (isPractice) {
-                setIsPractice(false);
-                setIsArchive(false);
-                handleStartDaily(dailyInfo.dateStr);
+                window.location.hash = 'daily';
               } else {
-                handleStartPractice();
+                window.location.hash = 'practice';
               }
             }}
             className={`px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 border transition ${
@@ -1932,7 +2145,10 @@ export default function App() {
                 <Trophy className="w-4 h-4" /> View Summary & Share
               </button>
               <button
-                onClick={() => setShowMicrodexModal(true)}
+                onClick={() => {
+                  setReturnScreen('game');
+                  window.location.hash = target?.id ? `microdex?id=${target.id}` : 'microdex';
+                }}
                 className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-emerald-600 dark:text-emerald-400 shadow transition inline-flex items-center gap-1.5"
               >
                 <BookOpen className="w-4 h-4" /> Open in Microdex
@@ -2404,6 +2620,8 @@ export default function App() {
           For educational and entertainment purposes only. Not intended for clinical diagnostic or treatment decisions.
         </p>
       </footer>
+    </div>
+  )}
 
       {/* Case Outcome / Results Modal */}
       {showCaseResultModal && target && (
@@ -2575,7 +2793,7 @@ export default function App() {
               <button
                 onClick={() => {
                   setShowCaseResultModal(false);
-                  setCurrentScreen('menu');
+                  window.location.hash = 'menu';
                 }}
                 className="w-full py-2.5 bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-slate-300 hover:text-white font-semibold rounded-2xl flex items-center justify-center gap-2 transition text-xs"
               >
@@ -2597,12 +2815,12 @@ export default function App() {
         initialTab={calendarInitialTab}
         onSelectDateToPlay={(selectedDate) => {
           setShowStatsModal(false);
-          handleStartDaily(selectedDate);
+          window.location.hash = `daily?date=${selectedDate}`;
         }}
         onResetAndPlayArchive={(selectedDate) => {
           setShowStatsModal(false);
           handleResetArchiveCase(selectedDate);
-          handleStartDaily(selectedDate);
+          window.location.hash = `daily?date=${selectedDate}`;
         }}
         onOpenLeaderboard={() => {
           setShowStatsModal(false);
@@ -2678,11 +2896,28 @@ export default function App() {
       <MicrodexModal 
         isOpen={showMicrodexModal}
         onClose={() => {
-          setShowMicrodexModal(false);
-          setMicrodexInitialBug(null);
+          if (returnScreen === 'game') {
+            window.location.hash = isPracticeRef.current 
+              ? 'practice' 
+              : (isArchiveRef.current ? `daily?date=${dateStrRef.current}` : 'daily');
+          } else if (returnScreen === 'wikimicrobe') {
+            window.location.hash = 'wikimicrobe';
+          } else if (returnScreen === 'textbook' && selectedTextbookId) {
+            window.location.hash = `textbook?id=${selectedTextbookId}`;
+          } else {
+            window.location.hash = 'menu';
+          }
         }}
         unlockedBugIds={unlockedBugIds}
         initialBug={microdexInitialBug}
+        onSelectBug={(bug) => {
+          if (bug?.id) {
+            window.location.hash = `microdex?id=${bug.id}`;
+          }
+        }}
+        onCloseBug={() => {
+          window.location.hash = 'microdex';
+        }}
         microbesList={liveMicrobes}
         isAdmin={isAdmin}
         onOpenStudio={(bugId) => {
@@ -2709,44 +2944,50 @@ export default function App() {
       {/* Library Bookshelf Hub Modal */}
       <LibraryModal
         isOpen={showLibraryModal}
-        onClose={() => setShowLibraryModal(false)}
+        onClose={() => {
+          window.location.hash = 'menu';
+        }}
         unlockedBugsCount={unlockedBugIds.length}
         totalBugsCount={liveMicrobes.length}
         onOpenMicrodex={() => {
-          setShowLibraryModal(false);
-          setShowMicrodexModal(true);
+          setReturnScreen('wikimicrobe');
+          window.location.hash = 'microdex';
         }}
         onSelectTextbook={(tbId) => {
-          setSelectedTextbookId(tbId);
+          window.location.hash = `textbook?id=${tbId}`;
         }}
       />
 
       {/* Textbook Wiki Page Modal */}
       <TextbookWikiModal
-        isOpen={Boolean(selectedTextbookId)}
-        onClose={() => setSelectedTextbookId(null)}
+        isOpen={Boolean(selectedTextbookId && !selectedChapter)}
+        onClose={() => {
+          window.location.hash = 'wikimicrobe';
+        }}
         textbookId={selectedTextbookId}
         allSummaries={chapterSummaries}
-        onSelectChapter={(ch) => setSelectedChapter(ch)}
+        onSelectChapter={(ch) => {
+          window.location.hash = `textbook?id=${selectedTextbookId}&ch=${ch.chapterNumber}`;
+        }}
         onBackToLibrary={() => {
-          setSelectedTextbookId(null);
-          setShowLibraryModal(true);
+          window.location.hash = 'wikimicrobe';
         }}
       />
 
       {/* Chapter Wiki Reader & Editor Modal */}
       <ChapterWikiModal
         isOpen={Boolean(selectedChapter && selectedTextbookId)}
-        onClose={() => setSelectedChapter(null)}
+        onClose={() => {
+          window.location.hash = `textbook?id=${selectedTextbookId}`;
+        }}
         textbook={selectedTextbookId ? getCoverMeta(selectedTextbookId) : null}
         chapter={selectedChapter}
         summaryData={selectedChapter && selectedTextbookId ? chapterSummaries[`${selectedTextbookId}_ch${selectedChapter.chapterNumber}`] : null}
         onSaveSummary={handleSaveChapterSummary}
         allMicrobes={liveMicrobes}
         onOpenPathogen={(bugId) => {
-          const foundBug = liveMicrobes.find(b => b.id === bugId);
-          setMicrodexInitialBug(foundBug || { id: bugId });
-          setShowMicrodexModal(true);
+          setReturnScreen('textbook');
+          window.location.hash = `microdex?id=${bugId}`;
         }}
         isAdmin={isAdmin}
       />

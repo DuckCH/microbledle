@@ -41,6 +41,8 @@ export default function MicrodexModal({
   onClose, 
   unlockedBugIds = [], 
   initialBug = null,
+  onSelectBug = null,
+  onCloseBug = null,
   microbesList = null,
   onOpenStudio = null,
   isAdmin = false
@@ -52,10 +54,16 @@ export default function MicrodexModal({
   const [selectedBug, setSelectedBug] = useState(null);
 
   useEffect(() => {
-    if (isOpen && initialBug) {
-      // Find latest version from microbes list in case citations updated
-      const latest = microbes.find(m => m.id === initialBug.id) || initialBug;
-      setSelectedBug(latest);
+    if (isOpen) {
+      if (initialBug) {
+        // Find latest version from microbes list in case citations updated
+        const latest = microbes.find(m => m.id === initialBug.id) || initialBug;
+        setSelectedBug(latest);
+      } else {
+        setSelectedBug(null);
+      }
+    } else {
+      setSelectedBug(null);
     }
   }, [isOpen, initialBug, microbes]);
 
@@ -233,7 +241,12 @@ export default function MicrodexModal({
             return (
               <div
                 key={bug.id}
-                onClick={() => isUnlocked && setSelectedBug(bug)}
+                onClick={() => {
+                  if (isUnlocked) {
+                    if (onSelectBug) onSelectBug(bug);
+                    else setSelectedBug(bug);
+                  }
+                }}
                 className={`p-3.5 rounded-2xl border transition-all text-left relative flex flex-col justify-between ${
                   isUnlocked
                     ? 'bg-slate-900/90 border-slate-700/80 hover:border-emerald-500/60 hover:bg-slate-800/80 cursor-pointer shadow-lg group'
@@ -291,7 +304,10 @@ export default function MicrodexModal({
           <div className="fixed inset-0 z-[55] flex items-center justify-center p-3 md:p-6 bg-black/85 backdrop-blur-md animate-fade">
             <div className="bg-slate-900 border border-emerald-500/40 rounded-3xl p-5 md:p-7 max-w-2xl w-full shadow-2xl relative max-h-[90vh] overflow-y-auto text-left">
               <button 
-                onClick={() => setSelectedBug(null)}
+                onClick={() => {
+                  if (onCloseBug) onCloseBug();
+                  else setSelectedBug(null);
+                }}
                 className="absolute right-4 top-4 text-slate-400 hover:text-white p-1 rounded-xl hover:bg-slate-800 transition"
               >
                 <X className="w-6 h-6" />

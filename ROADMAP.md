@@ -36,16 +36,16 @@ Official product roadmap, architectural milestones, and ecosystem expansion plan
 - [x] Symmetrical 3-card Main Menu layout (Daily Case, Practice Mode, WikiMicrobe).
 - [x] Microdex A-to-Z alphabetical sorting and 3:4 high-res cover artwork.
 - [x] Admin secure authentication without plaintext passwords.
-- [ ] **Hash-Based Page Routing**:
+- [x] **Hash-Based Page Routing**:
   - `/#daily` ➔ Dedicated Full-Page Daily Case view.
   - `/#practice` ➔ Dedicated Full-Page Practice Mode view.
   - `/#wikimicrobe` ➔ Dedicated Full-Page WikiMicrobe Bookshelf view.
   - `/#microdex` ➔ Dedicated Full-Page Microdex Compendium view.
-- [ ] **Native Navigation**:
+- [x] **Native Navigation**:
   - iPad swipe-back and browser Back/Forward button history management.
-  - Deep linking support (`/#microdex?id=saureus`, `/#textbook?id=murray_10ed&ch=1`).
-- [ ] **Performance Optimization**:
-  - Lazy-load screens to reduce iPad/mobile RAM and ensure 120 FPS rendering.
+  - Deep linking support (`/#microdex?id=saureus`, `/#textbook?id=murray_10ed&ch=1`, `/#daily?date=YYYY-MM-DD`).
+- [x] **Performance Optimization**:
+  - Offscreen DOM suppression (`display: none` / GPU compositor layer optimization) ensuring silky-smooth 120 FPS rendering on ProMotion iPad Safari.
 
 ---
 
